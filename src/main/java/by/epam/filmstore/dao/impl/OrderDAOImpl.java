@@ -108,14 +108,7 @@ public class OrderDAOImpl implements IOrderDAO {
                 if(rs.next()) {
                     order = new Order();
                     order.setId(rs.getInt(1));
-                    IUserDAO userDAO = DAOFactory.getMySqlDAOFactory().getIUserDAO();
-                    IFilmDAO filmDAO = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
 
-                    Film film = filmDAO.get(rs.getInt(2));
-                    User user = userDAO.get(rs.getInt(3));
-
-                    order.setFilm(film);
-                    order.setUser(user);
                     order.setDateSale(rs.getTimestamp(4).toLocalDateTime());
                     order.setSum(rs.getDouble(5));
                     order.setStatus(rs.getString(6));
@@ -140,19 +133,11 @@ public class OrderDAOImpl implements IOrderDAO {
             preparedStatement.setInt(1, userId);
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 Order order = null;
-                IUserDAO userDAO = DAOFactory.getMySqlDAOFactory().getIUserDAO();
-                IFilmDAO filmDAO = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
-                Film film = null;
-                User user = null;
+
                 while (rs.next()) {
                     order = new Order();
                     order.setId(rs.getInt(1));
 
-                    film = filmDAO.get(rs.getInt(2));
-                    user = userDAO.get(rs.getInt(3));
-
-                    order.setFilm(film);
-                    order.setUser(user);
                     order.setDateSale(rs.getTimestamp(4).toLocalDateTime());
                     order.setSum(rs.getDouble(5));
                     order.setStatus(rs.getString(6));
@@ -176,19 +161,11 @@ public class OrderDAOImpl implements IOrderDAO {
             preparedStatement.setInt(1, filmId);
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 Order order = null;
-                IUserDAO userDAO = DAOFactory.getMySqlDAOFactory().getIUserDAO();
-                IFilmDAO filmDAO = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
-                Film film = null;
-                User user = null;
+
                 while (rs.next()) {
                     order = new Order();
                     order.setId(rs.getInt(1));
 
-                    film = filmDAO.get(rs.getInt(2));
-                    user = userDAO.get(rs.getInt(3));
-
-                    order.setFilm(film);
-                    order.setUser(user);
                     order.setDateSale(rs.getTimestamp(4).toLocalDateTime());
                     order.setSum(rs.getDouble(5));
                     order.setStatus(rs.getString(6));
@@ -211,19 +188,11 @@ public class OrderDAOImpl implements IOrderDAO {
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_ORDERS)) {
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 Order order = null;
-                IUserDAO userDAO = DAOFactory.getMySqlDAOFactory().getIUserDAO();
-                IFilmDAO filmDAO = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
-                Film film = null;
-                User user = null;
+
                 while (rs.next()) {
                     order = new Order();
                     order.setId(rs.getInt(1));
 
-                    film = filmDAO.get(rs.getInt(2));
-                    user = userDAO.get(rs.getInt(3));
-
-                    order.setFilm(film);
-                    order.setUser(user);
                     order.setDateSale(rs.getTimestamp(4).toLocalDateTime());
                     order.setSum(rs.getDouble(5));
                     order.setStatus(rs.getString(6));

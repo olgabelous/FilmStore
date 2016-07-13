@@ -100,14 +100,7 @@ public class CommentDAOImpl implements ICommentDAO {
             try(ResultSet rs = preparedStatement.executeQuery()) {
                 if(rs.next()) {
                     comment = new Comment();
-                    IUserDAO userDAO = DAOFactory.getMySqlDAOFactory().getIUserDAO();
-                    IFilmDAO filmDAO = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
 
-                    Film film = filmDAO.get(rs.getInt(1));
-                    User user = userDAO.get(rs.getInt(2));
-
-                    comment.setUser(user);
-                    comment.setFilm(film);
                     comment.setMark(rs.getInt(3));
                     comment.setText(rs.getString(4));
                     comment.setDateComment(rs.getTimestamp(5).toLocalDateTime());
@@ -133,17 +126,10 @@ public class CommentDAOImpl implements ICommentDAO {
             preparedStatement.setInt(1, userId);
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 Comment comment = null;
-                IUserDAO userDAO = DAOFactory.getMySqlDAOFactory().getIUserDAO();
-                IFilmDAO filmDAO = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
-                Film film = null;
-                User user = null;
+
                 while (rs.next()) {
                     comment = new Comment();
-                    film = filmDAO.get(rs.getInt(1));
-                    user = userDAO.get(rs.getInt(2));
 
-                    comment.setUser(user);
-                    comment.setFilm(film);
                     comment.setMark(rs.getInt(3));
                     comment.setText(rs.getString(4));
                     comment.setDateComment(rs.getTimestamp(5).toLocalDateTime());
@@ -168,17 +154,10 @@ public class CommentDAOImpl implements ICommentDAO {
             preparedStatement.setInt(1, filmId);
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 Comment comment = null;
-                IUserDAO userDAO = DAOFactory.getMySqlDAOFactory().getIUserDAO();
-                IFilmDAO filmDAO = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
-                Film film = null;
-                User user = null;
+
                 while (rs.next()) {
                     comment = new Comment();
-                    film = filmDAO.get(rs.getInt(1));
-                    user = userDAO.get(rs.getInt(2));
 
-                    comment.setUser(user);
-                    comment.setFilm(film);
                     comment.setMark(rs.getInt(3));
                     comment.setText(rs.getString(4));
                     comment.setDateComment(rs.getTimestamp(5).toLocalDateTime());
