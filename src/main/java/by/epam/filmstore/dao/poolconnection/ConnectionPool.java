@@ -11,7 +11,13 @@ import java.util.concurrent.Executor;
 /**
  * Created by Olga Shahray on 18.06.2016.
  */
+/*класс ConnectionPool позволяет использовать доступные connection для доступа к БД
+т.к. операция создания соединения очень дорогая, использованный connection не закрывается,
+а возвращается обратно в пул*/
 public final class ConnectionPool {
+
+    private static final int DEFAULT_POOL_SIZE = 5;//количество соединений по умолчанию
+
     private BlockingQueue<Connection> connectionQueue;
     private BlockingQueue<Connection> givenAwayConQueue;
     private String driverName;
@@ -30,13 +36,14 @@ public final class ConnectionPool {
         try {
             this.poolSize = Integer.parseInt(dbResourceManager.getValue(DBParameter.DB_POOL_SIZE));
         } catch (NumberFormatException e) {
-            poolSize = 5;
+            poolSize = DEFAULT_POOL_SIZE;
         }
         initPoolData();
 
     }
 
-    //Singleton Bill Pugh
+    //Singleton Bill Pugh. Использование внутреннего класса позволяет создать объект пула только при
+    //первом обращении к нему
     private static class SingletonHelper {
         private static final ConnectionPool INSTANCE = new ConnectionPool();
     }
@@ -45,8 +52,8 @@ public final class ConnectionPool {
         return SingletonHelper.INSTANCE;
     }
 
+    //инициализируем пул соединений
     private void initPoolData() {
-        Locale.setDefault(Locale.ENGLISH);
         try {
             Class.forName(driverName);
             givenAwayConQueue = new ArrayBlockingQueue<>(poolSize);
@@ -64,6 +71,8 @@ public final class ConnectionPool {
         }
     }
 
+
+    //берем коннекшен из пула
     public Connection takeConnection() throws ConnectionPoolException {
         Connection connection = null;
         try {
@@ -75,9 +84,17 @@ public final class ConnectionPool {
         return connection;
     }
 
+    //закрытие пула соединений
+    public void disposeConnectionPool() throws ConnectionPoolException {
+        try {
+            closeConnectionsQueue(connectionQueue);
+            closeConnectionsQueue(givenAwayConQueue);
+        } catch (SQLException ex) {
+            throw new ConnectionPoolException("Can't destroy connections pool", ex);
+        }
+    }
 
-    private void closeConnectionsQueue(BlockingQueue<Connection> queue)
-            throws SQLException {
+    private void closeConnectionsQueue(BlockingQueue<Connection> queue) throws SQLException {
         Connection connection;
         while ((connection = queue.poll()) != null) {
             if (!connection.getAutoCommit()) {
@@ -86,6 +103,10 @@ public final class ConnectionPool {
             ((PooledConnection) connection).reallyClose();
         }
     }
+
+    //внутренний класс - реализация интерфейса Connection
+    //реализуем метод close таким обрабом, что соединение не закрывается, а возвращается в пул
+    //метод reallyClose фактически закрывает connection
 
     private class PooledConnection implements Connection {
         private Connection connection;
