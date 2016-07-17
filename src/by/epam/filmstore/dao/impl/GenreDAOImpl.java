@@ -12,6 +12,10 @@ import java.util.List;
 
 /**
  * Created by Olga Shahray on 19.06.2016.
+ *
+ * Класс GenreDAOImpl позволяет совершить CRUD операции с сущностью Жанр.
+ * В каждом методе используется Connection, полученный из DAOHelper (см. AbstractDAO и DAOHelper).
+ * Возврат Connection в пул происходит в DAOHelper
  */
 public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
     private static final String INSERT_GENRE = "INSERT INTO allgenres (genre) VALUES(?)";

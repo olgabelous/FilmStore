@@ -14,6 +14,10 @@ import java.util.List;
 
 /**
  * Created by Olga Shahray on 18.06.2016.
+ *
+ * Класс UserDAOImpl позволяет совершить CRUD операции с сущностью Пользователь и связанными сущностями - Любимые Жанры Пользователя.
+ * В каждом методе используется Connection, полученный из DAOHelper (см. AbstractDAO и DAOHelper).
+ * Возврат Connection в пул происходит в DAOHelper
  */
 public class UserDAOImpl extends AbstractDAO implements IUserDAO {
 

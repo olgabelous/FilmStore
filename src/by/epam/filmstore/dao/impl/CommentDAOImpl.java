@@ -17,6 +17,10 @@ import java.util.List;
 
 /**
  * Created by Olga Shahray on 18.06.2016.
+ *
+ * Класс CommentDAOImpl позволяет совершить CRUD операции с сущностью Комментарий.
+ * В каждом методе используется Connection, полученный из DAOHelper (см. AbstractDAO и DAOHelper).
+ * Возврат Connection в пул происходит в DAOHelper
  */
 public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
 

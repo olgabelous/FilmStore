@@ -13,6 +13,10 @@ import java.util.List;
 
 /**
  * Created by Olga Shahray on 27.06.2016.
+ *
+ * Класс FilmMakerDAOImpl позволяет совершить CRUD операции с сущностью Кинематографист (Создатель Фильма).
+ * В каждом методе используется Connection, полученный из DAOHelper (см. AbstractDAO и DAOHelper).
+ * Возврат Connection в пул происходит в DAOHelper
  */
 public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
 

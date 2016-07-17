@@ -51,7 +51,7 @@ public class DAOHelper {
     }
 
     //Параметризованный транзакционный метод выполнения запросов
-    //используется для операций save, update, для получения составных объектов (например, фильм со списком актеров)
+    //используется для операций, требующих проведения в рамках транзакции, например, получения фильма со списком актеров
     //В качестве паметра принимает функциональный интерфейс SqlExecutor<T>
     public static <T> T transactionExecute(SqlExecutor<T> executor) throws DAOException {
         try (Connection conn = connectionPool.takeConnection()) {
