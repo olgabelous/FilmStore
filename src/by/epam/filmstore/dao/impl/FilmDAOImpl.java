@@ -23,15 +23,12 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
 
     private static final String INSERT_FILM = "INSERT INTO films(title, release_year, country_id, description, " +
             "duration, age_restriction, price, link)VALUES(?,?,?,?,?,?,?,?,?,?)";
-    private static final String GET_COUNTRY_ID = "SELECT id FROM country WHERE country = ?";
-    private static final String INSERT_COUNTRY = "INSERT INTO country (country) VALUES(?)";
     private static final String INSERT_FILM_GENRE = "INSERT INTO filmgenres (film_id, genre_id) VALUES(?,?)";
     private static final String DELETE_FILM_GENRE = "DELETE FROM filmgenres WHERE film_id=?";
     private static final String INSERT_FILM_MAKER = "INSERT INTO filmmakers (film_id, person_id) VALUES(?,?)";
     private static final String DELETE_FILM_MAKER = "DELETE FROM filmmakers WHERE film_id=?";
     private static final String SELECT_FILM_BY_ID = "SELECT films.id, title, release_year, description, duration, " +
-            "age_restriction, price, link, rating, Country.country  FROM Films INNER JOIN Country ON Films.country_id = Country.id " +
-            "WHERE films.id=?";
+            "age_restriction, price, link, rating, FROM Films WHERE films.id=?";
     private static final String SELECT_FILM_GENRES = "SELECT DISTINCT filmgenres.genre_id, allgenres.genre FROM filmgenres, allgenres" +
             " WHERE allgenres.id = filmgenres.genre_id AND filmgenres.film_id = ?";
     private static final String SELECT_FILM_MAKERS = "SELECT DISTINCT filmmakers.person_id, allfilmmakers.name, allfilmmakers.profession" +
@@ -39,11 +36,11 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     private static final String DELETE_FILM_BY_TITLE = "DELETE FROM films WHERE title=?";
     private static final String DELETE_FILM = "DELETE FROM films WHERE id=?";
     private static final String SELECT_ALL_FILMS = "SELECT films.id, title, release_year, director, description, duration," +
-            " quality, age_restriction, price, link, Country.country  FROM Films INNER JOIN Country ON Films.country_id = Country.id";
+            " quality, age_restriction, price, link FROM Films";
     private static final String SELECT_FILMS_BY_GENRE = "SELECT DISTINCT films.id, films.title, films.release_year, " +
-            "films.description, films.duration, films.age_restriction, films.price, films.link, films.rating, Country.country " +
-            "FROM  FilmGenres, Films INNER JOIN Country ON Films.country_id = Country.id WHERE films.id = filmgenres.film_id " +
-            "AND filmgenres.genre_id = (SELECT AllGenres.id FROM AllGenres WHERE Allgenres.genre = ?)";
+            "films.description, films.duration, films.age_restriction, films.price, films.link, films.rating " +
+            "FROM  FilmGenres, Films WHERE films.id = filmgenres.film_id AND filmgenres.genre_id = " +
+            "(SELECT AllGenres.id FROM AllGenres WHERE Allgenres.genre = ?)";
     private static final String UPDATE_FILM = "UPDATE films SET title=?, release_year=?, country_id=?, description=?, " +
             "duration=?, age_restriction=?, price=?, link=? WHERE id=?";
 
@@ -59,7 +56,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
 
             preparedStatement.setString(1, film.getTitle());
             preparedStatement.setInt(2, film.getYear());
-            preparedStatement.setInt(3, getCountryId(film.getCountry()));//country
+            preparedStatement.setInt(3, film.getCountry().getId());
             preparedStatement.setString(4, film.getDescription());
             preparedStatement.setInt(5, film.getDuration());
             preparedStatement.setInt(6, film.getAgeRestriction());
@@ -91,50 +88,6 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             }
         }
     }
-
-    @Override
-    public int getCountryId(String country) throws DAOException {
-        PreparedStatement preparedStatement = null;
-
-        try {
-            Connection connection = getConnection();
-            preparedStatement = connection.prepareStatement(GET_COUNTRY_ID);
-
-            preparedStatement.setString(1, country);
-            try (ResultSet rs = preparedStatement.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                } else {
-                    PreparedStatement preparedStatement1 = connection.prepareStatement(INSERT_COUNTRY, Statement.RETURN_GENERATED_KEYS);
-                    preparedStatement1.setString(1, country);
-                    preparedStatement1.executeUpdate();
-                    int row = preparedStatement1.executeUpdate();
-                    if (row == 0) {
-                        throw new DAOException("Error saving country");
-                    }
-                    try (ResultSet rs1 = preparedStatement1.getGeneratedKeys()) {
-                        if (rs1.next()) {
-                            return rs.getInt(1);
-                        } else {
-                            throw new DAOException("Error getting country id");
-                        }
-                    }
-                }
-            }
-        } catch (ConnectionPoolException | SQLException e) {
-            throw new DAOException("Error getting country id", e);
-        }
-        finally {
-            if(preparedStatement != null){
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    throw new DAOException("Error closing prepared statement in film dao", e);
-                }
-            }
-        }
-    }
-
 
     @Override
     public void saveFilmGenres(int filmId, List<Genre> genres) throws DAOException {
@@ -239,7 +192,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
 
             preparedStatement.setString(1, film.getTitle());
             preparedStatement.setInt(2, film.getYear());
-            preparedStatement.setInt(3, getCountryId(film.getCountry()));//country
+            preparedStatement.setInt(3, film.getCountry().getId());
             preparedStatement.setString(4, film.getDescription());
             preparedStatement.setInt(5, film.getDuration());
             preparedStatement.setInt(6, film.getAgeRestriction());
@@ -340,7 +293,6 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
                     film.setPrice(rs.getDouble(7));
                     film.setLink(rs.getString(8));
                     film.setRating(rs.getDouble(9));
-                    film.setCountry(rs.getString(10));
                 }
                 else{
                     throw new DAOException("Error getting film by id");
@@ -383,7 +335,6 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
                     film.setPrice(rs.getDouble(7));
                     film.setLink(rs.getString(8));
                     film.setRating(rs.getDouble(9));
-                    film.setCountry(rs.getString(10));
 
                     filmList.add(film);
                 }
@@ -425,7 +376,6 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
                     film.setPrice(rs.getDouble(7));
                     film.setLink(rs.getString(8));
                     film.setRating(rs.getDouble(9));
-                    film.setCountry(rs.getString(10));
 
                     allFilms.add(film);
                 }

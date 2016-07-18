@@ -19,4 +19,5 @@ public abstract class DAOFactory {
     public abstract IOrderDAO getIOrderDAO();
     public abstract IGenreDAO getIGenreDAO();
     public abstract IDiscountDAO getIDiscountDAO();
+    public abstract ICountryDAO getICountryDAO();
 }

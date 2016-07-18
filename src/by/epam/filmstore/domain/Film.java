@@ -2,6 +2,7 @@ package by.epam.filmstore.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Olga Shahray on 17.06.2016.
@@ -10,7 +11,7 @@ public class Film {
     private int id;
     private String title;
     private int year;
-    private String country;
+    private Country country;
     private String description;
     private int duration;
     private int ageRestriction;
@@ -23,7 +24,7 @@ public class Film {
     public Film() {
     }
 
-    public Film(int id, String title, int year, String country, String description, int duration, int ageRestriction,
+    public Film(int id, String title, int year, Country country, String description, int duration, int ageRestriction,
                 double price, String link, double rating, List<Genre> genreList, List<FilmMaker> filmMakerList) {
         this.id = id;
         this.title = title;
@@ -63,11 +64,11 @@ public class Film {
         this.year = year;
     }
 
-    public String getCountry() {
+    public Country getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(Country country) {
         this.country = country;
     }
 
@@ -147,43 +148,25 @@ public class Film {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o.getClass() != this.getClass()) return false;
-
         Film film = (Film) o;
-
-        if (id != film.id) return false;
-        if (year != film.year) return false;
-        if (duration != film.duration) return false;
-        if (ageRestriction != film.ageRestriction) return false;
-        if (Double.compare(film.price, price) != 0) return false;
-        if (Double.compare(film.rating, rating) != 0) return false;
-        if (title != null ? !title.equals(film.title) : film.title != null) return false;
-        if (country != null ? !country.equals(film.country) : film.country != null) return false;
-        if (description != null ? !description.equals(film.description) : film.description != null) return false;
-        if (link != null ? !link.equals(film.link) : film.link != null) return false;
-        if (genreList != null ? !genreList.equals(film.genreList) : film.genreList != null) return false;
-        return !(filmMakerList != null ? !filmMakerList.equals(film.filmMakerList) : film.filmMakerList != null);
-
+        return id == film.id &&
+                year == film.year &&
+                duration == film.duration &&
+                ageRestriction == film.ageRestriction &&
+                Double.compare(film.price, price) == 0 &&
+                Double.compare(film.rating, rating) == 0 &&
+                Objects.equals(title, film.title) &&
+                Objects.equals(country, film.country) &&
+                Objects.equals(description, film.description) &&
+                Objects.equals(link, film.link) &&
+                Objects.equals(genreList, film.genreList) &&
+                Objects.equals(filmMakerList, film.filmMakerList);
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        result = id;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + year;
-        result = 31 * result + (country != null ? country.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + duration;
-        result = 31 * result + ageRestriction;
-        temp = Double.doubleToLongBits(price);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (link != null ? link.hashCode() : 0);
-        temp = Double.doubleToLongBits(rating);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (genreList != null ? genreList.hashCode() : 0);
-        result = 31 * result + (filmMakerList != null ? filmMakerList.hashCode() : 0);
-        return result;
+        return Objects.hash(id, title, year, country, description, duration, ageRestriction, price, link, rating,
+                genreList, filmMakerList);
     }
 
     @Override

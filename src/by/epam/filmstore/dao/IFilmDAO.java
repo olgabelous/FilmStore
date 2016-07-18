@@ -33,8 +33,6 @@ public interface IFilmDAO {
 
     List<Film> getAll() throws DAOException;
 
-    int getCountryId(String country) throws DAOException;
-
     List<Genre> getAllGenresOfFilm(int filmId) throws DAOException;
 
     List<FilmMaker> getMakersOfFilm(int filmId) throws DAOException;
