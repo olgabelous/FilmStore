@@ -28,9 +28,9 @@ public class CommentDAOTest {
         this.filmDAO = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
     }
 
-    @Before//how to reset db by file .sql?
+    @Before
     public void cleanDB() throws DAOException {
-        //ProcessBuilder pb = new ProcessBuilder("mysql -u root -proot filmstoretest < data.sql");
+
         commentDao.delete(TEST_USER.getId(), TEST_FILM1.getId());
         commentDao.delete(TEST_USER.getId(), TEST_FILM2.getId());
         userDAO.deleteByEmail(TEST_USER.getEmail());
