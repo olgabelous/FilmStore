@@ -2,7 +2,6 @@ package by.epam.filmstore.dao.impl;
 
 import by.epam.filmstore.dao.IDiscountDAO;
 import by.epam.filmstore.dao.exception.DAOException;
-import by.epam.filmstore.dao.poolconnection.ConnectionPool;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Discount;
 

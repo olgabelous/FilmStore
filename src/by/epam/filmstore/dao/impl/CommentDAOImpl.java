@@ -1,15 +1,9 @@
 package by.epam.filmstore.dao.impl;
 
-import by.epam.filmstore.dao.DAOFactory;
 import by.epam.filmstore.dao.ICommentDAO;
-import by.epam.filmstore.dao.IFilmDAO;
-import by.epam.filmstore.dao.IUserDAO;
 import by.epam.filmstore.dao.exception.DAOException;
-import by.epam.filmstore.dao.poolconnection.ConnectionPool;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Comment;
-import by.epam.filmstore.domain.Film;
-import by.epam.filmstore.domain.User;
 
 import java.sql.*;
 import java.util.ArrayList;

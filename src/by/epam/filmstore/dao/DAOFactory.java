@@ -1,7 +1,5 @@
 package by.epam.filmstore.dao;
 
-import by.epam.filmstore.dao.exception.DAOException;
-
 /**
  * Created by Olga Shahray on 18.06.2016.
  */

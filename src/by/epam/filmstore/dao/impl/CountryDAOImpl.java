@@ -3,9 +3,7 @@ package by.epam.filmstore.dao.impl;
 import by.epam.filmstore.dao.ICountryDAO;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
-import by.epam.filmstore.domain.Comment;
 import by.epam.filmstore.domain.Country;
-import by.epam.filmstore.domain.Film;
 
 import java.sql.*;
 import java.util.ArrayList;
