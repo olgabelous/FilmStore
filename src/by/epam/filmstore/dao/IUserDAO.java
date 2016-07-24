@@ -13,6 +13,8 @@ public interface IUserDAO {
 
     void save(User user) throws DAOException;
 
+    User authorize(String email, String password) throws DAOException;
+
     void update(User user) throws DAOException;
 
     // false if not found

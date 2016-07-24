@@ -27,6 +27,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
             " WHERE allgenres.id = preferences.genre_id AND preferences.user_id= ?";
     private static final String SELECT_USER_BY_ID = "SELECT * FROM users WHERE users.id=?";
     private static final String SELECT_USER_BY_EMAIL = "SELECT * FROM users WHERE users.email=?";
+    private static final String SELECT_USER_BY_EMAIL_PASS = "SELECT * FROM users WHERE users.email=? and users.password =?";
     private static final String DELETE_USER_BY_EMAIL = "DELETE FROM users WHERE email=?";
     private static final String DELETE_USER = "DELETE FROM users WHERE id=?";
     private static final String SELECT_ALL_USERS = "SELECT * FROM users";
@@ -71,6 +72,48 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
                 }
             }
         }
+    }
+
+    @Override
+    public User authorize(String email, String password) throws DAOException {
+        User user = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = getConnection();
+            preparedStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL_PASS);
+
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, password);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    user = new User();
+                    user.setId(rs.getInt(1));
+                    user.setName(rs.getString(2));
+                    user.setEmail(rs.getString(3));
+                    user.setPass(rs.getString(4));
+                    user.setPhone(rs.getString(5));
+                    user.setPhoto(rs.getString(6));
+                    user.setDateRegistration(rs.getTimestamp(7).toLocalDateTime());
+                    user.setRole(Role.valueOf(rs.getString(8).toUpperCase()));
+
+                } /*else {
+                    throw new DAOException("Error getting user");
+                }*/
+            }
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error getting user", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in user dao", e);
+                }
+            }
+        }
+        return user;
     }
 
     public void saveFavoriteGenres(int userId, List<Genre> genreList) throws DAOException {
@@ -274,6 +317,15 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
             }
         } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Error getting user id", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in user dao", e);
+                }
+            }
         }
         return user;
     }

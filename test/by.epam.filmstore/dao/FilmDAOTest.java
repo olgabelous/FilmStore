@@ -33,7 +33,7 @@ public class FilmDAOTest {
 
     @Test
     public void testSave() throws DAOException{
-        Film film = new Film(0, "TestFilm", 2016, "USA", "the best", 111, 16, 10.0, "movie.hd", 9.0, null, null);
+        Film film = new Film(0, "TestFilm", 2016, null, "the best", 111, 16, 10.0, "movie.hd", 9.0, null, null);
         dao.save(film);
         Film savedFilm = dao.get(film.getId());
         Assert.assertEquals(film, savedFilm);
