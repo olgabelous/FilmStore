@@ -20,11 +20,11 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>UserServlet</servlet-name>
-        <servlet-class>by.epam.filmstore.controller.UserServlet</servlet-class>
+        <servlet-name>Controller</servlet-name>
+        <servlet-class>by.epam.filmstore.controller.Controller</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>UserServlet</servlet-name>
+        <servlet-name>Controller</servlet-name>
         <url-pattern>/FilmStore/UserServlet</url-pattern>
     </servlet-mapping>
 

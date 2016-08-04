@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface IUserDAO {
 
-    void save(User user) throws DAOException;
+    User save(User user) throws DAOException;
 
     User authorize(String email, String password) throws DAOException;
 

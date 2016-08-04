@@ -7,6 +7,7 @@ import by.epam.filmstore.domain.FilmMaker;
 import by.epam.filmstore.service.IFilmMakerService;
 import by.epam.filmstore.service.exception.ServiceException;
 import by.epam.filmstore.util.DAOHelper;
+
 import java.util.List;
 
 /**
@@ -45,7 +46,6 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
-
     }
 
     @Override

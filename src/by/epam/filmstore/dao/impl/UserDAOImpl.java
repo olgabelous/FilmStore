@@ -34,7 +34,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
     private static final String UPDATE_USER = "UPDATE users SET name=?, email=?, password=?, phone=?, photo=?, date_reg=?, role=? WHERE id=?";
 
     @Override
-    public void save(User user) throws DAOException {
+    public User save(User user) throws DAOException {
         PreparedStatement preparedStatement = null;
 
         try {
@@ -60,6 +60,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
                     throw new DAOException("Error getting user id");
                 }
             }
+            return user;
         } catch (ConnectionPoolException | SQLException e) {
             throw new DAOException("Error saving user", e);
         }

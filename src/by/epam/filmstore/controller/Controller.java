@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * Created by Olga Shahray on 23.07.2016.
  */
-public class UserServlet extends HttpServlet {
+public class Controller extends HttpServlet {
     private static final String COMMAND = "command";
 
     @Override

@@ -4,6 +4,7 @@ package by.epam.filmstore.service.exception;
  * Created by Olga Shahray on 23.07.2016.
  */
 public class ServiceAuthException extends ServiceException{
+
     public ServiceAuthException(String message) {
         super(message);
     }

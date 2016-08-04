@@ -10,5 +10,6 @@ public interface IUserService {
 
     User authorize(String login, String password) throws ServiceException;
 
-    void saveUser(String name, String email, String pass, String phone) throws ServiceException;
+    User saveUser(String name, String email, String pass, String phone) throws ServiceException;
+
 }

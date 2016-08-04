@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class LoginCommand implements Command {
+public class LoginationCommand implements Command {
 
     private static final String LOGIN = "login";
     private static final String PASSWORD = "password";

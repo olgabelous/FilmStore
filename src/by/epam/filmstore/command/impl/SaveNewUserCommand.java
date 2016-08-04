@@ -1,12 +1,14 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
+import by.epam.filmstore.domain.User;
 import by.epam.filmstore.service.IUserService;
 import by.epam.filmstore.service.ServiceFactory;
 import by.epam.filmstore.service.exception.ServiceException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -25,8 +27,12 @@ public class SaveNewUserCommand implements Command {
         ServiceFactory factory = ServiceFactory.getInstance();
         IUserService service = factory.getUserService();
 
+        HttpSession session = request.getSession(true);
+
         try{
-            service.saveUser(name, email, pass, phone);
+            User user = service.saveUser(name, email, pass, phone);
+            session.setAttribute("user", user);
+
         }catch(ServiceException e){
             // logging
             try {

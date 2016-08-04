@@ -33,6 +33,15 @@ public class User {
         this.favoriteGenres = favoriteGenres;
     }
 
+    public User(String name, String email, String pass, String phone, LocalDateTime dateRegistration, Role role) {
+        this.name = name;
+        this.email = email;
+        this.pass = pass;
+        this.phone = phone;
+        this.dateRegistration = dateRegistration;
+        this.role = role;
+    }
+
     public int getId() {
         return id;
     }

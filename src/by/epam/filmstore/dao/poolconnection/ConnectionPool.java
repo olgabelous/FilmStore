@@ -1,7 +1,6 @@
 package by.epam.filmstore.dao.poolconnection;
 
 import java.sql.*;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -38,7 +37,6 @@ public final class ConnectionPool {
         } catch (NumberFormatException e) {
             poolSize = DEFAULT_POOL_SIZE;
         }
-        initPoolData();
 
     }
 
@@ -53,7 +51,7 @@ public final class ConnectionPool {
     }
 
     //инициализируем пул соединений
-    private void initPoolData() {
+    public void initPoolData() throws ConnectionPoolException {
         try {
             Class.forName(driverName);
             givenAwayConQueue = new ArrayBlockingQueue<>(poolSize);
@@ -65,9 +63,9 @@ public final class ConnectionPool {
                 connectionQueue.add(pooledConnection);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("SQLException in ConnectionPool", e);
+            throw new ConnectionPoolException("SQLException in ConnectionPool", e);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can't find database driver class", e);
+            throw new ConnectionPoolException("Can't find database driver class", e);
         }
     }
 

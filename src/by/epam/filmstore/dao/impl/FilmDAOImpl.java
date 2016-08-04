@@ -41,6 +41,10 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             "films.description, films.duration, films.age_restriction, films.price, films.link, films.rating " +
             "FROM  FilmGenres, Films WHERE films.id = filmgenres.film_id AND filmgenres.genre_id = " +
             "(SELECT AllGenres.id FROM AllGenres WHERE Allgenres.genre = ?)";
+    private static final String SELECT_FILMS_BY_YEAR = "SELECT films.id, title, release_year, description, duration, " +
+            "age_restriction, price, link, rating FROM Films WHERE films.release_year = ?";
+    private static final String SELECT_FILMS_BY_RATING = "SELECT films.id, title, release_year, description, duration, " +
+            "age_restriction, price, link, rating FROM Films WHERE films.rating >= ?";
     private static final String UPDATE_FILM = "UPDATE films SET title=?, release_year=?, country_id=?, description=?, " +
             "duration=?, age_restriction=?, price=?, link=? WHERE id=?";
 
@@ -322,6 +326,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             Connection connection = getConnection();
             preparedStatement = connection.prepareStatement(SELECT_FILMS_BY_GENRE);
 
+            preparedStatement.setString(1, genre);
             try(ResultSet rs = preparedStatement.executeQuery()) {
                 Film film = null;
                 while(rs.next()) {
@@ -341,6 +346,48 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             }
         }catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Error getting films by genre", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in film dao", e);
+                }
+            }
+        }
+        return filmList;
+    }
+
+    @Override
+    public List<Film> getByYear(int year) throws DAOException {
+        List<Film> filmList = new ArrayList<>();
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = getConnection();
+            preparedStatement = connection.prepareStatement(SELECT_FILMS_BY_YEAR);
+
+            preparedStatement.setInt(1, year);
+            try(ResultSet rs = preparedStatement.executeQuery()) {
+                Film film = null;
+                while(rs.next()) {
+                    film = new Film();
+                    film.setId(rs.getInt(1));
+                    film.setTitle(rs.getString(2));
+                    film.setYear(rs.getDate(3).toLocalDate().getYear());
+                    film.setDescription(rs.getString(4));
+                    film.setDuration(rs.getInt(5));
+                    film.setAgeRestriction(rs.getInt(6));
+                    film.setPrice(rs.getDouble(7));
+                    film.setLink(rs.getString(8));
+                    film.setRating(rs.getDouble(9));
+
+                    filmList.add(film);
+                }
+            }
+        }catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error getting films by year", e);
         }
         finally {
             if(preparedStatement != null){

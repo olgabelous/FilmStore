@@ -3,10 +3,7 @@ package by.epam.filmstore.controller;
 
 
 import by.epam.filmstore.command.Command;
-import by.epam.filmstore.command.impl.ChangeLanguage;
-import by.epam.filmstore.command.impl.LoginCommand;
-import by.epam.filmstore.command.impl.SaveNewFilmCommand;
-import by.epam.filmstore.command.impl.SaveNewUserCommand;
+import by.epam.filmstore.command.impl.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,10 +18,13 @@ public class CommandHelper {
     private Map<CommandName, Command> commands = new HashMap<>();
 
     CommandHelper(){
-        commands.put(CommandName.SAVE_NEW_USER, new SaveNewUserCommand());
+
+        commands.put(CommandName.USER_AUTHORIZATION, new LoginationCommand());
+        commands.put(CommandName.USER_REGISTRATION, new SaveNewUserCommand());
+        commands.put(CommandName.CHANGE_LANGUAGE, new ChangeLanguageCommand());
+        commands.put(CommandName.GET_FILMS_BY_YEAR, new GetFilmsByYearCommand());
         commands.put(CommandName.SAVE_NEW_FILM, new SaveNewFilmCommand());
-        commands.put(CommandName.USER_AUTHORIZATION, new LoginCommand());
-        commands.put(CommandName.CHANGE_LANGUAGE, new ChangeLanguage());
+
     }
 
     public Command getCommand(String name) {
