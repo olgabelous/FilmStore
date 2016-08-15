@@ -20,12 +20,13 @@ public class Film {
     private double rating;
     private List<Genre> genreList = new ArrayList<>();
     private List<FilmMaker> filmMakerList = new ArrayList<>();
+    private List<Comment> commentsList = new ArrayList<>();
 
     public Film() {
     }
 
     public Film(int id, String title, int year, Country country, String description, int duration, int ageRestriction,
-                double price, String link, double rating, List<Genre> genreList, List<FilmMaker> filmMakerList) {
+                double price, String link, double rating, List<Genre> genreList, List<FilmMaker> filmMakerList, List<Comment> commentsList) {
         this.id = id;
         this.title = title;
         this.year = year;
@@ -38,6 +39,17 @@ public class Film {
         this.rating = rating;
         this.genreList = genreList;
         this.filmMakerList = filmMakerList;
+        this.commentsList = commentsList;
+    }
+
+    public Film(String title, int year, String description, int duration, int ageRestriction, double price, String link) {
+        this.title = title;
+        this.year = year;
+        this.description = description;
+        this.duration = duration;
+        this.ageRestriction = ageRestriction;
+        this.price = price;
+        this.link = link;
     }
 
     public int getId() {
@@ -144,6 +156,14 @@ public class Film {
         this.filmMakerList.add(fMaker);
     }
 
+    public List<Comment> getCommentsList() {
+        return commentsList;
+    }
+
+    public void setCommentsList(List<Comment> commentsList) {
+        this.commentsList = commentsList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -160,13 +180,13 @@ public class Film {
                 Objects.equals(description, film.description) &&
                 Objects.equals(link, film.link) &&
                 Objects.equals(genreList, film.genreList) &&
-                Objects.equals(filmMakerList, film.filmMakerList);
+                Objects.equals(filmMakerList, film.filmMakerList) &&
+                Objects.equals(commentsList, film.commentsList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, year, country, description, duration, ageRestriction, price, link, rating,
-                genreList, filmMakerList);
+        return Objects.hash(id, title, year, country, description, duration, ageRestriction, price, link, rating, genreList, filmMakerList, commentsList);
     }
 
     @Override
@@ -174,8 +194,8 @@ public class Film {
         return "Film{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", year='" + year + '\'' +
-                ", country='" + country + '\'' +
+                ", year=" + year +
+                ", country=" + country +
                 ", description='" + description + '\'' +
                 ", duration=" + duration +
                 ", ageRestriction=" + ageRestriction +
@@ -184,6 +204,7 @@ public class Film {
                 ", rating=" + rating +
                 ", genreList=" + genreList +
                 ", filmMakerList=" + filmMakerList +
+                ", commentsList=" + commentsList +
                 '}';
     }
 }

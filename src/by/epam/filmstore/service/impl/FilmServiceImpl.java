@@ -1,6 +1,7 @@
 package by.epam.filmstore.service.impl;
 
 import by.epam.filmstore.dao.DAOFactory;
+import by.epam.filmstore.dao.ICommentDAO;
 import by.epam.filmstore.dao.IFilmDAO;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.domain.Film;
@@ -34,12 +35,29 @@ public class FilmServiceImpl implements IFilmService{
 
     @Override
     public Film get(int id) throws ServiceException {
-        IFilmDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
+        IFilmDAO daoFilm = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
+        ICommentDAO daoComment = DAOFactory.getMySqlDAOFactory().getICommentDAO();
+
+        if(id <= 0){
+            throw new ServiceException("Film id must be positive number!");
+        }
+        final Film[] film = new Film[1];
         try {
-            return DAOHelper.execute(() -> dao.get(id));
+            DAOHelper.transactionExecute(() -> {
+                film[0] = daoFilm.get(id);
+                if(film[0] == null){
+                    throw new ServiceException("Wrong film id!");
+                }
+                film[0].setFilmMakerList(daoFilm.getMakersOfFilm(id));
+                film[0].setGenreList(daoFilm.getAllGenresOfFilm(id));
+                film[0].setCommentsList(daoComment.getAllOfFilm(id));
+                return film[0];
+            });
+
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
+        return film[0];
     }
 
     @Override
@@ -53,21 +71,21 @@ public class FilmServiceImpl implements IFilmService{
     }
 
     @Override
-    public List<Film> getByYear(String year) throws ServiceException {
+    public List<Film> getByYear(String year, int limit) throws ServiceException {
         IFilmDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
         try {
             int yearNum = Integer.parseInt(year);
-            return DAOHelper.execute(() -> dao.getByYear(yearNum));
+            return DAOHelper.execute(() -> dao.getByYear(yearNum, limit));
         } catch (DAOException | NumberFormatException e) {
             throw new ServiceException(e);
         }
     }
 
     @Override
-    public List<Film> getAll() throws ServiceException {
+    public List<Film> getAll(String order, int limit) throws ServiceException {
         IFilmDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
         try {
-            return DAOHelper.execute(() -> dao.getAll());
+            return DAOHelper.execute(() -> dao.getAll(order, limit));
         } catch (DAOException e) {
             throw new ServiceException(e);
         }

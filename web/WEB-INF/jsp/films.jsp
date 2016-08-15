@@ -29,8 +29,9 @@
 
         <c:forEach var="film" items="${requestScope.filmlist}">
             <div class="col-md-2">
-                <img src="../resources/images/Barbershop_small.jpg" class="img-fluid m-y">
-                <p class="m-y-1">${film.title}</p>
+                <a href="/FilmStore/UserServlet?command=get_film_by_id&id=${film.id}"><img src="../resources/images/Barbershop_small.jpg"  class="img-fluid m-y" alt="Обложка">
+                    <p class="m-y-1">${film.title}</p>
+                </a>
             </div>
         </c:forEach>
 

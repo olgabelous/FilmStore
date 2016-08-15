@@ -16,8 +16,8 @@ public interface IFilmService {
 
     List<Film> getByGenre(String genre) throws ServiceException;
 
-    List<Film> getByYear(String year) throws ServiceException;
+    List<Film> getByYear(String year, int limit) throws ServiceException;
 
-    List<Film> getAll() throws ServiceException;
+    List<Film> getAll(String order, int limit) throws ServiceException;
 
 }

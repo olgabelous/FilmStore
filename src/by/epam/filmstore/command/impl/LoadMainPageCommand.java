@@ -13,13 +13,13 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 03.08.2016.
+ * Created by Olga Shahray on 10.08.2016.
  */
-public class GetFilmsByYearCommand implements Command {
+public class LoadMainPageCommand implements Command {
 
     private static final String YEAR = "year";
-    private static final int LIMIT = 1000;
-
+    private static final String RATING = "rating";
+    private static final int LIMIT = 6;
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -28,14 +28,19 @@ public class GetFilmsByYearCommand implements Command {
         IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 
         try {
-            List<Film> filmList = filmService.getByYear(year, LIMIT);
+            List<Film> newFilmList = filmService.getByYear(year,LIMIT);
 
-            request.setAttribute("filmlist", filmList);
+            request.setAttribute("newfilms", newFilmList);
 
-            request.getRequestDispatcher("/WEB-INF/jsp/films.jsp").forward(request, response);
+            List<Film> bestFilmList = filmService.getAll(RATING, LIMIT);
+
+            request.setAttribute("bestfilms", bestFilmList);
+
+            request.getRequestDispatcher("/WEB-INF/jsp/main.jsp").forward(request, response);
 
 
         } catch (ServiceException e) {
+            request.setAttribute("message", e.getMessage());
             request.getRequestDispatcher("error.jsp").forward(request, response);
         }
     }

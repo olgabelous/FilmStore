@@ -1,0 +1,26 @@
+.navbar {
+    margin-bottom: 0px;
+}
+.navbar-brand:focus, .navbar-brand:hover {
+    text-decoration: none;
+}
+a:focus, a:hover {
+    text-decoration: underline;
+}
+.td-data{
+    width: 35%;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 3%;
+}
+.dd_data{
+    width: 60%;
+    margin-right: 0;
+    display: inline-block;
+    vertical-align: top;
+}
+.dt_data>div, .dd_data>div {
+    display: block;
+    margin-bottom: 13px;
+    min-height: 15px;
+}

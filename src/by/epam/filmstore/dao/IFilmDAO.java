@@ -31,9 +31,9 @@ public interface IFilmDAO {
 
     List<Film> getByGenre(String genre) throws DAOException;
 
-    List<Film> getByYear(int year) throws DAOException;
+    List<Film> getByYear(int year, int limit) throws DAOException;
 
-    List<Film> getAll() throws DAOException;
+    List<Film> getAll(String order, int limit) throws DAOException;
 
     List<Genre> getAllGenresOfFilm(int filmId) throws DAOException;
 

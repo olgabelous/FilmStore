@@ -3,10 +3,7 @@ package by.epam.filmstore.dao.impl;
 import by.epam.filmstore.dao.IFilmDAO;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
-import by.epam.filmstore.domain.Film;
-import by.epam.filmstore.domain.FilmMaker;
-import by.epam.filmstore.domain.Genre;
-import by.epam.filmstore.domain.Profession;
+import by.epam.filmstore.domain.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -28,21 +25,22 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     private static final String INSERT_FILM_MAKER = "INSERT INTO filmmakers (film_id, person_id) VALUES(?,?)";
     private static final String DELETE_FILM_MAKER = "DELETE FROM filmmakers WHERE film_id=?";
     private static final String SELECT_FILM_BY_ID = "SELECT films.id, title, release_year, description, duration, " +
-            "age_restriction, price, link, rating, FROM Films WHERE films.id=?";
+            "age_restriction, price, link, rating, films.country_id, country.country FROM Films INNER JOIN Country " +
+            "ON films.country_id = country.id WHERE films.id=?";
     private static final String SELECT_FILM_GENRES = "SELECT DISTINCT filmgenres.genre_id, allgenres.genre FROM filmgenres, allgenres" +
             " WHERE allgenres.id = filmgenres.genre_id AND filmgenres.film_id = ?";
     private static final String SELECT_FILM_MAKERS = "SELECT DISTINCT filmmakers.person_id, allfilmmakers.name, allfilmmakers.profession" +
-            "FROM allfilmmakers, filmmakers WHERE allfilmmakers.id = filmmakers.person_id AND filmmakers.film_id = ?";
+            " FROM allfilmmakers, filmmakers WHERE allfilmmakers.id = filmmakers.person_id AND filmmakers.film_id = ?";
     private static final String DELETE_FILM_BY_TITLE = "DELETE FROM films WHERE title=?";
     private static final String DELETE_FILM = "DELETE FROM films WHERE id=?";
-    private static final String SELECT_ALL_FILMS = "SELECT films.id, title, release_year, director, description, duration," +
-            " quality, age_restriction, price, link FROM Films";
+    private static final String SELECT_ALL_FILMS = "SELECT films.id, title, release_year, description, duration, " +
+            "age_restriction, price, link, rating FROM Films ORDER BY ? DESC LIMIT ?";
     private static final String SELECT_FILMS_BY_GENRE = "SELECT DISTINCT films.id, films.title, films.release_year, " +
             "films.description, films.duration, films.age_restriction, films.price, films.link, films.rating " +
             "FROM  FilmGenres, Films WHERE films.id = filmgenres.film_id AND filmgenres.genre_id = " +
             "(SELECT AllGenres.id FROM AllGenres WHERE Allgenres.genre = ?)";
     private static final String SELECT_FILMS_BY_YEAR = "SELECT films.id, title, release_year, description, duration, " +
-            "age_restriction, price, link, rating FROM Films WHERE films.release_year = ?";
+            "age_restriction, price, link, rating FROM Films WHERE films.release_year = ? LIMIT ?";
     private static final String SELECT_FILMS_BY_RATING = "SELECT films.id, title, release_year, description, duration, " +
             "age_restriction, price, link, rating FROM Films WHERE films.rating >= ?";
     private static final String UPDATE_FILM = "UPDATE films SET title=?, release_year=?, country_id=?, description=?, " +
@@ -297,6 +295,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
                     film.setPrice(rs.getDouble(7));
                     film.setLink(rs.getString(8));
                     film.setRating(rs.getDouble(9));
+                    film.setCountry(new Country(rs.getInt(10), rs.getString(11)));
                 }
                 else{
                     throw new DAOException("Error getting film by id");
@@ -360,7 +359,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     }
 
     @Override
-    public List<Film> getByYear(int year) throws DAOException {
+    public List<Film> getByYear(int year, int limit) throws DAOException {
         List<Film> filmList = new ArrayList<>();
         PreparedStatement preparedStatement = null;
 
@@ -369,6 +368,8 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             preparedStatement = connection.prepareStatement(SELECT_FILMS_BY_YEAR);
 
             preparedStatement.setInt(1, year);
+            preparedStatement.setInt(2, limit);
+
             try(ResultSet rs = preparedStatement.executeQuery()) {
                 Film film = null;
                 while(rs.next()) {
@@ -402,13 +403,15 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     }
 
     @Override
-    public List<Film> getAll() throws DAOException {
+    public List<Film> getAll(String order, int limit) throws DAOException {
         List<Film> allFilms = new ArrayList<>();
         PreparedStatement preparedStatement = null;
 
         try {
             Connection connection = getConnection();
             preparedStatement = connection.prepareStatement(SELECT_ALL_FILMS);
+            preparedStatement.setString(1, order);
+            preparedStatement.setInt(2, limit);
 
             try(ResultSet rs = preparedStatement.executeQuery()) {
                 Film film = null;

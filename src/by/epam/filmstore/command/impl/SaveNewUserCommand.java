@@ -21,7 +21,7 @@ public class SaveNewUserCommand implements Command {
 
         String name = request.getParameter("name");
         String email = request.getParameter("email");
-        String pass = request.getParameter("pass");
+        String pass = request.getParameter("password");
         String phone = request.getParameter("phone");
 
         ServiceFactory factory = ServiceFactory.getInstance();
@@ -32,8 +32,9 @@ public class SaveNewUserCommand implements Command {
         try{
             User user = service.saveUser(name, email, pass, phone);
             session.setAttribute("user", user);
+            response.sendRedirect("/index.jsp");
 
-        }catch(ServiceException e){
+        }catch(ServiceException | IOException e){
             // logging
             try {
                 response.sendRedirect("/");

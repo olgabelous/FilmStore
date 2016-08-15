@@ -6,8 +6,9 @@
 <fmt:setBundle basename="resources.locale" var="loc" /><!-- locale_ru  -->
 
 <fmt:message bundle="${loc}" key="locale.change_language.ru" var="ru" />
-<fmt:message bundle="${loc}" key="locale.index.login" var="login" />
 <fmt:message bundle="${loc}" key="locale.index.sign_in" var="sign_in" />
+<fmt:message bundle="${loc}" key="locale.index.sign_out" var="sign_out" />
+<fmt:message bundle="${loc}" key="locale.index.profile" var="profile" />
 <fmt:message bundle="${loc}" key="locale.index.forgot_pass" var="forgot_pass" />
 <fmt:message bundle="${loc}" key="locale.index.email" var="email" />
 <fmt:message bundle="${loc}" key="locale.index.password" var="password" />
@@ -21,14 +22,27 @@
 <fmt:message bundle="${loc}" key="locale.index.phone" var="phone" />
 <fmt:message bundle="${loc}" key="locale.index.repeat_pass" var="repeat_pass" />
 
-<nav class="navbar navbar-full navbar-light bg-faded" draggable="true">
-    <a class="navbar-brand" href="#">FilmStore</a>
+
+<div class="navbar navbar-full navbar-inverse" role="navigation">
+    <div class="container">
+    <a class="navbar-header navbar-brand" href="/index.jsp">FilmStore</a>
     <ul class="nav navbar-nav pull-right">
         <li class="nav-item active">
-            <a class="nav-link" href="#" data-toggle="modal" data-target="#login-modal">${login}<span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#" data-toggle="modal" data-target="#signupbox">Signup</a>
+            <c:choose>
+                <c:when test="${not empty sessionScope.user}">
+                    <li class="nav-item dropdown-open">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">${sessionScope.user.name}<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/FilmStore/UserServlet?command=get-user&id=${sessionScope.user.id}">${profile}</a></li>
+                            <li><a href="/FilmStore/UserServlet?command=logout">${sign_out}</a></li>
+                        </ul>
+                    </li>
+                    <a class="nav-link" href="#"></a>
+                </c:when>
+                <c:otherwise>
+                    <a class="nav-link" href="#" data-toggle="modal" data-target="#login-modal">${sign_in}<span class="sr-only">(current)</span></a>
+                </c:otherwise>
+            </c:choose>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="FilmStore/UserServlet?command=change_language&language=ru">RU|</a>
@@ -37,20 +51,21 @@
             <a class="nav-link" href="FilmStore/UserServlet?command=change_language&language=en">EN</a>
         </li>
 
-         <%--<li class="nav-item dropdown-open">
+        <li class="nav-item dropdown-open">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">${pageContext.response.locale}<b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a onclick="show('en')">English</a></li>
                             <li><a onclick="show('ru')">Русский</a></li>
                         </ul>
-                </li>
+        </li>
         <script type="text/javascript">
             function show(lang){
                 window.location.href = window.location.href.split('?')[0]+"?lang="+lang;
             }
-        </script>--%>
+        </script>
     </ul>
-</nav>
+    </div>
+</div>
 
 <%--login--%>
 <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
@@ -67,7 +82,7 @@
 
                         <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
 
-                        <form id="loginform" class="form-horizontal" role="form" action="FilmStore/UserServlet" method="post">
+                        <form id="loginform" class="form-horizontal" role="form" action="/FilmStore/UserServlet" method="post">
                             <input type="hidden" name="command" value="user-authorization" /> <br />
                             <div style="margin-bottom: 25px" class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
@@ -124,8 +139,8 @@
                     <div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="#" onclick="$('#signupbox').hide(); $('#loginbox').show()">${sign_in}</a></div>
                 </div>
                 <div class="panel-body" >
-                    <form id="signupform" class="form-horizontal" role="form" action="FilmStore/UserServlet" method="post">
-                        <input type="hidden" name="command" value="user-registration" /> <br />
+                    <form id="signupform" class="form-horizontal" role="form" action="/FilmStore/UserServlet" method="post">
+                        <input type="hidden" name="command" value="save-new-user" /> <br />
                         <div id="signupalert" style="display:none" class="alert alert-danger">
                             <p>Error:</p>
                             <span></span>
@@ -153,7 +168,7 @@
                         <div class="form-group">
                             <label for="password" class="col-md-3 control-label">${pass}</label>
                             <div class="col-md-9">
-                                <input type="password" class="form-control" name="passwod" placeholder="${pass}" required>
+                                <input type="password" class="form-control" name="password" placeholder="${pass}" required>
                             </div>
                         </div>
 
@@ -167,7 +182,6 @@
                         <div class="form-group">
                             <!-- Button -->
                             <div class="col-md-offset-3 col-md-9">
-                                <%--<button id="btn-login" type="submit" class="btn btn-success">${enter}</button>--%>
                                 <button id="btn-signup" type="submit" class="btn btn-info"><i class="icon-hand-right"></i> &nbsp ${sign_up}</button>
                                 <span style="margin-left:8px;">or</span>
                             </div>

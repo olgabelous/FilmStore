@@ -10,33 +10,32 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 /**
- * Created by Olga Shahray on 03.08.2016.
+ * Created by Olga Shahray on 10.08.2016.
  */
-public class GetFilmsByYearCommand implements Command {
+public class GetFilmByIdCommand implements Command {
 
-    private static final String YEAR = "year";
-    private static final int LIMIT = 1000;
-
+    private static final String ID = "id";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String year = request.getParameter(YEAR);
 
         IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 
         try {
-            List<Film> filmList = filmService.getByYear(year, LIMIT);
+            int id = Integer.parseInt(request.getParameter(ID));
 
-            request.setAttribute("filmlist", filmList);
+            Film film = filmService.get(id);
 
-            request.getRequestDispatcher("/WEB-INF/jsp/films.jsp").forward(request, response);
+            request.setAttribute("film", film);
+
+            request.getRequestDispatcher("/WEB-INF/jsp/singleFilm.jsp").forward(request, response);
 
 
-        } catch (ServiceException e) {
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+        } catch (ServiceException | NumberFormatException e) {
+            request.setAttribute("message", e.getMessage());
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
     }
 }

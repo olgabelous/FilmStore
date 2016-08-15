@@ -13,8 +13,8 @@ public class TestData {
     public static final User TEST_USER = new User(1, "User", "user@yandex.ru", "password", "2223322", null, LocalDateTime.of(2016, Month.JUNE, 15, 10, 0, 0), Role.USER, null);
     public static final User TEST_ADMIN = new User(2, "Admin", "admin@gmail.com", "admin", "+375297253059", "adm.jpg", LocalDateTime.of(2016, Month.MAY, 1, 12, 12, 0), Role.ADMIN, null);
 
-    public static final Film TEST_FILM1 = new Film(1, "Film1", 2016, null, "good", 100, 16, 15.0, "movie.hd", 9.0, null, null);
-    public static final Film TEST_FILM2 = new Film(2, "Film2", 2015, null, "the best", 87, 18, 10.0, "movie.hd", 10.00, null, null);
+    public static final Film TEST_FILM1 = new Film(1, "Film1", 2016, null, "good", 100, 16, 15.0, "movie.hd", 9.0, null, null, null);
+    public static final Film TEST_FILM2 = new Film(2, "Film2", 2015, null, "the best", 87, 18, 10.0, "movie.hd", 10.00, null, null, null);
 
     public static final Comment TEST_COM1 = new Comment(TEST_USER, TEST_FILM1, 9, "Super!", LocalDateTime.of(2016, Month.JUNE, 18, 10, 0, 0), "new");
     public static final Comment TEST_COM2 = new Comment(TEST_USER, TEST_FILM2, 10, "Super!!!", LocalDateTime.of(2016, Month.JUNE, 19, 11, 11, 0), "new");

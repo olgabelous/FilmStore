@@ -26,13 +26,4 @@ public class Controller extends HttpServlet {
         command.execute(req, resp);
     }
 
-    @Override
-    public void destroy() {
-        super.destroy();
-    }
-
-    @Override
-    public void init() throws ServletException {
-        super.init();
-    }
 }

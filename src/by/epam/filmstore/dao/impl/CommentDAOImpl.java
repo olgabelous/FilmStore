@@ -4,6 +4,7 @@ import by.epam.filmstore.dao.ICommentDAO;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Comment;
+import by.epam.filmstore.domain.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,10 +22,10 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
     private static final String INSERT_COMMENT = "INSERT INTO comments (film_id, user_id, mark, comment, date_com, status) VALUES(?,?,?,?,?,?)";
     private static final String SELECT_COMMENT = "SELECT * FROM comments WHERE user_id=? AND film_id=?";
     private static final String DELETE_COMMENT = "DELETE FROM comments WHERE user_id=? AND film_id=?";
-    private static final String SELECT_ALL_COMMENTS_OF_USER = "SELECT film_id, user_id, mark, comment, dare_com, status " +
+    private static final String SELECT_ALL_COMMENTS_OF_USER = "SELECT film_id, user_id, mark, comment, date_com, status " +
             "FROM comments WHERE user_id=?";
-    private static final String SELECT_ALL_COMMENTS_OF_FILM = "SELECT film_id, user_id, mark, comment, dare_com, status " +
-            "FROM comments WHERE film_id=?";
+    private static final String SELECT_ALL_COMMENTS_OF_FILM = "SELECT mark, comment, date_com, status, user_id, " +
+            "users.name FROM comments INNER JOIN users ON comments.user_id = users.id WHERE film_id=? AND status = 'checked'";
     private static final String UPDATE_COMMENT = "UPDATE comments SET status=? WHERE film_id=? and user_id=?";
 
 
@@ -212,10 +213,11 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
                 while (rs.next()) {
                     comment = new Comment();
 
-                    comment.setMark(rs.getInt(3));
-                    comment.setText(rs.getString(4));
-                    comment.setDateComment(rs.getTimestamp(5).toLocalDateTime());
-                    comment.setStatus(rs.getString(6));
+                    comment.setMark(rs.getInt(1));
+                    comment.setText(rs.getString(2));
+                    comment.setDateComment(rs.getTimestamp(3).toLocalDateTime());
+                    comment.setStatus(rs.getString(4));
+                    comment.setUser(new User(rs.getInt(5), rs.getString(6)));
 
                     allComments.add(comment);
                 }

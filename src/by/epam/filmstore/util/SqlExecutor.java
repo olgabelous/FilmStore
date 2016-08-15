@@ -1,8 +1,8 @@
 package by.epam.filmstore.util;
 
 import by.epam.filmstore.dao.exception.DAOException;
+import by.epam.filmstore.service.exception.ServiceException;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
@@ -15,5 +15,5 @@ import java.sql.SQLException;
 
 @FunctionalInterface
 public interface SqlExecutor<T> {
-    T execute() throws SQLException, DAOException;
+    T execute() throws SQLException, DAOException, ServiceException;
 }

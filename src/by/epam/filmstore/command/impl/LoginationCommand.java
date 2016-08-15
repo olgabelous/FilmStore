@@ -1,7 +1,6 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
-import by.epam.filmstore.domain.Role;
 import by.epam.filmstore.domain.User;
 import by.epam.filmstore.service.IUserService;
 import by.epam.filmstore.service.ServiceFactory;
@@ -11,6 +10,7 @@ import by.epam.filmstore.service.exception.ServiceException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class LoginationCommand implements Command {
@@ -25,6 +25,7 @@ public class LoginationCommand implements Command {
 
         IUserService userService = ServiceFactory.getInstance().getUserService();
 
+        HttpSession session = request.getSession(true);
 		/*String query = QueryUtil.createHttpQueryString(request);
         request.getSession(true).setAttribute("prev_query", query);
 		System.out.println(query);*/
@@ -32,13 +33,10 @@ public class LoginationCommand implements Command {
         try {
             User user = userService.authorize(login, password);
 
-            request.setAttribute("user", user);
-            if (user.getRole() == Role.ADMIN) {
-                request.getRequestDispatcher("/WEB-INF/jsp/admin.jsp").forward(request, response);
-            }
-            else if(user.getRole() == Role.USER){
-                request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
-            }
+            //request.setAttribute("user", user);
+            session.setAttribute("user", user);
+            response.sendRedirect("/index.jsp");
+
         } catch (ServiceAuthException e) {
 
             request.setAttribute("errorMessage", "Wrong login or password");

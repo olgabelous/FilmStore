@@ -17,13 +17,17 @@ public class CommandHelper {
 
     private Map<CommandName, Command> commands = new HashMap<>();
 
-    CommandHelper(){
+    private CommandHelper(){
 
         commands.put(CommandName.USER_AUTHORIZATION, new LoginationCommand());
-        commands.put(CommandName.USER_REGISTRATION, new SaveNewUserCommand());
+        commands.put(CommandName.SAVE_NEW_USER, new SaveNewUserCommand());
         commands.put(CommandName.CHANGE_LANGUAGE, new ChangeLanguageCommand());
         commands.put(CommandName.GET_FILMS_BY_YEAR, new GetFilmsByYearCommand());
         commands.put(CommandName.SAVE_NEW_FILM, new SaveNewFilmCommand());
+        commands.put(CommandName.LOAD_MAIN_PAGE, new LoadMainPageCommand());
+        commands.put(CommandName.GET_FILM_BY_ID, new GetFilmByIdCommand());
+        commands.put(CommandName.LOGOUT, new LogoutCommand());
+        commands.put(CommandName.GET_USER, new GetUserByIdCommand());
 
     }
 

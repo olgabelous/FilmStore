@@ -3,9 +3,9 @@ package by.epam.filmstore.util;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPool;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
+import by.epam.filmstore.service.exception.ServiceException;
 
 import java.sql.Connection;
-
 import java.sql.SQLException;
 
 /**
@@ -35,7 +35,7 @@ public class DAOHelper {
     //В качестве паметра принимает функциональный интерфейс SqlExecutor<T>
     //коннекшн берем из пула с помощью конструкции try-with-resources. Метод close() вызывается автоматически и
     //возвращает connection в пул
-    public static <T> T execute(SqlExecutor<T> executor) throws DAOException {
+    public static <T> T execute(SqlExecutor<T> executor) throws DAOException, ServiceException {
 
         try (Connection conn = connectionPool.takeConnection()) {
             //помещаем connection в ThreadLocal для передачи в DAO
@@ -53,7 +53,7 @@ public class DAOHelper {
     //Параметризованный транзакционный метод выполнения запросов
     //используется для операций, требующих проведения в рамках транзакции, например, получения фильма со списком актеров
     //В качестве паметра принимает функциональный интерфейс SqlExecutor<T>
-    public static <T> T transactionExecute(SqlExecutor<T> executor) throws DAOException {
+    public static <T> T transactionExecute(SqlExecutor<T> executor) throws DAOException, ServiceException {
         try (Connection conn = connectionPool.takeConnection()) {
             currentConnection.set(conn);
             try {
