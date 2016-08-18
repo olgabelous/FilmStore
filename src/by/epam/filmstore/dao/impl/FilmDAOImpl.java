@@ -34,7 +34,8 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     private static final String DELETE_FILM_BY_TITLE = "DELETE FROM films WHERE title=?";
     private static final String DELETE_FILM = "DELETE FROM films WHERE id=?";
     private static final String SELECT_ALL_FILMS = "SELECT films.id, title, release_year, description, duration, " +
-            "age_restriction, price, link, rating FROM Films ORDER BY ? DESC LIMIT ?";
+            "age_restriction, price, link, rating, films.country_id, country.country FROM Films INNER JOIN Country " +
+            "ON films.country_id = country.id ORDER BY ? ASC LIMIT ?";
     private static final String SELECT_FILMS_BY_GENRE = "SELECT DISTINCT films.id, films.title, films.release_year, " +
             "films.description, films.duration, films.age_restriction, films.price, films.link, films.rating " +
             "FROM  FilmGenres, Films WHERE films.id = filmgenres.film_id AND filmgenres.genre_id = " +
@@ -426,6 +427,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
                     film.setPrice(rs.getDouble(7));
                     film.setLink(rs.getString(8));
                     film.setRating(rs.getDouble(9));
+                    film.setCountry(new Country(rs.getInt(10), rs.getString(11)));
 
                     allFilms.add(film);
                 }

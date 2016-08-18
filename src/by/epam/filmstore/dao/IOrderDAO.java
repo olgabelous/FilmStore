@@ -26,4 +26,6 @@ public interface IOrderDAO {
 
     List<Order> getAll() throws DAOException;
 
+    double getTotalAmount(int userId) throws DAOException;
+
 }

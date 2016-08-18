@@ -27,10 +27,11 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
             " WHERE allgenres.id = preferences.genre_id AND preferences.user_id= ?";
     private static final String SELECT_USER_BY_ID = "SELECT * FROM users WHERE users.id=?";
     private static final String SELECT_USER_BY_EMAIL = "SELECT * FROM users WHERE users.email=?";
-    private static final String SELECT_USER_BY_EMAIL_PASS = "SELECT * FROM users WHERE users.email=? and users.password =?";
+    private static final String SELECT_USER_BY_EMAIL_PASS = "SELECT id, name, email, password, phone, photo, date_reg, role " +
+            "FROM users WHERE users.email=? and users.password =?";
     private static final String DELETE_USER_BY_EMAIL = "DELETE FROM users WHERE email=?";
     private static final String DELETE_USER = "DELETE FROM users WHERE id=?";
-    private static final String SELECT_ALL_USERS = "SELECT * FROM users";
+    private static final String SELECT_ALL_USERS = "SELECT id, name, email, password, phone, photo, date_reg, role FROM users LIMIT ?";
     private static final String UPDATE_USER = "UPDATE users SET name=?, email=?, password=?, phone=?, photo=?, date_reg=?, role=? WHERE id=?";
 
     @Override
@@ -332,7 +333,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
     }
 
     @Override
-    public List<User> getAll() throws DAOException {
+    public List<User> getAll(int limit) throws DAOException {
         List<User> allUsers = new ArrayList<>();
         PreparedStatement preparedStatement = null;
 
@@ -340,6 +341,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
             Connection connection = getConnection();
             preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);
 
+            preparedStatement.setInt(1, limit);
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 User user = null;
                 while (rs.next()) {

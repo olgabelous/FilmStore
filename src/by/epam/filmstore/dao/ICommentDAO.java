@@ -23,4 +23,6 @@ public interface ICommentDAO {
     List<Comment> getAllOfUser(int userId) throws DAOException;
 
     List<Comment> getAllOfFilm(int filmId) throws DAOException;
+
+    List<Comment> getByStatus(String status) throws DAOException;
 }

@@ -29,7 +29,7 @@ public interface IUserDAO {
     // null if not found
     User getByEmail(String email) throws DAOException;
 
-    List<User> getAll() throws DAOException;
+    List<User> getAll(int limit) throws DAOException;
 
     List<Genre> getFavoriteGenresOfUser(int userId) throws DAOException;
 

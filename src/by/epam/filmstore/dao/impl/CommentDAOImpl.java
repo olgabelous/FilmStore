@@ -4,6 +4,7 @@ import by.epam.filmstore.dao.ICommentDAO;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Comment;
+import by.epam.filmstore.domain.Film;
 import by.epam.filmstore.domain.User;
 
 import java.sql.*;
@@ -22,11 +23,14 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
     private static final String INSERT_COMMENT = "INSERT INTO comments (film_id, user_id, mark, comment, date_com, status) VALUES(?,?,?,?,?,?)";
     private static final String SELECT_COMMENT = "SELECT * FROM comments WHERE user_id=? AND film_id=?";
     private static final String DELETE_COMMENT = "DELETE FROM comments WHERE user_id=? AND film_id=?";
-    private static final String SELECT_ALL_COMMENTS_OF_USER = "SELECT film_id, user_id, mark, comment, date_com, status " +
-            "FROM comments WHERE user_id=?";
+    private static final String SELECT_ALL_COMMENTS_OF_USER = "SELECT comments.film_id, films.title, comments.mark, comments.comment, " +
+            "comments.date_com, comments.status FROM comments INNER JOIN Films ON comments.film_id = films.id WHERE user_id=?";
     private static final String SELECT_ALL_COMMENTS_OF_FILM = "SELECT mark, comment, date_com, status, user_id, " +
             "users.name FROM comments INNER JOIN users ON comments.user_id = users.id WHERE film_id=? AND status = 'checked'";
     private static final String UPDATE_COMMENT = "UPDATE comments SET status=? WHERE film_id=? and user_id=?";
+    private static final String SELECT_COMMENTS_BY_STATUS = "SELECT mark, comment, date_com, status, user_id, " +
+            "users.name, film_id, films.title FROM comments INNER JOIN users ON comments.user_id = users.id " +
+            "INNER JOIN films ON comments.film_id = films.id WHERE status = ?";
 
 
     @Override
@@ -174,6 +178,7 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
                 while (rs.next()) {
                     comment = new Comment();
 
+                    comment.setFilm(new Film(rs.getInt(1), rs.getString(2)));
                     comment.setMark(rs.getInt(3));
                     comment.setText(rs.getString(4));
                     comment.setDateComment(rs.getTimestamp(5).toLocalDateTime());
@@ -224,6 +229,47 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
             }
         } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Error getting all comments", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in comment dao", e);
+                }
+            }
+        }
+        return allComments;
+    }
+
+    @Override
+    public List<Comment> getByStatus(String status) throws DAOException {
+        List<Comment> allComments = new ArrayList<>();
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = getConnection();
+            preparedStatement = connection.prepareStatement(SELECT_COMMENTS_BY_STATUS);
+
+            preparedStatement.setString(1, status);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                Comment comment = null;
+
+                while (rs.next()) {
+                    comment = new Comment();
+
+                    comment.setMark(rs.getInt(1));
+                    comment.setText(rs.getString(2));
+                    comment.setDateComment(rs.getTimestamp(3).toLocalDateTime());
+                    comment.setStatus(rs.getString(4));
+                    comment.setUser(new User(rs.getInt(5), rs.getString(6)));
+                    comment.setFilm(new Film(rs.getInt(7), rs.getString(8)));
+
+                    allComments.add(comment);
+                }
+            }
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error getting comments by status", e);
         }
         finally {
             if(preparedStatement != null){

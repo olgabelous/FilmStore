@@ -21,7 +21,7 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
     private static final String INSERT_DISCOUNT = "INSERT INTO discount (discount_id, sum_from, value) VALUES (?,?,?)";
     private static final String SELECT_DISCOUNT = "SELECT discount_id, discount.sum_from, discount.value FROM discount " +
             "WHERE discount_id=?";
-    private static final String SELECT_ALL_DISCOUNTS = "SELECT discount_id, discount.sum_from, discount.value" +
+    private static final String SELECT_ALL_DISCOUNTS = "SELECT discount_id, discount.sum_from, discount.value " +
             "FROM discount ORDER BY value";
     private static final String DELETE_DISCOUNT = "DELETE FROM discount WHERE discount.id = ?";
 

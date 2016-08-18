@@ -22,7 +22,7 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
     private static final String INSERT_FILM_MAKER = "INSERT INTO allfilmmakers (name, profession) VALUES(?,?)";
     private static final String SELECT_FILM_MAKER = "SELECT id, name, profession FROM allfilmmakers WHERE allfilmmakers.id = ?";
     private static final String DELETE_FILM_MAKER = "DELETE FROM allfilmmakers WHERE allfilmmakers.id=?";
-    private static final String SELECT_ALL_FILM_MAKERS = "SELECT id, name, profession FROM allfilmmakers";
+    private static final String SELECT_ALL_FILM_MAKERS = "SELECT id, name, profession FROM allfilmmakers ORDER BY ? LIMIT ?";
 
     @Override
     public void save(FilmMaker filmMaker) throws DAOException {
@@ -124,21 +124,22 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
     }
 
     @Override
-    public List<FilmMaker> getAll() throws DAOException {
+    public List<FilmMaker> getAll(String order, int limit) throws DAOException {
         List<FilmMaker> allFilmMakers = new ArrayList<>();
         PreparedStatement preparedStatement = null;
 
         try {
             Connection connection = getConnection();
             preparedStatement = connection.prepareStatement(SELECT_ALL_FILM_MAKERS);
-
+            preparedStatement.setString(1, order);
+            preparedStatement.setInt(2, limit);
             try(ResultSet rs = preparedStatement.executeQuery()) {
                 FilmMaker filmMaker = null;
                 while(rs.next()) {
                     filmMaker = new FilmMaker();
                     filmMaker.setId(rs.getInt(1));
                     filmMaker.setName(rs.getString(2));
-                    filmMaker.setProfession(Profession.valueOf(rs.getString(2).toUpperCase()));
+                    filmMaker.setProfession(Profession.valueOf(rs.getString(3).toUpperCase()));
 
                     allFilmMakers.add(filmMaker);
                 }

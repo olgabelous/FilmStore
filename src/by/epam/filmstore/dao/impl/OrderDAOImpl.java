@@ -3,6 +3,7 @@ package by.epam.filmstore.dao.impl;
 import by.epam.filmstore.dao.IOrderDAO;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
+import by.epam.filmstore.domain.Film;
 import by.epam.filmstore.domain.Order;
 
 import java.sql.*;
@@ -22,12 +23,14 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
     private static final String INSERT_ORDER = "INSERT INTO orders (film_id, user_id, date_sale, sum, status) VALUES(?,?,?,?,?)";
     private static final String SELECT_ORDER = "SELECT id, film_id, user_id, date_sale, sum, status FROM orders WHERE orders.id =?";
     private static final String DELETE_ORDER = "DELETE FROM orders WHERE orders.id=?";
-    private static final String SELECT_ALL_ORDERS_OF_USER = "SELECT id, film_id, user_id, date_sale, sum, status " +
-            "FROM orders WHERE user_id=?";
+    private static final String SELECT_ALL_ORDERS_OF_USER = "SELECT orders.id, orders.film_id, films.title, orders.date_sale, orders.sum, " +
+            "orders.status FROM orders INNER JOIN Films ON orders.film_id = films.id WHERE orders.user_id=?";
     private static final String SELECT_ALL_ORDERS_OF_FILM = "SELECT id, film_id, user_id, date_sale, sum, status " +
             "FROM orders WHERE film_id=?";
     private static final String SELECT_ALL_ORDERS = "SELECT id, film_id, user_id, date_sale, sum, status FROM orders";
     private static final String UPDATE_ORDER_STATUS = "UPDATE orders SET status=? WHERE orders.id=?";
+    private static final String SELECT_TOTAL_AMOUNT_OF_USER = "SELECT SUM(Orders.sum) FROM Orders WHERE Orders.user_id = ? " +
+            "AND Orders.status = 'completed'";
 
 
     @Override
@@ -180,7 +183,7 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
                 while (rs.next()) {
                     order = new Order();
                     order.setId(rs.getInt(1));
-
+                    order.setFilm(new Film(rs.getInt(2), rs.getString(3)));
                     order.setDateSale(rs.getTimestamp(4).toLocalDateTime());
                     order.setSum(rs.getDouble(5));
                     order.setStatus(rs.getString(6));
@@ -278,5 +281,36 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
             }
         }
         return allOrders;
+    }
+
+    @Override
+    public double getTotalAmount(int userId) throws DAOException {
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = getConnection();
+            preparedStatement = connection.prepareStatement(SELECT_TOTAL_AMOUNT_OF_USER);
+
+            preparedStatement.setInt(1, userId);
+            try(ResultSet rs = preparedStatement.executeQuery()) {
+                if(rs.next()) {
+                    return rs.getDouble(1);
+                }
+                else{
+                    throw new DAOException("Error getting total amount of orders");
+                }
+            }
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error getting total amount of orders", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in order dao", e);
+                }
+            }
+        }
     }
 }
