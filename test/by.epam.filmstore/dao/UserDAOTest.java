@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static by.epam.filmstore.TestData.TEST_USER;
 import static by.epam.filmstore.TestData.TEST_ADMIN;
+import static by.epam.filmstore.TestData.TEST_USER;
 
 /**
  * Created by Olga Shahray on 18.06.2016.
@@ -63,13 +63,13 @@ public class UserDAOTest {
     @Test
     public void testDelete() throws DAOException {
         dao.delete(TEST_USER.getId());
-        List<User> allUsers = dao.getAll();
+        List<User> allUsers = dao.getAll(1000);
         Assert.assertEquals(allUsers, Collections.singletonList(TEST_ADMIN));
     }
 
     @Test
     public void testGellAll() throws DAOException {
-        List<User> allUsers = dao.getAll();
+        List<User> allUsers = dao.getAll(1000);
         Assert.assertEquals(allUsers, Arrays.asList(TEST_USER, TEST_ADMIN));
     }
 
