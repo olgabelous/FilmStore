@@ -1,7 +1,5 @@
 package by.epam.filmstore.controller;
 
-
-
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.command.impl.*;
 
@@ -28,6 +26,19 @@ public class CommandHelper {
         commands.put(CommandName.GET_FILM_BY_ID, new GetFilmByIdCommand());
         commands.put(CommandName.LOGOUT, new LogoutCommand());
         commands.put(CommandName.GET_USER, new GetUserByIdCommand());
+        commands.put(CommandName.GET_ORDERS_OF_USER, new GetOrdersOfUserCommand());
+        commands.put(CommandName.GET_COMMENTS_OF_USER, new GetCommentsOfUserCommand());
+        commands.put(CommandName.GET_FAVORITE_GENRES, new GetFavoriteGenresCommand());
+        commands.put(CommandName.SAVE_FAVORITE_GENRES, new SaveFavoriteGenresCommand());
+        commands.put(CommandName.GET_DISCOUNT, new GetDiscountCommand());
+        commands.put(CommandName.ADMIN_GET_COMMENTS, new AdminGetCommentsCommand());
+        commands.put(CommandName.ADMIN_GET_COUNTRIES, new AdminGetCountriesCommand());
+        commands.put(CommandName.ADMIN_GET_DISCOUNTS, new AdminGetDiscountsCommand());
+        commands.put(CommandName.ADMIN_GET_FILM_MAKERS, new AdminGetFilmMakersCommand());
+        commands.put(CommandName.ADMIN_GET_FILMS, new AdminGetFilmsCommand());
+        commands.put(CommandName.ADMIN_GET_GENRES, new AdminGetGenresCommand());
+        commands.put(CommandName.ADMIN_GET_USERS, new AdminGetUsersCommand());
+
 
     }
 
