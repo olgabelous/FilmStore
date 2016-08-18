@@ -1,6 +1,5 @@
 package by.epam.filmstore.service;
 
-import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.domain.FilmMaker;
 import by.epam.filmstore.service.exception.ServiceException;
 
@@ -19,5 +18,5 @@ public interface IFilmMakerService {
     // null if not found
     FilmMaker get(int id) throws ServiceException;
 
-    List<FilmMaker> getAll() throws ServiceException;
+    List<FilmMaker> getAll(String order, int limit) throws ServiceException;
 }

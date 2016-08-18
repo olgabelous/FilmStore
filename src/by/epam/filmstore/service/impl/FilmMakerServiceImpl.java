@@ -15,10 +15,10 @@ import java.util.List;
  */
 public class FilmMakerServiceImpl implements IFilmMakerService {
 
-    IFilmMakerDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmMakerDAO();
 
     @Override
     public void save(FilmMaker filmMaker) throws ServiceException {
+        IFilmMakerDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmMakerDAO();
         try {
             DAOHelper.transactionExecute(() -> {
                 dao.save(filmMaker);
@@ -32,6 +32,7 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
 
     @Override
     public boolean delete(int id) throws ServiceException {
+        IFilmMakerDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmMakerDAO();
         try {
             return DAOHelper.execute(() -> dao.delete(id));
         } catch (DAOException e) {
@@ -41,6 +42,7 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
 
     @Override
     public FilmMaker get(int id) throws ServiceException {
+        IFilmMakerDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmMakerDAO();
         try {
             return DAOHelper.execute(() -> dao.get(id));
         } catch (DAOException e) {
@@ -49,9 +51,10 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
     }
 
     @Override
-    public List<FilmMaker> getAll() throws ServiceException {
+    public List<FilmMaker> getAll(String order, int limit) throws ServiceException {
+        IFilmMakerDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmMakerDAO();
         try {
-            return DAOHelper.execute(() -> dao.getAll());
+            return DAOHelper.execute(() -> dao.getAll(order, limit));
         } catch (DAOException e) {
             throw new ServiceException(e);
         }

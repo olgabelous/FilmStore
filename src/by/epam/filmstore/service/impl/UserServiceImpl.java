@@ -12,6 +12,7 @@ import by.epam.filmstore.service.util.ServiceHelper;
 import by.epam.filmstore.util.DAOHelper;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Created by Olga Shahray on 23.07.2016.
@@ -73,6 +74,17 @@ public class UserServiceImpl implements IUserService {
         }
         try {
             return DAOHelper.execute(() -> dao.get(id));
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public List<User> getAll(int limit) throws ServiceException {
+        IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
+
+        try {
+            return DAOHelper.execute(() -> dao.getAll(limit));
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
