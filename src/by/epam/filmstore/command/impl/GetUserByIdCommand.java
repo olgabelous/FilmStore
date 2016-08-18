@@ -17,6 +17,12 @@ import java.io.IOException;
  */
 public class GetUserByIdCommand implements Command {
     private static final String ID = "id";
+    private static final String USER = "user";
+    private static final String ADMIN_PAGE = "/WEB-INF/jsp/admin/admin.jsp";
+    private static final String USER_PAGE = "/WEB-INF/jsp/user/user.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
+    private static final String ERROR_ATTRIBUTE = "errorMessage";
+    private static final String ERROR_MESSAGE = "Access denied";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -26,21 +32,21 @@ public class GetUserByIdCommand implements Command {
         try {
             int id = Integer.parseInt(request.getParameter(ID));
             if (session != null){
-                User loggedUser = (User)session.getAttribute("user");
+                User loggedUser = (User)session.getAttribute(USER);
                 if(loggedUser.getId() == id){
                     User user = userService.get(id);
 
-                    request.setAttribute("user", user);
+                    request.setAttribute(USER, user);
 
-                    request.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(request, response);
+                    request.getRequestDispatcher(USER_PAGE).forward(request, response);
                 }
                 else{
-                    request.setAttribute("errorMessage", "Access denied");
+                    request.setAttribute(ERROR_ATTRIBUTE, ERROR_MESSAGE);
                 }
             }
         } catch (ServiceException | NumberFormatException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
+            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
         }
     }
 }
