@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 
-<jsp:include page="fragments/headTag.jsp"/>
+<jsp:include page="../fragments/headTag.jsp"/>
 
 <body>
 <fmt:setLocale value="${sessionScope.locale}" /><!-- locale = ru -->
@@ -26,12 +26,12 @@
 <fmt:message bundle="${loc}" key="locale.user.sign_out" var="sign_out" />
 
 <jsp:useBean id="user" class="by.epam.filmstore.domain.User" scope="request"/>
-<jsp:include page="fragments/bodyHeader.jsp"/>
+<jsp:include page="../fragments/bodyHeader.jsp"/>
 
 <div class="section m-y-1">
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <c:choose>
                     <c:when test="${not empty user.photo}">
                         <img src="${user.photo}"
@@ -51,53 +51,44 @@
 
             </div>
 
-            <div class="col-md-8">
+            <div class="col-md-10">
                 <h1 class="p-y-2 text-xs-left">${my_page}</h1></div>
 
 
-            <div class="col-md-8 text-xs-left">
-                <div class="td-data">
-                    <div>${name}</div>
-                    <div>${email}</div>
-                    <div>${phone}</div>
-                </div>
-                <div class="dd-data">
-                    <div>${user.name}</div>
-                    <div>${user.email}</div>
-                    <div>${user.phone}</div>
-                </div>
+            <div class="col-md-6">
+                <table class="table table-hover">
+                    <tbody>
+                    <tr>
+                        <td>${name}</td>
+                        <td>${user.name}</td>
+                    </tr>
+                    <tr>
+                        <td>${email}</td>
+                        <td>${user.email}</td>
+                    </tr>
+                    <tr>
+                        <td>${phone}</td>
+                        <td>${user.phone}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="col-md-2"><a href="#" class="btn btn-block btn-primary" draggable="true">${edit}</a></div>
+            </div>
+            <div class="col-md-2 col-md-offset-4"><a href="#" class="btn btn-block btn-primary" draggable="true">${edit}</a></div>
 
         </div>
-
     </div>
-</div>
 <div class="section">
     <div class="container">
-        <div class="row" draggable="true">
-            <div class="col-lg-4">
-                <ul class="nav nav-pills  nav-stacked" draggable="true">
-                    <li class="nav-item">
-                        <a href="#" class="active nav-link">${my_orders}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">${wish_list}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">${favorite_genres}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">${my_comments}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">${my_discout}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">${sign_out}</a>
-                    </li>
-                </ul>
-            </div>
+        <div class="row">
+            <c:choose>
+                <c:when test="${user.role.name()=='ADMIN'}">
+                    <jsp:include page="../fragments/adminMenu.jsp"/>
+                </c:when>
+                <c:otherwise>
+                    <jsp:include page="../fragments/userMenu.jsp"/>
+                </c:otherwise>
+            </c:choose>
             <div class="col-lg-4">
                 <div class="col-md-12 text-xs-center">
                     <i class="fa fa-5x fa-fw fa-star m-y-1 m-y-lg text-primary"></i>
@@ -123,17 +114,17 @@
 <div class="section text-xs-center">
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
 
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4  text-xs-center">
                 <i class="fa fa-5x fa-fw fa-star m-y-1 m-y-lg text-primary"></i>
 
                 <h1>${favorite_genres}</h1>
 
                 <p>${favorite_genres_info}</p>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4  text-xs-center">
                 <i class="fa fa-5x fa-fw fa-star m-y-1 m-y-lg text-primary"></i>
 
                 <h1>${my_comments}</h1>
