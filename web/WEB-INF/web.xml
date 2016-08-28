@@ -40,10 +40,18 @@
             <param-value>utf-8</param-value>
         </init-param>
     </filter>
+    <filter>
+        <filter-name>AdminFilter</filter-name>
+        <filter-class>by.epam.filmstore.controller.filter.AdminFilter</filter-class>
+    </filter>
+
     <filter-mapping>
         <filter-name>CharsetFilter</filter-name>
         <url-pattern>/FilmStore/UserServlet</url-pattern>
     </filter-mapping>
-
+    <filter-mapping>
+        <filter-name>AdminFilter</filter-name>
+        <url-pattern>/FilmStore/UserServlet</url-pattern>
+    </filter-mapping>
 
 </web-app>
