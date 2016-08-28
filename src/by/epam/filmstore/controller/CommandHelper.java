@@ -38,6 +38,13 @@ public class CommandHelper {
         commands.put(CommandName.ADMIN_GET_FILMS, new AdminGetFilmsCommand());
         commands.put(CommandName.ADMIN_GET_GENRES, new AdminGetGenresCommand());
         commands.put(CommandName.ADMIN_GET_USERS, new AdminGetUsersCommand());
+        commands.put(CommandName.ADMIN_DELETE_COMMENT, new AdminDeleteCommentCommand());
+        commands.put(CommandName.ADMIN_DELETE_COUNTRY, new AdminDeleteCountryCommand());
+        commands.put(CommandName.ADMIN_DELETE_DISCOUNT, new AdminDeleteDiscountCommand());
+        commands.put(CommandName.ADMIN_DELETE_FILM_MAKER, new AdminDeleteFilmMakerCommand());
+        commands.put(CommandName.ADMIN_DELETE_FILM, new AdminDeleteFilmCommand());
+        commands.put(CommandName.ADMIN_DELETE_GENRE, new AdminDeleteGenreCommand());
+        commands.put(CommandName.ADMIN_DELETE_USER, new AdminDeleteUserCommand());
 
 
     }
@@ -47,6 +54,11 @@ public class CommandHelper {
         CommandName commandName = CommandName.valueOf(name.toUpperCase());
 
         return commands.get(commandName);
+    }
+
+    public CommandName getCommandName(String name) {
+        name = name.replace('-', '_');
+        return CommandName.valueOf(name.toUpperCase());
     }
 
     public static CommandHelper getInstance() {
