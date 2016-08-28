@@ -15,6 +15,19 @@ import java.util.List;
  */
 public class CountryServiceImpl implements ICountryService {
     @Override
+    public boolean delete(int id) throws ServiceException {
+        ICountryDAO dao = DAOFactory.getMySqlDAOFactory().getICountryDAO();
+        if(id <= 0){
+            throw new ServiceException("Country id must be positive number!");
+        }
+        try {
+            return DAOHelper.execute(() -> dao.delete(id));
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
     public List<Country> getAll() throws ServiceException {
         ICountryDAO dao = DAOFactory.getMySqlDAOFactory().getICountryDAO();
         try {

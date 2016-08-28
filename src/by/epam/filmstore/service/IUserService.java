@@ -16,6 +16,8 @@ public interface IUserService {
 
     User get(int id) throws ServiceException;
 
+    boolean delete(int id) throws ServiceException;
+
     List<User> getAll(int limit) throws ServiceException;
 
 }

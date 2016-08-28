@@ -16,6 +16,19 @@ import java.util.List;
 public class CommentServiceImpl implements ICommentService {
 
     @Override
+    public boolean delete(int userId, int filmId) throws ServiceException {
+        ICommentDAO dao = DAOFactory.getMySqlDAOFactory().getICommentDAO();
+        if(userId <= 0 || filmId <= 0){
+            throw new ServiceException("Id must be positive number!");
+        }
+        try {
+            return DAOHelper.execute(() -> dao.delete(userId, filmId));
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
     public List<Comment> getAllOfUser(int userId) throws ServiceException {
         ICommentDAO dao = DAOFactory.getMySqlDAOFactory().getICommentDAO();
         try {

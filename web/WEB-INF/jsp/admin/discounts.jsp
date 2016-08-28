@@ -35,7 +35,7 @@
                             <td>${discountItem.sumFrom}</td>
                             <td>${discountItem.value}</td>
                             <td><button type="submit" class="btn btn-primary">Edit</button></td>
-                            <td><button type="submit" class="btn btn-primary">Delete</button></td>
+                            <td><a href="FilmStore/UserServlet?command=admin-delete-discount&id=${discountItem.id}" class="btn btn-danger">Delete</a></td>
                         </tr>
                     </c:forEach>
                     </tbody>

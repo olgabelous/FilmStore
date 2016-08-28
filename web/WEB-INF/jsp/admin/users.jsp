@@ -33,7 +33,7 @@
                     </thead>
                     <tbody>
                     <c:forEach var="userItem" items="${requestScope.userList}">
-                        <tr>
+                        <td>
                             <td>${userItem.id}</td>
                             <td>${userItem.name}</td>
                             <td>${userItem.email}</td>
@@ -41,7 +41,7 @@
                             <td>${userItem.dateRegistration}</td>
                             <td>${userItem.role.name()}</td>
                             <td><button type="submit" class="btn btn-primary">Edit</button></td>
-                            <td><button type="submit" class="btn btn-primary">Delete</button></td>
+                            <td><a href="/FilmStore/UserServlet?command=admin-delete-user&id=${userItem.id}" class="btn btn-danger">Delete</a></td>
                         </tr>
                     </c:forEach>
                     </tbody>

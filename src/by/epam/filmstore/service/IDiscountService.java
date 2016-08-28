@@ -10,6 +10,8 @@ import java.util.List;
  */
 public interface IDiscountService {
 
+    boolean delete(int id) throws ServiceException;
+
     List<Discount> getAll() throws ServiceException;
 
     double getDiscount(int userId) throws ServiceException;

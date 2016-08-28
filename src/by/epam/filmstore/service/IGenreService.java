@@ -10,5 +10,7 @@ import java.util.List;
  */
 public interface IGenreService {
 
+    boolean delete(int id) throws ServiceException;
+
     List<Genre> getAll() throws ServiceException;
 }

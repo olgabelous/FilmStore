@@ -41,7 +41,7 @@
                             <td>${filmItem.ageRestriction}</td>
                             <td>${filmItem.price}</td>
                             <td><button type="submit" class="btn btn-primary">Edit</button></td>
-                            <td><button type="submit" class="btn btn-primary">Delete</button></td>
+                            <td><a href="FilmStore/UserServlet?command=admin-delete-film&id=${filmItem.id}" class="btn btn-danger">Delete</a></td>
                         </tr>
                     </c:forEach>
                     </tbody>

@@ -33,7 +33,7 @@
                             <td>${countryItem.id}</td>
                             <td>${countryItem.countryName}</td>
                             <td><button type="submit" class="btn btn-primary">Edit</button></td>
-                            <td><button type="submit" class="btn btn-primary">Delete</button></td>
+                            <td><a href="FilmStore/UserServlet?command=admin-delete-country&id=${countryItem.id}" class="btn btn-danger">Delete</a></td>
                         </tr>
                     </c:forEach>
                     </tbody>

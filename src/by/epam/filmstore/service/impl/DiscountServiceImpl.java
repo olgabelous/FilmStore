@@ -18,6 +18,19 @@ import java.util.ListIterator;
 public class DiscountServiceImpl implements IDiscountService {
 
     @Override
+    public boolean delete(int id) throws ServiceException {
+        IDiscountDAO dao = DAOFactory.getMySqlDAOFactory().getIDiscountDAO();
+        if(id <= 0){
+            throw new ServiceException("Discount id must be positive number!");
+        }
+        try {
+            return DAOHelper.execute(() -> dao.delete(id));
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
     public List<Discount> getAll() throws ServiceException {
         IDiscountDAO dao = DAOFactory.getMySqlDAOFactory().getIDiscountDAO();
         try {
@@ -37,13 +50,14 @@ public class DiscountServiceImpl implements IDiscountService {
                 double sum = orderDAO.getTotalAmount(userId);
                 List<Discount> discountList = discountDAO.getDiscountsList();
                 ListIterator<Discount> iter = discountList.listIterator(discountList.size());
+                double discounValue = 0.0;
                 while (iter.hasPrevious()) {
                     Discount discount = iter.previous();
                     if (sum > discount.getSumFrom()) {
-                        discount.getValue();
+                        discounValue = discount.getValue();
                     }
                 }
-                return 0.0;
+                return discounValue;
             });
         } catch (DAOException e) {
             throw new ServiceException(e);

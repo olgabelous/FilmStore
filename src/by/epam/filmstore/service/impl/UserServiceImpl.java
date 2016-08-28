@@ -80,6 +80,19 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public boolean delete(int id) throws ServiceException {
+        IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
+        if(id <= 0){
+            throw new ServiceException("User id must be positive number!");
+        }
+        try {
+            return DAOHelper.execute(() -> dao.delete(id));
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
     public List<User> getAll(int limit) throws ServiceException {
         IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
 

@@ -10,6 +10,8 @@ import java.util.List;
  */
 public interface ICommentService {
 
+    boolean delete(int userId, int filmId) throws ServiceException;
+
     List<Comment> getAllOfUser(int userId) throws ServiceException;
 
     List<Comment> getByStatus(String status) throws ServiceException;

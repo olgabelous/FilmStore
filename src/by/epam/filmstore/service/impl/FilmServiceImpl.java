@@ -61,6 +61,19 @@ public class FilmServiceImpl implements IFilmService{
     }
 
     @Override
+    public boolean delete(int id) throws ServiceException {
+        IFilmDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
+        if(id <= 0){
+            throw new ServiceException("Film id must be positive number!");
+        }
+        try {
+            return DAOHelper.execute(() -> dao.delete(id));
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
     public List<Film> getByGenre(String genre) throws ServiceException {
         IFilmDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
         try {

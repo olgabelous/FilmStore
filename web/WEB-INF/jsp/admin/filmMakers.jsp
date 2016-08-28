@@ -35,7 +35,7 @@
                             <td>${filmMakerItem.name}</td>
                             <td>${filmMakerItem.profession.name()}</td>
                             <td><button type="submit" class="btn btn-primary">Edit</button></td>
-                            <td><button type="submit" class="btn btn-primary">Delete</button></td>
+                            <td><a href="FilmStore/UserServlet?command=admin-delete-film-maker&id=${filmMakerItem.id}" class="btn btn-danger">Delete</a></td>
                         </tr>
                     </c:forEach>
                     </tbody>

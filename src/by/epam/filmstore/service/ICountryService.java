@@ -10,5 +10,7 @@ import java.util.List;
  */
 public interface ICountryService {
 
+    boolean delete(int id) throws ServiceException;
+
     List<Country> getAll() throws ServiceException;
 }
