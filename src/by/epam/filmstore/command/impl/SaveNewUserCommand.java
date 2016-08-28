@@ -15,14 +15,20 @@ import java.io.IOException;
  * Created by Olga Shahray on 23.07.2016.
  */
 public class SaveNewUserCommand implements Command {
+    private static final String NAME = "name";
+    private static final String EMAIL = "email";
+    private static final String PASSWORD = "password";
+    private static final String PHONE = "phone";
+    private static final String USER = "user";
+    private static final String INDEX_PAGE = "/index.jsp";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) {
 
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String pass = request.getParameter("password");
-        String phone = request.getParameter("phone");
+        String name = request.getParameter(NAME);
+        String email = request.getParameter(EMAIL);
+        String pass = request.getParameter(PASSWORD);
+        String phone = request.getParameter(PHONE);
 
         ServiceFactory factory = ServiceFactory.getInstance();
         IUserService service = factory.getUserService();
@@ -31,8 +37,8 @@ public class SaveNewUserCommand implements Command {
 
         try{
             User user = service.saveUser(name, email, pass, phone);
-            session.setAttribute("user", user);
-            response.sendRedirect("/index.jsp");
+            session.setAttribute(USER, user);
+            response.sendRedirect(INDEX_PAGE);
 
         }catch(ServiceException | IOException e){
             // logging
