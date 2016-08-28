@@ -9,7 +9,6 @@ import by.epam.filmstore.service.exception.ServiceException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,21 +26,13 @@ public class AdminGetFilmsCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         IFilmService filmService = ServiceFactory.getInstance().getFilmService();
-        HttpSession session = request.getSession(false);
 
         try {
-            if (session != null){
+            List<Film> filmList = filmService.getAll(ORDER, LIMIT);
 
-                List<Film> filmList = filmService.getAll(ORDER, LIMIT);
+            request.setAttribute(FILM_LIST, filmList);
 
-                request.setAttribute(FILM_LIST, filmList);
-
-                request.getRequestDispatcher(FILMS_PAGE).forward(request, response);
-            }
-            else {
-                request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
-            }
-
+            request.getRequestDispatcher(FILMS_PAGE).forward(request, response);
 
         } catch (ServiceException e) {
             request.getRequestDispatcher(ERROR_PAGE).forward(request, response);

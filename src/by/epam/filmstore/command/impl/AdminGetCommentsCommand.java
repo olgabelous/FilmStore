@@ -9,7 +9,6 @@ import by.epam.filmstore.service.exception.ServiceException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,21 +26,13 @@ public class AdminGetCommentsCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         ICommentService commentService = ServiceFactory.getInstance().getCommentService();
-        HttpSession session = request.getSession(false);
 
         try {
-            if (session != null){
+            List<Comment> commentList = commentService.getByStatus(STATUS);
 
-                List<Comment> commentList = commentService.getByStatus(STATUS);
+            request.setAttribute(COMMENT_LIST, commentList);
 
-                request.setAttribute(COMMENT_LIST, commentList);
-
-                request.getRequestDispatcher(COMMENTS_PAGE).forward(request, response);
-            }
-            else {
-                request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
-            }
-
+            request.getRequestDispatcher(COMMENTS_PAGE).forward(request, response);
 
         } catch (ServiceException e) {
             request.getRequestDispatcher(ERROR_PAGE).forward(request, response);

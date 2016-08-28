@@ -9,7 +9,6 @@ import by.epam.filmstore.service.exception.ServiceException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,21 +25,13 @@ public class AdminGetCountriesCommand implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         ICountryService countryService = ServiceFactory.getInstance().getCountryService();
-        HttpSession session = request.getSession(false);
 
         try {
-            if (session != null){
+            List<Country> countryList = countryService.getAll();
 
-                List<Country> countryList = countryService.getAll();
+            request.setAttribute(COUNTRY_LIST, countryList);
 
-                request.setAttribute(COUNTRY_LIST, countryList);
-
-                request.getRequestDispatcher(COUNTRIES_PAGE).forward(request, response);
-            }
-            else {
-                request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
-            }
-
+            request.getRequestDispatcher(COUNTRIES_PAGE).forward(request, response);
 
         } catch (ServiceException e) {
             request.getRequestDispatcher(ERROR_PAGE).forward(request, response);

@@ -9,7 +9,6 @@ import by.epam.filmstore.service.exception.ServiceException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -24,21 +23,13 @@ public class AdminGetDiscountsCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         IDiscountService discountService = ServiceFactory.getInstance().getDiscountService();
-        HttpSession session = request.getSession(false);
 
         try {
-            if (session != null){
+            List<Discount> discountList = discountService.getAll();
 
-                List<Discount> discountList = discountService.getAll();
+            request.setAttribute(DISCOUNT_LIST, discountList);
 
-                request.setAttribute(DISCOUNT_LIST, discountList);
-
-                request.getRequestDispatcher(DISCOUNTS_PAGE).forward(request, response);
-            }
-            else {
-                request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
-            }
-
+            request.getRequestDispatcher(DISCOUNTS_PAGE).forward(request, response);
 
         } catch (ServiceException e) {
             request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
