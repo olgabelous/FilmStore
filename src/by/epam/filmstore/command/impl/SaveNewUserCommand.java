@@ -30,8 +30,7 @@ public class SaveNewUserCommand implements Command {
         String pass = request.getParameter(PASSWORD);
         String phone = request.getParameter(PHONE);
 
-        ServiceFactory factory = ServiceFactory.getInstance();
-        IUserService service = factory.getUserService();
+        IUserService service = ServiceFactory.getInstance().getUserService();
 
         HttpSession session = request.getSession(true);
 

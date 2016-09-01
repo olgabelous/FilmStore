@@ -8,10 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Created by Olga Shahray on 23.07.2016.
+ * Created by Olga Shahray on 29.08.2016.
  */
-public class SaveNewFilmCommand implements Command {
-
+public class AdminUpdateCommentCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 

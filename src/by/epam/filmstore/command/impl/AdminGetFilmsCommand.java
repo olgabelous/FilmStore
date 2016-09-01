@@ -19,7 +19,7 @@ public class AdminGetFilmsCommand implements Command {
 
     private static final String FILM_LIST = "filmList";
     private static final String FILMS_PAGE = "/WEB-INF/jsp/admin/films.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
     private static final int LIMIT = 1000;
     private static final String ORDER = "release_year";
 

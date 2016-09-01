@@ -16,10 +16,11 @@ import java.io.IOException;
 public class AdminDeleteCommentCommand  implements Command {
     private static final String USER_ID = "userId";
     private static final String FILM_ID = "filmId";
-    private static final String COMMENTS_PAGE = "/WEB-INF/jsp/admin/comments.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String COMMENTS_PAGE = "/FilmStore/UserServlet?command=admin-get-comments";
+    private static final String ERROR_PAGE = "/error.jsp";
     private static final int STATUS_OK = 200;
     private static final String ERROR_MESSAGE = "errorMassage";
+    private static final String EXCEPTION = "exception";
     private static final String ERROR_MESSAGE_TEXT = "Not found";
 
 
@@ -35,14 +36,15 @@ public class AdminDeleteCommentCommand  implements Command {
 
             if(isDeleted) {
                 response.setStatus(STATUS_OK);
+                response.sendRedirect(COMMENTS_PAGE);
             }
             else{
                 request.setAttribute(ERROR_MESSAGE, ERROR_MESSAGE_TEXT);
+                request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
             }
 
-            request.getRequestDispatcher(COMMENTS_PAGE).forward(request, response);
-
         } catch (ServiceException e) {
+            request.setAttribute(EXCEPTION, e);
             request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
         }
     }

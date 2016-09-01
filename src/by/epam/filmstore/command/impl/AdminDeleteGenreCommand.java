@@ -15,8 +15,8 @@ import java.io.IOException;
  */
 public class AdminDeleteGenreCommand  implements Command {
     private static final String ID = "id";
-    private static final String FILM_MAKERS_PAGE = "/WEB-INF/jsp/admin/filmMakers.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String GENRES_PAGE = "/FilmStore/UserServlet?command=admin-get-genres";
+    private static final String ERROR_PAGE = "/error.jsp";
     private static final int STATUS_OK = 200;
     private static final String ERROR_MESSAGE = "errorMassage";
     private static final String ERROR_MESSAGE_TEXT = "Not found";
@@ -33,12 +33,12 @@ public class AdminDeleteGenreCommand  implements Command {
 
             if(isDeleted) {
                 response.setStatus(STATUS_OK);
+                response.sendRedirect(GENRES_PAGE);
             }
             else{
                 request.setAttribute(ERROR_MESSAGE, ERROR_MESSAGE_TEXT);
+                request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
             }
-
-            request.getRequestDispatcher(FILM_MAKERS_PAGE).forward(request, response);
 
         } catch (ServiceException | NumberFormatException e ) {
             request.getRequestDispatcher(ERROR_PAGE).forward(request, response);

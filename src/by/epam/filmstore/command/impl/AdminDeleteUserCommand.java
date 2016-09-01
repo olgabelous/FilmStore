@@ -15,10 +15,11 @@ import java.io.IOException;
  */
 public class AdminDeleteUserCommand implements Command {
     private static final String ID = "id";
-    private static final String USERS_PAGE = "/WEB-INF/jsp/admin/users.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String USERS_PAGE = "/FilmStore/UserServlet?command=admin-get-users";
+    private static final String ERROR_PAGE = "/error.jsp";
     private static final int STATUS_OK = 200;
-    private static final String ERROR_MESSAGE = "errorMassage";
+    private static final String ERROR_MESSAGE = "errorMessage";
+    private static final String EXCEPTION = "exception";
     private static final String ERROR_MESSAGE_TEXT = "Not found";
 
 
@@ -33,14 +34,15 @@ public class AdminDeleteUserCommand implements Command {
 
             if(isDeleted) {
                 response.setStatus(STATUS_OK);
+                response.sendRedirect(USERS_PAGE);
             }
             else{
                 request.setAttribute(ERROR_MESSAGE, ERROR_MESSAGE_TEXT);
+                request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
             }
 
-            request.getRequestDispatcher(USERS_PAGE).forward(request, response);
-
         } catch (ServiceException | NumberFormatException e ) {
+            request.setAttribute(EXCEPTION, e);
             request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
         }
     }

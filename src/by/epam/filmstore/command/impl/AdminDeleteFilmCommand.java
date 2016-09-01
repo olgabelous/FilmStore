@@ -15,8 +15,8 @@ import java.io.IOException;
  */
 public class AdminDeleteFilmCommand  implements Command {
     private static final String ID = "id";
-    private static final String FILMS_PAGE = "/WEB-INF/jsp/admin/films.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String FILMS_PAGE = "/FilmStore/UserServlet?command=admin-get-films";
+    private static final String ERROR_PAGE = "/error.jsp";
     private static final int STATUS_OK = 200;
     private static final String ERROR_MESSAGE = "errorMassage";
     private static final String ERROR_MESSAGE_TEXT = "Not found";
@@ -33,12 +33,12 @@ public class AdminDeleteFilmCommand  implements Command {
 
             if(isDeleted) {
                 response.setStatus(STATUS_OK);
+                response.sendRedirect(FILMS_PAGE);
             }
             else{
                 request.setAttribute(ERROR_MESSAGE, ERROR_MESSAGE_TEXT);
+                request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
             }
-
-            request.getRequestDispatcher(FILMS_PAGE).forward(request, response);
 
         } catch (ServiceException | NumberFormatException e ) {
             request.getRequestDispatcher(ERROR_PAGE).forward(request, response);

@@ -19,7 +19,7 @@ public class AdminGetUsersCommand implements Command {
 
     private static final String USER_LIST = "userList";
     private static final String USER_PAGE = "/WEB-INF/jsp/admin/users.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
     private static final int LIMIT = 1000;
 
     @Override
