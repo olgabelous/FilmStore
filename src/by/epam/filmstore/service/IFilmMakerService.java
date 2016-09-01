@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface IFilmMakerService {
 
-    void save(FilmMaker filmMaker) throws ServiceException;
+    void save(String... params) throws ServiceException;
 
     // false if not found
     boolean delete(int id) throws ServiceException;
@@ -19,4 +19,6 @@ public interface IFilmMakerService {
     FilmMaker get(int id) throws ServiceException;
 
     List<FilmMaker> getAll(String order, int limit) throws ServiceException;
+
+    List<FilmMaker> getAll() throws ServiceException;
 }

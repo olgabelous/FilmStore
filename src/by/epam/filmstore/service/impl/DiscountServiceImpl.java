@@ -7,6 +7,7 @@ import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.domain.Discount;
 import by.epam.filmstore.service.IDiscountService;
 import by.epam.filmstore.service.exception.ServiceException;
+import by.epam.filmstore.service.util.ServiceHelper;
 import by.epam.filmstore.util.DAOHelper;
 
 import java.util.List;
@@ -16,6 +17,23 @@ import java.util.ListIterator;
  * Created by Olga Shahray on 16.08.2016.
  */
 public class DiscountServiceImpl implements IDiscountService {
+
+    @Override
+    public void save(double sumFrom, double value) throws ServiceException {
+        if(ServiceHelper.isNotPositive(value) && sumFrom < 0){
+            throw new ServiceException("Invalid arguments");
+        }
+        IDiscountDAO dao = DAOFactory.getMySqlDAOFactory().getIDiscountDAO();
+        Discount discount = new Discount(sumFrom, value);
+        try {
+            DAOHelper.transactionExecute(() -> {
+                dao.save(discount);
+                return null;
+            });
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
 
     @Override
     public boolean delete(int id) throws ServiceException {

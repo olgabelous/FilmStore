@@ -28,4 +28,32 @@ public class ServiceHelper {
         return !(password == null || password.isEmpty() || password.length() < 5);
 
     }
+
+    public static boolean isNullOrEmpty(String s){
+
+         return (s==null || s.isEmpty());
+    }
+
+    public static boolean isNullOrEmpty(String... ss){
+
+        for (String s: ss) {
+            if(s==null || s.isEmpty()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isNotPositive(int... nn) {
+        for (int n: nn) {
+            if(n <= 0){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isNotPositive(double d) {
+        return d<=0;
+    }
+
 }

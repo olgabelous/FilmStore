@@ -19,7 +19,7 @@ import java.util.List;
 public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
 
     private static final String INSERT_FILM = "INSERT INTO films(title, release_year, country_id, description, " +
-            "duration, age_restriction, price, link)VALUES(?,?,?,?,?,?,?,?,?,?)";
+            "duration, age_restriction, price, link)VALUES(?,?,?,?,?,?,?,?)";
     private static final String INSERT_FILM_GENRE = "INSERT INTO filmgenres (film_id, genre_id) VALUES(?,?)";
     private static final String DELETE_FILM_GENRE = "DELETE FROM filmgenres WHERE film_id=?";
     private static final String INSERT_FILM_MAKER = "INSERT INTO filmmakers (film_id, person_id) VALUES(?,?)";
@@ -94,23 +94,23 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
 
     @Override
     public void saveFilmGenres(int filmId, List<Genre> genres) throws DAOException {
-        PreparedStatement preparedStatement = null;
-        PreparedStatement preparedStatement1 = null;
+        PreparedStatement psInsert = null;
+        PreparedStatement psDelete = null;
 
         try {
             Connection connection = getConnection();
-            preparedStatement = connection.prepareStatement(INSERT_FILM_GENRE);
-            preparedStatement1 = connection.prepareStatement(DELETE_FILM_GENRE);
+            psInsert = connection.prepareStatement(INSERT_FILM_GENRE);
+            psDelete = connection.prepareStatement(DELETE_FILM_GENRE);
 
-            preparedStatement1.setInt(1, filmId);
-            preparedStatement.executeUpdate();
+            psDelete.setInt(1, filmId);
+            psDelete.executeUpdate();
 
             for(Genre genre : genres){
-                preparedStatement.setInt(1, filmId);
-                preparedStatement.setInt(2, genre.getId());
-                preparedStatement.addBatch();
+                psInsert.setInt(1, filmId);
+                psInsert.setInt(2, genre.getId());
+                psInsert.addBatch();
             }
-            int[] rows = preparedStatement.executeBatch();
+            int[] rows = psInsert.executeBatch();
             for (int row : rows) {
                 if(row == 0){
                     throw new DAOException("Error saving film genre");
@@ -121,16 +121,17 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             throw new DAOException("Error saving film genre", e);
         }
         finally {
-            if(preparedStatement != null){
+            if(psInsert != null){
                 try {
-                    preparedStatement.close();
+                    psInsert.close();
                 } catch (SQLException e) {
                     throw new DAOException("Error closing prepared statement in film dao", e);
                 }
             }
-            if(preparedStatement1 != null){
+            if(psDelete
+                    != null){
                 try {
-                    preparedStatement1.close();
+                    psDelete.close();
                 } catch (SQLException e) {
                     throw new DAOException("Error closing prepared statement1 in film dao", e);
                 }
@@ -140,23 +141,23 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
 
     @Override
     public void saveFilmMakers(int filmId, List<FilmMaker> filmMakers) throws DAOException {
-        PreparedStatement preparedStatement = null;
-        PreparedStatement preparedStatement1 = null;
+        PreparedStatement psDelete = null;
+        PreparedStatement psInsert = null;
 
         try {
             Connection connection = getConnection();
-            preparedStatement = connection.prepareStatement(INSERT_FILM_MAKER);
-            preparedStatement1 = connection.prepareStatement(DELETE_FILM_MAKER);
+            psInsert = connection.prepareStatement(INSERT_FILM_MAKER);
+            psDelete = connection.prepareStatement(DELETE_FILM_MAKER);
 
-            preparedStatement1.setInt(1, filmId);
-            preparedStatement.executeUpdate();
+            psDelete.setInt(1, filmId);
+            psDelete.executeUpdate();
 
             for(FilmMaker person: filmMakers){
-                preparedStatement.setInt(1, filmId);
-                preparedStatement.setInt(2, person.getId());
-                preparedStatement.addBatch();
+                psInsert.setInt(1, filmId);
+                psInsert.setInt(2, person.getId());
+                psInsert.addBatch();
             }
-            int[] rows = preparedStatement.executeBatch();
+            int[] rows = psInsert.executeBatch();
 
             for (int row : rows) {
                 if(row == 0){
@@ -168,16 +169,16 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             throw new DAOException("Error saving film makers", e);
         }
         finally {
-            if(preparedStatement != null){
+            if(psInsert != null){
                 try {
-                    preparedStatement.close();
+                    psInsert.close();
                 } catch (SQLException e) {
                     throw new DAOException("Error closing prepared statement in film dao", e);
                 }
             }
-            if(preparedStatement1 != null){
+            if(psDelete != null){
                 try {
-                    preparedStatement1.close();
+                    psDelete.close();
                 } catch (SQLException e) {
                     throw new DAOException("Error closing prepared statement in film dao", e);
                 }

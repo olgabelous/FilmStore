@@ -23,7 +23,7 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
             "WHERE discount_id=?";
     private static final String SELECT_ALL_DISCOUNTS = "SELECT discount_id, discount.sum_from, discount.value " +
             "FROM discount ORDER BY value";
-    private static final String DELETE_DISCOUNT = "DELETE FROM discount WHERE discount.id = ?";
+    private static final String DELETE_DISCOUNT = "DELETE FROM discount WHERE discount_id = ?";
 
 
     @Override
@@ -114,7 +114,7 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
             return row != 0;
 
         } catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Error deleting order", e);
+            throw new DAOException("Error deleting discount", e);
         }
         finally {
             if(preparedStatement != null){

@@ -14,6 +14,21 @@ import java.util.List;
  * Created by Olga Shahray on 17.08.2016.
  */
 public class GenreServiceImpl implements IGenreService {
+
+    @Override
+    public void save(String genreName) throws ServiceException {
+        IGenreDAO dao = DAOFactory.getMySqlDAOFactory().getIGenreDAO();
+        Genre genre = new Genre(genreName);
+        try {
+            DAOHelper.transactionExecute(() -> {
+                dao.save(genre);
+                return null;
+            });
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
     @Override
     public boolean delete(int id) throws ServiceException {
         IGenreDAO dao = DAOFactory.getMySqlDAOFactory().getIGenreDAO();

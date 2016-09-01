@@ -10,6 +10,8 @@ import java.util.List;
  */
 public interface IDiscountService {
 
+    void save(double sumFrom, double value) throws ServiceException;
+
     boolean delete(int id) throws ServiceException;
 
     List<Discount> getAll() throws ServiceException;

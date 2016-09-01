@@ -20,4 +20,6 @@ public interface IFilmMakerDAO {
 
     List<FilmMaker> getAll(String order, int limit) throws DAOException;
 
+    List<FilmMaker> getAll() throws DAOException;
+
 }

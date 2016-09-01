@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface IFilmService {
 
-    void save(Film film) throws ServiceException;
+    Film save(String[] genres, String[] filmMakers, Object... param) throws ServiceException;
 
     Film get(int id) throws ServiceException;
 

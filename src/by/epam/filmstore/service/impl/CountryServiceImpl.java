@@ -14,6 +14,21 @@ import java.util.List;
  * Created by Olga Shahray on 17.08.2016.
  */
 public class CountryServiceImpl implements ICountryService {
+
+    @Override
+    public void save(String countryName) throws ServiceException {
+        ICountryDAO dao = DAOFactory.getMySqlDAOFactory().getICountryDAO();
+        Country country = new Country(countryName);
+        try {
+            DAOHelper.transactionExecute(() -> {
+                dao.save(country);
+                return null;
+            });
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
     @Override
     public boolean delete(int id) throws ServiceException {
         ICountryDAO dao = DAOFactory.getMySqlDAOFactory().getICountryDAO();

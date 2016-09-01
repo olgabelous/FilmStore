@@ -51,7 +51,7 @@ public class UserServiceImpl implements IUserService {
         if(!ServiceHelper.isPasswordValid(pass)){
             throw new ServiceAuthException("Wrong password!");
         }
-        if (name==null || phone==null || name.isEmpty() || phone.isEmpty()){
+        if (ServiceHelper.isNullOrEmpty(name, phone)){
             throw new ServiceAuthException("Fields must not be empty!");
         }
         IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
@@ -67,13 +67,60 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User get(int id) throws ServiceException {
-        IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
 
         if(id <= 0){
             throw new ServiceException("User id must be positive number!");
         }
+        IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
         try {
             return DAOHelper.execute(() -> dao.get(id));
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public void update(int id, String... params) throws ServiceException {
+        // validation
+        if(id <= 0){
+            throw new ServiceException("User id must be positive number!");
+        }
+        if (params.length != 7){
+            throw new ServiceException("incorrect params");
+        }
+        String name = params[0];
+        String email = params[1];
+        String pass = params[2];
+        String phone = params[3];
+        String photo = params[4];
+        String date = params[5];
+        String role = params[6];
+        if(!ServiceHelper.isLoginValid(email)){
+            throw new ServiceAuthException("Wrong email!");
+        }
+        if(!ServiceHelper.isPasswordValid(pass)){
+            throw new ServiceAuthException("Wrong password!");
+        }
+        if (ServiceHelper.isNullOrEmpty(name, phone, date, role) ){
+            throw new ServiceException("incorrect params");
+        }
+        LocalDateTime dateReg = LocalDateTime.parse(date);
+        Role userRole;
+        try{
+            userRole = Role.valueOf(role.toUpperCase());
+        }
+        catch(IllegalArgumentException e){
+            throw new ServiceException("Such role does not exist");
+        }
+        //end validation
+
+        User user = new User(id, name, email, pass, phone, photo, dateReg, userRole);
+        IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
+        try {
+            DAOHelper.transactionExecute(() -> {
+                dao.update(user);
+                return null;
+            });
         } catch (DAOException e) {
             throw new ServiceException(e);
         }

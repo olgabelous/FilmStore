@@ -28,7 +28,6 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
             preparedStatement = connection.prepareStatement(INSERT_COUNTRY, Statement.RETURN_GENERATED_KEYS);
 
             preparedStatement.setString(1, country.getCountryName());
-            preparedStatement.executeUpdate();
             int row = preparedStatement.executeUpdate();
             if (row == 0) {
                 throw new DAOException("Error saving country");
