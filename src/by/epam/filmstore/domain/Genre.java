@@ -15,6 +15,14 @@ public class Genre {
         this.genreName = genreName;
     }
 
+    public Genre(String genreName) {
+        this.genreName = genreName;
+    }
+
+    public Genre(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

@@ -17,6 +17,11 @@ public class Discount {
         this.value = discount;
     }
 
+    public Discount(double sumFrom, double value) {
+        this.sumFrom = sumFrom;
+        this.value = value;
+    }
+
     public int getId() {
         return id;
     }

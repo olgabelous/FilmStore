@@ -18,6 +18,14 @@ public class Country {
         this.countryName = countryName;
     }
 
+    public Country(String countryName) {
+        this.countryName = countryName;
+    }
+
+    public Country(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

@@ -17,6 +17,15 @@ public class FilmMaker {
         this.profession = profession;
     }
 
+    public FilmMaker(String name, Profession profession) {
+        this.name = name;
+        this.profession = profession;
+    }
+
+    public FilmMaker(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

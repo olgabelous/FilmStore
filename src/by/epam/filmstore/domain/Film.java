@@ -57,6 +57,19 @@ public class Film {
         this.title = title;
     }
 
+    public Film(String title, int year, Country country, String description, int duration, int ageRestriction, double price, String link, List<Genre> genreList, List<FilmMaker> filmMakerList) {
+        this.title = title;
+        this.year = year;
+        this.country = country;
+        this.description = description;
+        this.duration = duration;
+        this.ageRestriction = ageRestriction;
+        this.price = price;
+        this.link = link;
+        this.genreList = genreList;
+        this.filmMakerList = filmMakerList;
+    }
+
     public int getId() {
         return id;
     }
@@ -153,11 +166,11 @@ public class Film {
         this.filmMakerList = filmMakerList;
     }
 
-    public void addGenre(Genre genre){
+    public void addGenre(Genre genre) {
         this.genreList.add(genre);
     }
 
-    public void addFilmMaker(FilmMaker fMaker){
+    public void addFilmMaker(FilmMaker fMaker) {
         this.filmMakerList.add(fMaker);
     }
 

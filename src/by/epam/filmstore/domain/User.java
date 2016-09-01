@@ -47,6 +47,17 @@ public class User {
         this.name = name;
     }
 
+    public User(int id, String name, String email, String pass, String phone, String photo, LocalDateTime dateRegistration, Role role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.pass = pass;
+        this.phone = phone;
+        this.photo = photo;
+        this.dateRegistration = dateRegistration;
+        this.role = role;
+    }
+
     public int getId() {
         return id;
     }
