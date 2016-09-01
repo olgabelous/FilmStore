@@ -17,7 +17,7 @@
         <div class="row">
             <jsp:include page="../fragments/adminMenu.jsp"/>
             <div class="col-lg-10 col-md-10">
-                <button type="submit" class="btn btn-primary">Add user</button>
+                <br>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -40,7 +40,10 @@
                             <td>${userItem.phone}</td>
                             <td>${userItem.dateRegistration}</td>
                             <td>${userItem.role.name()}</td>
-                            <td><button type="submit" class="btn btn-primary">Edit</button></td>
+                            <td><a href="#myModal" data-toggle="modal" data-id="${userItem.id}" class="edit-user btn btn-primary"
+                                   data-user-name="${userItem.name}" data-user-email="${userItem.email}" data-user-phone="${userItem.phone}"
+                                   data-user-photo="${userItem.photo}" data-user-date-reg="${userItem.dateRegistration}"
+                                   data-user-pass="${userItem.pass}" data-user-role="${userItem.role}">Edit</a></td>
                             <td><a href="/FilmStore/UserServlet?command=admin-delete-user&id=${userItem.id}" class="btn btn-danger">Delete</a></td>
                         </tr>
                     </c:forEach>
@@ -50,6 +53,66 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit user</h4>
+            </div>
+            <form action="/FilmStore/UserServlet" method="post">
+                <input type="hidden" name="command" value="admin-update-user"/><br/>
+
+                <div class="modal-body">
+                    <jsp:useBean id="user" class="by.epam.filmstore.domain.User" scope="request"/>
+
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" name="name" id="name" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Enter email"
+                               value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">Password:</label>
+                        <input type="password" class="form-control" name="password" id="pwd"
+                               placeholder="Enter password" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone:</label>
+                        <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter phone"
+                               value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Role:</label>
+                        <select class="form-control" name="role" id="role">
+                            <option value="user" selected>USER</option>
+                            <option value="admin">ADMIN</option>
+                        </select>
+                    </div>
+
+                    <input type="hidden" name="id" id="id" value=""/>
+                    <input type="hidden" name="photo" id="photo" value=""/>
+                    <input type="hidden" name="date-reg" id="date-reg" value=""/>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+        <!-- Modal content end-->
+
+    </div>
+</div>
+<!-- Modal End -->
 
 </body>
 </html>

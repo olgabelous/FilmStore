@@ -17,7 +17,20 @@
         <div class="row">
             <jsp:include page="../fragments/adminMenu.jsp"/>
             <div class="col-lg-10 col-md-10">
-                <button type="submit" class="btn btn-primary">Add genre</button>
+                <form class="form-horizontal" id="detailsForm" action="/FilmStore/UserServlet" method="post">
+                    <input type="hidden" name="command" value="admin-add-genre" /> <br />
+
+                    <div class="form-group">
+                        <label for="genre" class="control-label col-xs-3">Add genre: </label>
+
+                        <div class="col-xs-5">
+                            <input class="form-control" id="genre" name="genreName" placeholder="Genre">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+
+                    </div>
+                </form>
+                <hr>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -32,14 +45,46 @@
                         <tr>
                             <td>${genreItem.id}</td>
                             <td>${genreItem.genreName}</td>
-                            <td><button type="submit" class="btn btn-primary">Edit</button></td>
-                            <td><a href="FilmStore/UserServlet?command=admin-delete-genre&id=${genreItem.id}" class="btn btn-danger">Delete</a></td>
+                            <td><button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Edit</button></td>
+                            <td><a href="/FilmStore/UserServlet?command=admin-delete-genre&id=${genreItem.id}" class="btn btn-danger">Delete</a></td>
                         </tr>
                     </c:forEach>
                     </tbody>
                 </table>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit genre</h4>
+            </div>
+            <form action="/FilmStore/UserServlet" method="post">
+                <input type="hidden" name="command" value="admin-update-user" /> <br />
+                <div class="modal-body">
+                    <jsp:useBean id="genre" class="by.epam.filmstore.domain.Genre" scope="page" />
+
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" name="countryName" value="${genre.genreName}">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+            </form>
+
+
+        </div>
+
     </div>
 </div>
 

@@ -17,7 +17,7 @@
         <div class="row">
             <jsp:include page="../fragments/adminMenu.jsp"/>
             <div class="col-lg-10 col-md-10">
-                <button type="submit" class="btn btn-primary">Add fiml maker</button>
+                <a href="#myModal" data-toggle="modal" class="btn btn-primary">Add fiml maker</a>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -44,6 +44,50 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit film maker</h4>
+            </div>
+            <form action="/FilmStore/UserServlet" method="post">
+                <input type="hidden" name="command" value="admin-add-film-maker"/><br/>
+
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" name="name" id="name" value="">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profession">Profession:</label>
+                        <select class="form-control" name="profession" id="profession">
+                            <option value="actor" selected>ACTOR</option>
+                            <option value="director">DIRECTOR</option>
+                        </select>
+                    </div>
+
+                    <%--<input type="hidden" name="id" id="id" value=""/>
+                    <input type="hidden" name="photo" id="photo" value=""/>
+                    <input type="hidden" name="date-reg" id="date-reg" value=""/>--%>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+        <!-- Modal content end-->
+    </div>
+</div>
+<!-- Modal End -->
 
 </body>
 </html>

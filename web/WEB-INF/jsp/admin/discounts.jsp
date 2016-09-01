@@ -17,7 +17,25 @@
         <div class="row">
             <jsp:include page="../fragments/adminMenu.jsp"/>
             <div class="col-lg-10 col-md-10">
-                <button type="submit" class="btn btn-primary">Add</button>
+                <form class="form-horizontal" id="detailsForm" action="/FilmStore/UserServlet" method="post">
+                    <input type="hidden" name="command" value="admin-add-discount" />
+                    <h3>Add discount</h3><br>
+                    <div class="form-group">
+                        <label for="sumFrom" class="control-label col-xs-2">Sum from: </label>
+                        <div class="col-xs-3">
+                            <input type="number" class="form-control" id="sumFrom" name="sumFrom" placeholder="Sum">
+                        </div>
+
+                        <label for="value" class="control-label col-xs-1">Value: </label>
+                        <div class="col-xs-3">
+                            <input type="number" class="form-control" id="value" name="value" placeholder="Value">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save</button>
+
+                    </div>
+                </form>
+                <hr>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -35,7 +53,7 @@
                             <td>${discountItem.sumFrom}</td>
                             <td>${discountItem.value}</td>
                             <td><button type="submit" class="btn btn-primary">Edit</button></td>
-                            <td><a href="FilmStore/UserServlet?command=admin-delete-discount&id=${discountItem.id}" class="btn btn-danger">Delete</a></td>
+                            <td><a href="/FilmStore/UserServlet?command=admin-delete-discount&id=${discountItem.id}" class="btn btn-danger">Delete</a></td>
                         </tr>
                     </c:forEach>
                     </tbody>

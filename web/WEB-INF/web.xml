@@ -44,6 +44,10 @@
         <filter-name>AdminFilter</filter-name>
         <filter-class>by.epam.filmstore.controller.filter.AdminFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>AddFilmFilter</filter-name>
+        <filter-class>by.epam.filmstore.controller.filter.AddFilmFilter</filter-class>
+    </filter>
 
     <filter-mapping>
         <filter-name>CharsetFilter</filter-name>
@@ -53,5 +57,10 @@
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/FilmStore/UserServlet</url-pattern>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>AddFilmFilter</filter-name>
+        <url-pattern>/FilmStore/UserServlet\?command=admin-get-films</url-pattern>
+    </filter-mapping>
+
 
 </web-app>
