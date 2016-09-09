@@ -6,7 +6,7 @@
 <jsp:include page="WEB-INF/jsp/fragments/headTag.jsp"/>
 
 <body>
-    <c:redirect url="FilmStore/UserServlet?command=load-main-page&year=2016"/>
+    <c:redirect url="Controller?command=load-main-page&year=2016"/>
 </body>
 
 </html>

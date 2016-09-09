@@ -12,12 +12,15 @@ import java.io.IOException;
  * Created by Olga Shahray on 14.08.2016.
  */
 public class LogoutCommand implements Command {
+
+    private static final String INDEX_PAGE = "index.jsp";
+
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session != null){
             session.invalidate();
         }
-        response.sendRedirect("/index.jsp");
+        response.sendRedirect(INDEX_PAGE);
     }
 }

@@ -6,6 +6,11 @@
 
     <display-name>Film Store</display-name>
 
+    <context-param>
+        <param-name>fileStorePath</param-name>
+        <param-value>d:/FileStore</param-value>
+    </context-param>
+
     <welcome-file-list>
         <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>
@@ -23,9 +28,18 @@
         <servlet-name>Controller</servlet-name>
         <servlet-class>by.epam.filmstore.controller.Controller</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ImageController</servlet-name>
+        <servlet-class>by.epam.filmstore.controller.ImageController</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>Controller</servlet-name>
-        <url-pattern>/FilmStore/UserServlet</url-pattern>
+        <url-pattern>/Controller</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ImageController</servlet-name>
+        <url-pattern>/ImageController</url-pattern>
     </servlet-mapping>
 
     <listener>
@@ -45,21 +59,29 @@
         <filter-class>by.epam.filmstore.controller.filter.AdminFilter</filter-class>
     </filter>
     <filter>
-        <filter-name>AddFilmFilter</filter-name>
-        <filter-class>by.epam.filmstore.controller.filter.AddFilmFilter</filter-class>
+        <filter-name>ChangeLanguageFilter</filter-name>
+        <filter-class>by.epam.filmstore.controller.filter.ChangeLanguageFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>FileUploadFilter</filter-name>
+        <filter-class>by.epam.filmstore.controller.filter.FileUploadFilter</filter-class>
     </filter>
 
     <filter-mapping>
+        <filter-name>FileUploadFilter</filter-name>
+        <url-pattern>/Controller</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
         <filter-name>CharsetFilter</filter-name>
-        <url-pattern>/FilmStore/UserServlet</url-pattern>
+        <url-pattern>/Controller</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
-        <url-pattern>/FilmStore/UserServlet</url-pattern>
+        <url-pattern>/Controller</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>AddFilmFilter</filter-name>
-        <url-pattern>/FilmStore/UserServlet\?command=admin-get-films</url-pattern>
+        <filter-name>ChangeLanguageFilter</filter-name>
+        <url-pattern>/Controller</url-pattern>
     </filter-mapping>
 
 

@@ -35,18 +35,18 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     private static final String DELETE_FILM = "DELETE FROM films WHERE id=?";
     private static final String SELECT_ALL_FILMS = "SELECT films.id, title, release_year, description, duration, " +
             "age_restriction, price, link, rating, films.country_id, country.country FROM Films INNER JOIN Country " +
-            "ON films.country_id = country.id ORDER BY ? ASC LIMIT ?";
+            "ON films.country_id = country.id ORDER BY ? DESC LIMIT ?";
     private static final String SELECT_FILMS_BY_GENRE = "SELECT DISTINCT films.id, films.title, films.release_year, " +
             "films.description, films.duration, films.age_restriction, films.price, films.link, films.rating " +
             "FROM  FilmGenres, Films WHERE films.id = filmgenres.film_id AND filmgenres.genre_id = " +
             "(SELECT AllGenres.id FROM AllGenres WHERE Allgenres.genre = ?)";
     private static final String SELECT_FILMS_BY_YEAR = "SELECT films.id, title, release_year, description, duration, " +
-            "age_restriction, price, link, rating FROM Films WHERE films.release_year = ? LIMIT ?";
+            "age_restriction, price, link, rating FROM Films WHERE films.release_year = ? LIMIT ?, ?";
     private static final String SELECT_FILMS_BY_RATING = "SELECT films.id, title, release_year, description, duration, " +
             "age_restriction, price, link, rating FROM Films WHERE films.rating >= ?";
     private static final String UPDATE_FILM = "UPDATE films SET title=?, release_year=?, country_id=?, description=?, " +
             "duration=?, age_restriction=?, price=?, link=? WHERE id=?";
-
+    //private static final String COUNT_FILMS = "SELECT COUNT(*) FROM films";
 
 
     @Override
@@ -54,7 +54,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(INSERT_FILM, Statement.RETURN_GENERATED_KEYS);
 
             preparedStatement.setString(1, film.getTitle());
@@ -98,7 +98,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         PreparedStatement psDelete = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             psInsert = connection.prepareStatement(INSERT_FILM_GENRE);
             psDelete = connection.prepareStatement(DELETE_FILM_GENRE);
 
@@ -145,7 +145,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         PreparedStatement psInsert = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             psInsert = connection.prepareStatement(INSERT_FILM_MAKER);
             psDelete = connection.prepareStatement(DELETE_FILM_MAKER);
 
@@ -191,7 +191,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(UPDATE_FILM);
 
             preparedStatement.setString(1, film.getTitle());
@@ -227,7 +227,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(DELETE_FILM);
 
             preparedStatement.setInt(1, id);
@@ -254,7 +254,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(DELETE_FILM_BY_TITLE);
 
             preparedStatement.setString(1, title);
@@ -281,7 +281,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_FILM_BY_ID);
 
             preparedStatement.setInt(1, id);
@@ -324,7 +324,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_FILMS_BY_GENRE);
 
             preparedStatement.setString(1, genre);
@@ -361,16 +361,17 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     }
 
     @Override
-    public List<Film> getByYear(int year, int limit) throws DAOException {
+    public List<Film> getByYear(int year, int offset, int count) throws DAOException {
         List<Film> filmList = new ArrayList<>();
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_FILMS_BY_YEAR);
 
             preparedStatement.setInt(1, year);
-            preparedStatement.setInt(2, limit);
+            preparedStatement.setInt(2, offset);
+            preparedStatement.setInt(3, count);
 
             try(ResultSet rs = preparedStatement.executeQuery()) {
                 Film film = null;
@@ -410,7 +411,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ALL_FILMS);
             preparedStatement.setString(1, order);
             preparedStatement.setInt(2, limit);
@@ -454,7 +455,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_FILM_GENRES);
 
             preparedStatement.setInt(1, filmId);
@@ -488,7 +489,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_FILM_MAKERS);
 
             preparedStatement.setInt(1, filmId);
@@ -516,4 +517,5 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         }
         return personList;
     }
+
 }

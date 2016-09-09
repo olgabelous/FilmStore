@@ -9,26 +9,26 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
+
 
 /**
  * Created by Olga Shahray on 29.08.2016.
  */
 public class AdminAddFilmCommand implements Command {
 
+    private static final String ID = "id";
     private static final String TITLE = "title";
     private static final String YEAR = "year";
     private static final String COUNTRY_ID = "countryId";
     private static final String DURATION = "duration";
     private static final String AGE_RESTRICTION = "ageRestriction";
     private static final String PRICE = "price";
-    private static final String LINK = "link";
+    private static final String POSTER = "poster";
     private static final String GENRES = "genres";
-    private static final String DIRECTOR = "director";
-    private static final String ACTORS = "actors";
+    private static final String FILM_MAKERS = "filmMakers";
     private static final String DESCRIPTION = "description";
 
-    private static final String FILMS_PAGE = "/FilmStore/UserServlet?command=admin-get-films";
+    private static final String FILMS_PAGE = "Controller?command=admin-get-films";
     private static final String ERROR_PAGE = "/error.jsp";
     private static final String ERROR_MESSAGE = "errorMessage";
     private static final String EXCEPTION = "exception";
@@ -36,25 +36,29 @@ public class AdminAddFilmCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         try{
+            int id = Integer.parseInt(request.getParameter(ID));
             String title = request.getParameter(TITLE);
             int year = Integer.parseInt(request.getParameter(YEAR));
             int countryId = Integer.parseInt(request.getParameter(COUNTRY_ID));
             int duration = Integer.parseInt(request.getParameter(DURATION));
             int ageRestriction = Integer.parseInt(request.getParameter(AGE_RESTRICTION));
             String[] genres = request.getParameterValues(GENRES);
-            String director = request.getParameter(DIRECTOR);
-            String[] actors = request.getParameterValues(ACTORS);
+            String[] filmMakers = request.getParameterValues(FILM_MAKERS);
             double price = Double.parseDouble(request.getParameter(PRICE));
-            String link = request.getParameter(LINK);
+            String poster = request.getParameter(POSTER);
             String description = request.getParameter(DESCRIPTION);
-            //String[] filmMakers = new String[actors.length+1];
-            String[] filmMakers = Arrays.copyOf(actors, actors.length+1);
-            filmMakers[filmMakers.length-1] = director;
 
             IFilmService service = ServiceFactory.getInstance().getFilmService();
 
-            service.save(genres, filmMakers, title, year, countryId, duration, ageRestriction, price, link, description);
+            if(id == 0) {
+                service.save(genres, filmMakers, title, year, countryId, duration, ageRestriction, price, poster, description);
+            }
+            else{
+                service.update(id, genres, filmMakers, title, year, countryId, duration, ageRestriction, price, poster, description);
+            }
+
             response.sendRedirect(FILMS_PAGE);
 
         }catch(ServiceException | NumberFormatException e){

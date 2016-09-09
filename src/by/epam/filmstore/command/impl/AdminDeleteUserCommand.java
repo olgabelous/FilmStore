@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class AdminDeleteUserCommand implements Command {
     private static final String ID = "id";
-    private static final String USERS_PAGE = "/FilmStore/UserServlet?command=admin-get-users";
+    private static final String USERS_PAGE = "Controller?command=admin-get-users";
     private static final String ERROR_PAGE = "/error.jsp";
     private static final int STATUS_OK = 200;
     private static final String ERROR_MESSAGE = "errorMessage";

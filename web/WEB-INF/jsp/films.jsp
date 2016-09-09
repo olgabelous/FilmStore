@@ -1,6 +1,8 @@
 <%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="paginator" uri="/WEB-INF/tld/paginator" %>
+
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
 
@@ -29,14 +31,16 @@
 
         <c:forEach var="film" items="${requestScope.filmlist}">
             <div class="col-md-2">
-                <a href="/FilmStore/UserServlet?command=get_film_by_id&id=${film.id}"><img src="../resources/images/Barbershop_small.jpg"  class="img-fluid m-y" alt="Обложка">
+                <a href="Controller?command=get-film-by-id&id=${film.id}"><img src="ImageController?img=${film.link}"  class="img-fluid m-y" alt="Обложка">
                     <p class="m-y-1">${film.title}</p>
                 </a>
             </div>
         </c:forEach>
-
         </div>
     </div>
+    <c:url var="searchUri" value="/Controller?command=get_films_by_year&year=2016&page=##" />
+    <paginator:display maxLinks="10" currPage="${requestScope.currentPage}" totalPages="${requestScope.totalPages}" uri="${searchUri}" />
+
 </div>
 
 </body>

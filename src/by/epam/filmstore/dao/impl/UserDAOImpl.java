@@ -39,7 +39,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS);
 
             preparedStatement.setString(1, user.getName());
@@ -82,7 +82,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL_PASS);
 
             preparedStatement.setString(1, email);
@@ -123,7 +123,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         PreparedStatement preparedStatement1 = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(INSERT_FAVORITE_GENRE);
             preparedStatement1 = connection.prepareStatement(DELETE_FAVORITE_GENRE);
 
@@ -167,7 +167,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(UPDATE_USER);
 
             preparedStatement.setString(1, user.getName());
@@ -202,7 +202,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(DELETE_USER);
 
             preparedStatement.setInt(1, id);
@@ -229,7 +229,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(DELETE_USER_BY_EMAIL);
 
             preparedStatement.setString(1, email);
@@ -256,7 +256,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID);
 
             preparedStatement.setInt(1, id);
@@ -297,7 +297,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL);
 
             preparedStatement.setString(1, email);
@@ -338,7 +338,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);
 
             preparedStatement.setInt(1, limit);
@@ -379,7 +379,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_FAVORITE_GENRES);
 
             preparedStatement.setInt(1, userId);

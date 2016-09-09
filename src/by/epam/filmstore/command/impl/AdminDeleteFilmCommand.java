@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class AdminDeleteFilmCommand  implements Command {
     private static final String ID = "id";
-    private static final String FILMS_PAGE = "/FilmStore/UserServlet?command=admin-get-films";
+    private static final String FILMS_PAGE = "Controller?command=admin-get-films";
     private static final String ERROR_PAGE = "/error.jsp";
     private static final int STATUS_OK = 200;
     private static final String ERROR_MESSAGE = "errorMassage";

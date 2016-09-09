@@ -1,14 +1,17 @@
 package by.epam.filmstore.service.util;
 
+import by.epam.filmstore.domain.Profession;
+import by.epam.filmstore.service.exception.ServiceException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Created by Olga Shahray on 23.07.2016.
  */
-public class ServiceHelper {
+public class ServiceValidation {
 
-    private ServiceHelper() {}
+    private ServiceValidation() {}
 
     public static boolean isLoginValid(String login){
 
@@ -54,6 +57,15 @@ public class ServiceHelper {
     }
     public static boolean isNotPositive(double d) {
         return d<=0;
+    }
+
+    public static Profession getProfession(String prof) throws ServiceException {
+        try{
+            return Profession.valueOf(prof.toUpperCase());
+        }
+        catch(IllegalArgumentException e){
+            throw new ServiceException("Such profession does not exist");
+        }
     }
 
 }

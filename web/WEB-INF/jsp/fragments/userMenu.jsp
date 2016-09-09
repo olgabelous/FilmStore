@@ -12,22 +12,25 @@
 <fmt:message bundle="${loc}" key="locale.user.sign_out" var="sign_out"/>
 
 
-<div class="col-lg-2">
+<div class="col-lg-3">
     <ul class="nav nav-pills  nav-stacked">
         <li class="nav-item">
-            <a href="/FilmStore/UserServlet?command=get-orders-of-user" class="active nav-link">${my_orders}</a>
+            <a href="Controller?command=user-cart" class="active nav-link">Корзина</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/FilmStore/UserServlet?command=get-favorite-genres">${favorite_genres}</a>
+            <a href="Controller?command=user-get-orders" class="active nav-link">${my_orders}</a>
+        </li>
+       <%-- <li class="nav-item">
+            <a class="nav-link" href="Controller?command=user-get-favorite-genres">${favorite_genres}</a>
+        </li>--%>
+        <li class="nav-item">
+            <a class="nav-link" href="Controller?command=user-get-comments">${my_comments}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/FilmStore/UserServlet?command=get-comments-of-user">${my_comments}</a>
+            <a class="nav-link" href="Controller?command=user-get-discount">${my_discout}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/FilmStore/UserServlet?command=get-discount">${my_discout}</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/FilmStore/UserServlet?command=logout">${sign_out}</a>
+            <a class="nav-link" href="Controller?command=logout">${sign_out}</a>
         </li>
     </ul>
 </div>

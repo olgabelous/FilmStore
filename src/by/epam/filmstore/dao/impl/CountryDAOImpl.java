@@ -1,6 +1,7 @@
 package by.epam.filmstore.dao.impl;
 
 import by.epam.filmstore.dao.ICountryDAO;
+import by.epam.filmstore.dao.PartOfTransaction;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Country;
@@ -18,13 +19,14 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
     private static final String SELECT_COUNTRY = "SELECT id, country FROM country WHERE id = ?";
     private static final String DELETE_COUNTRY = "DELETE FROM country WHERE id = ?";
     private static final String SELECT_ALL_COUNTRIES = "SELECT id, country FROM country";
+    private static final String UPDATE_COUNTRY = "UPDATE country SET country = ? WHERE id = ?";
 
     @Override
     public void save(Country country) throws DAOException {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(INSERT_COUNTRY, Statement.RETURN_GENERATED_KEYS);
 
             preparedStatement.setString(1, country.getCountryName());
@@ -55,11 +57,41 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
     }
 
     @Override
+    @PartOfTransaction
+    public void update(Country country) throws DAOException {
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            preparedStatement = connection.prepareStatement(UPDATE_COUNTRY);
+
+            preparedStatement.setString(1, country.getCountryName());
+            preparedStatement.setInt(2, country.getId());
+            int row = preparedStatement.executeUpdate();
+            if (row == 0) {
+                throw new DAOException("Error updating country");
+            }
+
+        } catch (ConnectionPoolException | SQLException e) {
+            throw new DAOException("Error updating country", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in country dao", e);
+                }
+            }
+        }
+    }
+
+    @Override
     public boolean delete(int countryId) throws DAOException {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(DELETE_COUNTRY);
 
             preparedStatement.setInt(1, countryId);
@@ -86,7 +118,7 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_COUNTRY);
 
             preparedStatement.setInt(1, countryId);
@@ -121,7 +153,7 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ALL_COUNTRIES);
 
             try(ResultSet rs = preparedStatement.executeQuery()) {

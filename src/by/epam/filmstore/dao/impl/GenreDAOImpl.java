@@ -21,6 +21,7 @@ public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
     private static final String SELECT_GENRE = "SELECT id, genre FROM allgenres WHERE allgenres.id =?";
     private static final String DELETE_GENRE = "DELETE FROM allgenres WHERE allgenres.id=?";
     private static final String SELECT_ALL_GENRES = "SELECT id, genre FROM allgenres";
+    private static final String UPDATE_GENRE = "UPDATE allgenres SET genre=? WHERE id=?";
 
     @Override
     public void save(Genre genre) throws DAOException {
@@ -28,10 +29,10 @@ public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(INSERT_GENRE, Statement.RETURN_GENERATED_KEYS);
 
-            preparedStatement.setString(1,genre.getGenreName());
+            preparedStatement.setString(1, genre.getGenreName());
             int row = preparedStatement.executeUpdate();
             if(row == 0){
                 throw new DAOException("Error saving genre");
@@ -59,12 +60,41 @@ public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
     }
 
     @Override
+    public void update(Genre genre) throws DAOException {
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            preparedStatement = connection.prepareStatement(UPDATE_GENRE);
+
+            preparedStatement.setString(1,genre.getGenreName());
+            preparedStatement.setInt(2,genre.getId());
+
+            int row = preparedStatement.executeUpdate();
+            if(row == 0){
+                throw new DAOException("Error updating genre");
+            }
+        } catch (ConnectionPoolException | SQLException e) {
+            throw new DAOException("Error updating genre", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in genre dao", e);
+                }
+            }
+        }
+    }
+
+    @Override
     public boolean delete(int id) throws DAOException {
 
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(DELETE_GENRE);
 
             preparedStatement.setInt(1, id);
@@ -91,7 +121,7 @@ public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_GENRE);
 
             preparedStatement.setInt(1, id);
@@ -126,7 +156,7 @@ public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ALL_GENRES);
 
             try(ResultSet rs = preparedStatement.executeQuery()) {

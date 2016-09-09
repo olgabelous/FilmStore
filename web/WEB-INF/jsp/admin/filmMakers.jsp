@@ -9,6 +9,16 @@
 <fmt:setLocale value="${sessionScope.locale}" /><!-- locale = ru -->
 <fmt:setBundle basename="resources.locale" var="loc" /><!-- locale_ru  -->
 
+<fmt:message bundle="${loc}" key="locale.admin.add_art_person" var="addArtPerson"/>
+<fmt:message bundle="${loc}" key="locale.admin.edit_art_person" var="editArtPerson"/>
+<fmt:message bundle="${loc}" key="locale.filmmaker.name" var="name"/>
+<fmt:message bundle="${loc}" key="locale.filmmaker.profession" var="profession"/>
+<fmt:message bundle="${loc}" key="locale.discount.value" var="value"/>
+<fmt:message bundle="${loc}" key="locale.button.save" var="save"/>
+<fmt:message bundle="${loc}" key="locale.button.edit" var="edit"/>
+<fmt:message bundle="${loc}" key="locale.button.delete" var="delete"/>
+<fmt:message bundle="${loc}" key="locale.button.close" var="close"/>
+
 <jsp:include page="../fragments/bodyHeader.jsp"/>
 
 
@@ -17,13 +27,13 @@
         <div class="row">
             <jsp:include page="../fragments/adminMenu.jsp"/>
             <div class="col-lg-10 col-md-10">
-                <a href="#myModal" data-toggle="modal" class="btn btn-primary">Add fiml maker</a>
+                <a href="#myModal" data-toggle="modal" class="btn btn-primary">${addArtPerson}</a>
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Имя</th>
-                        <th>Профессия</th>
+                        <th>${id}</th>
+                        <th>${name}</th>
+                        <th>${profession}</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -34,8 +44,9 @@
                             <td>${filmMakerItem.id}</td>
                             <td>${filmMakerItem.name}</td>
                             <td>${filmMakerItem.profession.name()}</td>
-                            <td><button type="submit" class="btn btn-primary">Edit</button></td>
-                            <td><a href="FilmStore/UserServlet?command=admin-delete-film-maker&id=${filmMakerItem.id}" class="btn btn-danger">Delete</a></td>
+                            <td><a href="#myModal" data-toggle="modal" data-id="${filmMakerItem.id}" class="edit-film-maker btn btn-primary"
+                                   data-film-maker-name="${filmMakerItem.name}" data-film-maker-prof="${filmMakerItem.profession.name()}" >${edit}</a></td>
+                            <td><a href="/Controller?command=admin-delete-film-maker&id=${filmMakerItem.id}" class="btn btn-danger">${delete}</a></td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -53,34 +64,32 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Edit film maker</h4>
+                <h4 class="modal-title">${editArtPerson}</h4>
             </div>
-            <form action="/FilmStore/UserServlet" method="post">
-                <input type="hidden" name="command" value="admin-add-film-maker"/><br/>
+            <form action="/Controller" method="post">
+                <input type="hidden" name="command" value="admin-save-film-maker"/><br/>
 
                 <div class="modal-body">
+                    <input type="hidden" name="id" id="id" value="" /> <br />
 
                     <div class="form-group">
-                        <label for="name">Name:</label>
+                        <label for="name">${name}:</label>
                         <input type="text" class="form-control" name="name" id="name" value="">
                     </div>
 
                     <div class="form-group">
-                        <label for="profession">Profession:</label>
+                        <label for="profession">${profession}:</label>
                         <select class="form-control" name="profession" id="profession">
-                            <option value="actor" selected>ACTOR</option>
-                            <option value="director">DIRECTOR</option>
+                            <option value="ACTOR" selected>ACTOR</option>
+                            <option value="DIRECTOR">DIRECTOR</option>
                         </select>
                     </div>
 
-                    <%--<input type="hidden" name="id" id="id" value=""/>
-                    <input type="hidden" name="photo" id="photo" value=""/>
-                    <input type="hidden" name="date-reg" id="date-reg" value=""/>--%>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Submit</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">${save}</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">${close}</button>
                 </div>
             </form>
         </div>

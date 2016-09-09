@@ -17,28 +17,28 @@
 <div class="col-lg-2 col-md-2">
     <ul class="nav nav-pills  nav-stacked">
         <li class="nav-item">
-            <a href="/FilmStore/UserServlet?command=admin-get-users" class="active nav-link">${users}</a>
+            <a href="Controller?command=admin-get-users" class="active nav-link">${users}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/FilmStore/UserServlet?command=admin-get-films">${films}</a>
+            <a class="nav-link" href="Controller?command=admin-get-films">${films}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/FilmStore/UserServlet?command=admin-get-genres">${genres}</a>
+            <a class="nav-link" href="Controller?command=admin-get-genres">${genres}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/FilmStore/UserServlet?command=admin-get-countries">${countries}</a>
+            <a class="nav-link" href="Controller?command=admin-get-countries">${countries}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/FilmStore/UserServlet?command=admin-get-film-makers">${film_makers}</a>
+            <a class="nav-link" href="Controller?command=admin-get-film-makers">${film_makers}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/FilmStore/UserServlet?command=admin-get-comments">${comments}</a>
+            <a class="nav-link" href="Controller?command=admin-get-comments">${comments}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/FilmStore/UserServlet?command=admin-get-discounts">${discount}</a>
+            <a class="nav-link" href="Controller?command=admin-get-discounts">${discount}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/FilmStore/UserServlet?command=logout">${sign_out}</a>
+            <a class="nav-link" href="Controller?command=logout">${sign_out}</a>
         </li>
     </ul>
 </div>

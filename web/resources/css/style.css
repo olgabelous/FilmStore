@@ -7,3 +7,8 @@
 a:focus, a:hover {
     text-decoration: underline;
 }
+
+.paginatorList { margin: 2px 6px; list-style: none outside none; }
+.paginatorList li { float: left; padding: 2px 4px; font-size: 1.2em; }
+li.paginatorCurr { font-weight: bold; font-size: 1.5em; margin-top: -2px; }
+li.paginatorLast { float: none; }

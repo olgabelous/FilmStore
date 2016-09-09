@@ -9,6 +9,14 @@
 <fmt:setLocale value="${sessionScope.locale}" /><!-- locale = ru -->
 <fmt:setBundle basename="resources.locale" var="loc" /><!-- locale_ru  -->
 
+<fmt:message bundle="${loc}" key="locale.admin.add_country" var="addCountry"/>
+<fmt:message bundle="${loc}" key="locale.common.id" var="id"/>
+<fmt:message bundle="${loc}" key="locale.country.country" var="country"/>
+<fmt:message bundle="${loc}" key="locale.button.save" var="save"/>
+<fmt:message bundle="${loc}" key="locale.button.edit" var="edit"/>
+<fmt:message bundle="${loc}" key="locale.button.delete" var="delete"/>
+<fmt:message bundle="${loc}" key="locale.button.close" var="close"/>
+
 <jsp:include page="../fragments/bodyHeader.jsp"/>
 
 
@@ -18,16 +26,16 @@
             <jsp:include page="../fragments/adminMenu.jsp"/>
             <div class="col-lg-10 col-md-10">
                 <br>
-                <form class="form-horizontal" id="detailsForm" action="/FilmStore/UserServlet" method="post">
-                    <input type="hidden" name="command" value="admin-add-country" /> <br />
+                <form class="form-horizontal" id="detailsForm" action="Controller" method="post">
+                    <input type="hidden" name="command" value="admin-save-country" /> <br />
 
                     <div class="form-group">
-                        <label for="country" class="control-label col-xs-3">Add country: </label>
+                        <label for="country" class="control-label col-xs-3">${addCountry}: </label>
 
                         <div class="col-xs-5">
                             <input class="form-control" id="country" name="countryName" placeholder="Country">
                         </div>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary">${save}</button>
 
                     </div>
                 </form>
@@ -36,8 +44,8 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Название</th>
+                        <th>${id}</th>
+                        <th>${country}</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -47,8 +55,9 @@
                         <tr>
                             <td>${countryItem.id}</td>
                             <td>${countryItem.countryName}</td>
-                            <td><button type="submit" class="btn btn-primary"  data-toggle="modal" data-target="#myModal">Edit</button></td>
-                            <td><a href="/FilmStore/UserServlet?command=admin-delete-country&id=${countryItem.id}" class="btn btn-danger">Delete</a></td>
+                            <td><a href="#myModal" data-toggle="modal" data-id="${countryItem.id}" class="edit-country btn btn-primary"
+                                   data-country-name="${countryItem.countryName}">${edit}</a></td>
+                            <td><a href="Controller?command=admin-delete-country&id=${countryItem.id}" class="btn btn-danger">${delete}</a></td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -68,25 +77,23 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Edit country</h4>
             </div>
-            <form action="/FilmStore/UserServlet" method="post">
-                <input type="hidden" name="command" value="admin-update-user" /> <br />
+            <form action="Controller" method="post">
+                <input type="hidden" name="command" value="admin-save-country" /> <br />
                 <div class="modal-body">
-                    <jsp:useBean id="county" class="by.epam.filmstore.domain.Country" scope="request" />
+                    <input type="hidden" name="id" id="id" value=""/> <br>
 
                     <div class="form-group">
-                        <label for="name">Name:</label>
-                        <input type="text" class="form-control" id="name" name="countryName" placeholder="Enter country name" value="${county.countryName}">
+                        <label for="name">${country}:</label>
+                        <input type="text" class="form-control" id="name" name="countryName" placeholder="Enter country name" value="">
                     </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Submit</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">${save}</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">${close}</button>
+                </div>
                 </div>
             </form>
-
-
         </div>
-
     </div>
 </div>
 

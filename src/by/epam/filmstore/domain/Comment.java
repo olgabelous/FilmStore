@@ -1,6 +1,7 @@
 package by.epam.filmstore.domain;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Created by Olga Shahray on 17.06.2016.
@@ -11,12 +12,12 @@ public class Comment {
     private int mark;
     private String text;
     private LocalDateTime dateComment;
-    private String status;
+    private CommentStatus status;
 
     public Comment() {
     }
 
-    public Comment(User user, Film film, int mark, String text, LocalDateTime dateComment, String status) {
+    public Comment(User user, Film film, int mark, String text, LocalDateTime dateComment, CommentStatus status) {
         this.user = user;
         this.film = film;
         this.mark = mark;
@@ -65,11 +66,11 @@ public class Comment {
         this.dateComment = dateComment;
     }
 
-    public String getStatus() {
+    public CommentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(CommentStatus status) {
         this.status = status;
     }
 
@@ -77,23 +78,18 @@ public class Comment {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o.getClass() != this.getClass()) return false;
-
         Comment comment = (Comment) o;
-
-        if (mark != comment.mark) return false;
-        if (!user.equals(comment.user)) return false;
-        if (!film.equals(comment.film)) return false;
-        if (text != null ? !text.equals(comment.text) : comment.text != null) return false;
-        if (dateComment != null ? !dateComment.equals(comment.dateComment) : comment.dateComment != null) return false;
-        return !(status != null ? !status.equals(comment.status) : comment.status != null);
-
+        return mark == comment.mark &&
+                Objects.equals(user, comment.user) &&
+                Objects.equals(film, comment.film) &&
+                Objects.equals(text, comment.text) &&
+                Objects.equals(dateComment, comment.dateComment) &&
+                status == comment.status;
     }
 
     @Override
     public int hashCode() {
-        int result = user.hashCode();
-        result = 31 * result + film.hashCode();
-        return result;
+        return Objects.hash(user, film, mark, text, dateComment, status);
     }
 
     @Override

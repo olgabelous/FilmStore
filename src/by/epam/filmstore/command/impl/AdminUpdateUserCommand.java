@@ -22,7 +22,7 @@ public class AdminUpdateUserCommand implements Command {
     private static final String PHOTO = "photo";
     private static final String DATE_REG = "date-reg";
     private static final String ROLE = "role";
-    private static final String USERS_PAGE = "/FilmStore/UserServlet?command=admin-get-users";
+    private static final String USERS_PAGE = "Controller?command=admin-get-users";
     private static final String ERROR_PAGE = "/error.jsp";
     private static final String ERROR_MESSAGE = "errorMessage";
 

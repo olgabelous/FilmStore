@@ -17,6 +17,13 @@ public class LoginationCommand implements Command {
 
     private static final String LOGIN = "login";
     private static final String PASSWORD = "password";
+    private static final String USER = "user";
+    private static final String INDEX_PAGE = "index.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
+    private static final String EXCEPTION = "exception";
+    private static final String ERROR_MESSAGE = "errorMessage";
+    private static final String ERROR_MESSAGE_TEXT = "Wrong login or password";
+
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -26,25 +33,21 @@ public class LoginationCommand implements Command {
         IUserService userService = ServiceFactory.getInstance().getUserService();
 
         HttpSession session = request.getSession(true);
-		/*String query = QueryUtil.createHttpQueryString(request);
-        request.getSession(true).setAttribute("prev_query", query);
-		System.out.println(query);*/
 
         try {
             User user = userService.authorize(login, password);
 
-            //request.setAttribute("user", user);
-            session.setAttribute("user", user);
-            response.sendRedirect("/index.jsp");
+            session.setAttribute(USER, user);
+            response.sendRedirect(INDEX_PAGE);
 
         } catch (ServiceAuthException e) {
 
-            request.setAttribute("errorMessage", "Wrong login or password");
-
-            request.getRequestDispatcher("index.jsp").forward(request, response);
+            request.setAttribute(ERROR_MESSAGE, ERROR_MESSAGE_TEXT);
+            request.getRequestDispatcher(INDEX_PAGE).forward(request, response);
 
         } catch (ServiceException e) {
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+            request.setAttribute(EXCEPTION, e);
+            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
         }
 
     }

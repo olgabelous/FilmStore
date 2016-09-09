@@ -18,7 +18,13 @@ import java.util.List;
 public class GetFilmsByYearCommand implements Command {
 
     private static final String YEAR = "year";
-    private static final int LIMIT = 1000;
+    private static final String PAGE = "page";
+    private static final String TOTAL_PAGES = "totalPage";
+    private static final String CURRENT_PAGE = "currentPage";
+    private static final String FILM_LIST = "filmlist";
+    private static final String FILMS_PAGE = "/WEB-INF/jsp/films.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
+    private static final String EXCEPTION = "exception";
 
 
     @Override
@@ -27,16 +33,26 @@ public class GetFilmsByYearCommand implements Command {
 
         IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 
+        int page = 1;
+        int recordsPerPage = 3;
+        if(request.getParameter(PAGE) != null)
+            page = Integer.parseInt(request.getParameter(PAGE));
+
         try {
-            List<Film> filmList = filmService.getByYear(year, LIMIT);
+            List<Film> filmList = filmService.getByYear(year, (page-1)*recordsPerPage, recordsPerPage);
+            int noOfRecords = 10;//dao.getNoOfRecords();
+            int totalPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
 
-            request.setAttribute("filmlist", filmList);
+            request.setAttribute(FILM_LIST, filmList);
+            request.setAttribute(TOTAL_PAGES, totalPages);
+            request.setAttribute(CURRENT_PAGE, page);
 
-            request.getRequestDispatcher("/WEB-INF/jsp/films.jsp").forward(request, response);
+            request.getRequestDispatcher(FILMS_PAGE).forward(request, response);
 
 
         } catch (ServiceException e) {
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+            request.setAttribute(EXCEPTION, e);
+            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
         }
     }
 }

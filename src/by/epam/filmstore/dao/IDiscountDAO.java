@@ -12,7 +12,11 @@ public interface IDiscountDAO {
 
     void save(Discount discount) throws DAOException;
 
+    void update(Discount discount) throws DAOException;
+
     Discount get(int discountId) throws DAOException;
+
+    Discount getUserDiscount(int userId)  throws DAOException;
 
     // false if not found
     boolean delete(int discountId) throws DAOException;

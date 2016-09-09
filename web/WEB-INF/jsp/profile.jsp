@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 
-<jsp:include page="../fragments/headTag.jsp"/>
+<jsp:include page="fragments/headTag.jsp"/>
 
 <body>
 <fmt:setLocale value="${sessionScope.locale}" /><!-- locale = ru -->
@@ -25,8 +25,8 @@
 <fmt:message bundle="${loc}" key="locale.user.my_discout" var="my_discout" />
 <fmt:message bundle="${loc}" key="locale.user.sign_out" var="sign_out" />
 
-<jsp:useBean id="user" class="by.epam.filmstore.domain.User" scope="request"/>
-<jsp:include page="../fragments/bodyHeader.jsp"/>
+<jsp:useBean id="user" class="by.epam.filmstore.domain.User" scope="session"/>
+<jsp:include page="fragments/bodyHeader.jsp"/>
 
 <div class="section m-y-1">
     <div class="container">
@@ -34,12 +34,12 @@
             <div class="col-md-2">
                 <c:choose>
                     <c:when test="${not empty user.photo}">
-                        <img src="${user.photo}"
-                             class="center-block img-circle img-fluid m-y m-y-1">
+                        <img src="ImageController?img=15.jpg"
+                             class="center-block img-circle img-fluid" width="250">
                     </c:when>
                     <c:otherwise>
                         <img src="https://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png"
-                             class="center-block img-circle img-fluid m-y m-y-1">
+                             class="center-block img-circle img-fluid" width="200">
                     </c:otherwise>
                 </c:choose>
 
@@ -51,11 +51,11 @@
 
             </div>
 
-            <div class="col-md-10">
+            <div class="col-md-8 col-lg-offset-2">
                 <h1 class="p-y-2 text-xs-left">${my_page}</h1></div>
 
 
-            <div class="col-md-6">
+            <div class="col-md-5 col-lg-offset-2">
                 <table class="table table-hover">
                     <tbody>
                     <tr>
@@ -73,36 +73,39 @@
                     </tbody>
                 </table>
             </div>
+            <div class="col-md-2 col-md-offset-3"><a href="#" class="btn btn-block btn-primary" draggable="true">${edit}</a></div>
             </div>
-            <div class="col-md-2 col-md-offset-4"><a href="#" class="btn btn-block btn-primary" draggable="true">${edit}</a></div>
+
 
         </div>
     </div>
-<div class="section">
+<br>
+<hr>
+<div class="section ">
     <div class="container">
         <div class="row">
             <c:choose>
                 <c:when test="${user.role.name()=='ADMIN'}">
-                    <jsp:include page="../fragments/adminMenu.jsp"/>
+                    <jsp:include page="fragments/adminMenu.jsp"/>
                 </c:when>
                 <c:otherwise>
-                    <jsp:include page="../fragments/userMenu.jsp"/>
-                </c:otherwise>
-            </c:choose>
+                    <jsp:include page="fragments/userMenu.jsp"/>
+
             <div class="col-lg-4">
                 <div class="col-md-12 text-xs-center">
-                    <i class="fa fa-5x fa-fw fa-star m-y-1 m-y-lg text-primary"></i>
 
-                    <h1>${my_orders}</h1>
+                    <div><i class="fa fa-3x fa-shopping-cart text-center" aria-hidden="true"></i></div>
+
+                    <h1><a href="Controller?command=user-get-orders" class="active nav-link">${my_orders}</a></h1>
 
                     <p>${my_orders_info}</p>
                 </div>
             </div>
             <div class="col-lg-4">
                 <div class="col-md-12 text-xs-center">
-                    <i class="fa fa-5x fa-fw fa-heart m-y-1 m-y-lg text-primary"></i>
+                    <div><i class="fa fa-3x fa-fw fa-heart"></i></div>
 
-                    <h1>${wish_list}</h1>
+                    <h1><a href="Controller?command=user-get-comments" class="active nav-link">${wish_list}</a></h1>
 
                     <p>${wish_list_info}</p>
                 </div>
@@ -118,20 +121,21 @@
 
             </div>
             <div class="col-md-4  text-xs-center">
-                <i class="fa fa-5x fa-fw fa-star m-y-1 m-y-lg text-primary"></i>
+                <div><i class="fa fa-3x fa-percent" aria-hidden="true"></i></div>
 
-                <h1>${favorite_genres}</h1>
+                <h1><a class="nav-link" href="Controller?command=user-get-discount">${my_discout}</a></h1>
 
                 <p>${favorite_genres_info}</p>
             </div>
             <div class="col-md-4  text-xs-center">
-                <i class="fa fa-5x fa-fw fa-star m-y-1 m-y-lg text-primary"></i>
+                <div><i class="fa fa-3x fa-commenting" aria-hidden="true"></i></div>
 
-                <h1>${my_comments}</h1>
+                <h1><a href="Controller?command=user-get-comments" class="active nav-link">${my_comments}</a></h1>
 
                 <p>${my_comments_info}</p>
             </div>
-
+            </c:otherwise>
+            </c:choose>
         </div>
     </div>
 </div>

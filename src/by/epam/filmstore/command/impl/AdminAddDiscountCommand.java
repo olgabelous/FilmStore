@@ -14,9 +14,10 @@ import java.io.IOException;
  * Created by Olga Shahray on 29.08.2016.
  */
 public class AdminAddDiscountCommand implements Command {
+    private static final String ID = "id";
     private static final String SUM_FROM = "sumFrom";
     private static final String VALUE = "value";
-    private static final String DISCOUNTS_PAGE = "/FilmStore/UserServlet?command=admin-get-discounts";
+    private static final String DISCOUNTS_PAGE = "Controller?command=admin-get-discounts";
     private static final String ERROR_PAGE = "/error.jsp";
     private static final String EXCEPTION = "exception";
 
@@ -24,10 +25,17 @@ public class AdminAddDiscountCommand implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         try{
+            String id = request.getParameter(ID);
             double sumFrom = Double.parseDouble(request.getParameter(SUM_FROM));
             double value = Double.parseDouble(request.getParameter(VALUE));
+
             IDiscountService service = ServiceFactory.getInstance().getDiscountService();
-            service.save(sumFrom, value);
+            if(id == null || id.isEmpty()) {
+                service.save(sumFrom, value);
+            }
+            else{
+                service.update(Integer.parseInt(id), sumFrom, value);
+            }
             response.sendRedirect(DISCOUNTS_PAGE);
 
         }catch(ServiceException | NumberFormatException e){

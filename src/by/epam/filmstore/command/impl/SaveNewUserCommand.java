@@ -6,6 +6,7 @@ import by.epam.filmstore.service.IUserService;
 import by.epam.filmstore.service.ServiceFactory;
 import by.epam.filmstore.service.exception.ServiceException;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,9 +22,11 @@ public class SaveNewUserCommand implements Command {
     private static final String PHONE = "phone";
     private static final String USER = "user";
     private static final String INDEX_PAGE = "/index.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
+    private static final String EXCEPTION = "exception";
 
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         String name = request.getParameter(NAME);
         String email = request.getParameter(EMAIL);
@@ -39,13 +42,9 @@ public class SaveNewUserCommand implements Command {
             session.setAttribute(USER, user);
             response.sendRedirect(INDEX_PAGE);
 
-        }catch(ServiceException | IOException e){
-            // logging
-            try {
-                response.sendRedirect("/");
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+        }catch(ServiceException e){
+            request.setAttribute(EXCEPTION, e);
+            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
         }
 
     }

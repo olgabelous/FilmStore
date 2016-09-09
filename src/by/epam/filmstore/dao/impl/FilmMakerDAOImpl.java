@@ -24,13 +24,14 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
     private static final String DELETE_FILM_MAKER = "DELETE FROM allfilmmakers WHERE allfilmmakers.id=?";
     private static final String SELECT_ALL_FILM_MAKERS = "SELECT id, name, profession FROM allfilmmakers ORDER BY ? LIMIT ?";
     private static final String SELECT_ALL_FILM_MAKERS1 = "SELECT id, name, profession FROM allfilmmakers";
+    private static final String UPDATE_FILM_MAKER = "UPDATE allfilmmakers SET name=?, profession=? WHERE id=?";
 
     @Override
     public void save(FilmMaker filmMaker) throws DAOException {
 
         PreparedStatement preparedStatement = null;
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(INSERT_FILM_MAKER, Statement.RETURN_GENERATED_KEYS);
 
             preparedStatement.setString(1,filmMaker.getName());
@@ -63,11 +64,40 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
     }
 
     @Override
+    public void update(FilmMaker filmMaker) throws DAOException {
+        PreparedStatement preparedStatement = null;
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            preparedStatement = connection.prepareStatement(UPDATE_FILM_MAKER);
+
+            preparedStatement.setString(1,filmMaker.getName());
+            preparedStatement.setString(2,filmMaker.getProfession().name());
+            preparedStatement.setInt(3,filmMaker.getId());
+
+            int row = preparedStatement.executeUpdate();
+            if(row == 0){
+                throw new DAOException("Error updating film maker");
+            }
+        } catch (ConnectionPoolException | SQLException e) {
+            throw new DAOException("Error updating film maker", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in film maker", e);
+                }
+            }
+        }
+    }
+
+    @Override
     public boolean delete(int id) throws DAOException {
 
         PreparedStatement preparedStatement = null;
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(DELETE_FILM_MAKER);
 
             preparedStatement.setInt(1, id);
@@ -94,7 +124,7 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_FILM_MAKER);
 
             preparedStatement.setInt(1, id);
@@ -130,7 +160,7 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ALL_FILM_MAKERS);
             preparedStatement.setString(1, order);
             preparedStatement.setInt(2, limit);
@@ -166,7 +196,7 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ALL_FILM_MAKERS1);
 
             try(ResultSet rs = preparedStatement.executeQuery()) {

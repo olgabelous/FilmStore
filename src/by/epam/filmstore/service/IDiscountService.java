@@ -12,6 +12,8 @@ public interface IDiscountService {
 
     void save(double sumFrom, double value) throws ServiceException;
 
+    void update(int id, double sumFrom, double value) throws ServiceException;
+
     boolean delete(int id) throws ServiceException;
 
     List<Discount> getAll() throws ServiceException;

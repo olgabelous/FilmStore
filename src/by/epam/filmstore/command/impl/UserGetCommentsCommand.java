@@ -17,11 +17,11 @@ import java.util.List;
 /**
  * Created by Olga Shahray on 15.08.2016.
  */
-public class GetCommentsOfUserCommand implements Command {
+public class UserGetCommentsCommand implements Command {
     private static final String USER = "user";
     private static final String COMMENT_LIST = "commentList";
-    private static final String COMMENTS_PAGE = "/WEB-INF/jsp/comments.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String COMMENTS_PAGE = "/WEB-INF/jsp/user/comments.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

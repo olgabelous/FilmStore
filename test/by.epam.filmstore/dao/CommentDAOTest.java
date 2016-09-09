@@ -2,6 +2,7 @@ package by.epam.filmstore.dao;
 
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.domain.Comment;
+import by.epam.filmstore.domain.CommentStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,11 +10,8 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import static by.epam.filmstore.TestData.TEST_USER;
-import static by.epam.filmstore.TestData.TEST_FILM1;
-import static by.epam.filmstore.TestData.TEST_FILM2;
-import static by.epam.filmstore.TestData.TEST_COM1;
-import static by.epam.filmstore.TestData.TEST_COM2;
+
+import static by.epam.filmstore.TestData.*;
 /**
  * Created by Olga Shahray on 19.06.2016.
  */
@@ -44,7 +42,7 @@ public class CommentDAOTest {
     }
     @Test
     public void save() throws DAOException{
-        Comment comment = new Comment(TEST_USER, TEST_FILM2, 10, "The best", null, "new");
+        Comment comment = new Comment(TEST_USER, TEST_FILM2, 10, "The best", null, CommentStatus.NEW);
         commentDao.save(TEST_USER.getId(), TEST_FILM1.getId(), comment);
         Comment savedComment = commentDao.get(TEST_USER.getId(), TEST_FILM1.getId());
         comment.setDateComment(savedComment.getDateComment());

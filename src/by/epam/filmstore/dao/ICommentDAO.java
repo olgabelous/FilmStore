@@ -2,6 +2,7 @@ package by.epam.filmstore.dao;
 
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.domain.Comment;
+import by.epam.filmstore.domain.CommentStatus;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface ICommentDAO {
 
     void save(int userId, int filmId, Comment comment) throws DAOException;
 
-    void update(Comment comment) throws DAOException;
+    void update(int filmId, int userId, CommentStatus status) throws DAOException;
 
     // false if not found
     boolean delete(int userId, int filmId) throws DAOException;
@@ -24,5 +25,5 @@ public interface ICommentDAO {
 
     List<Comment> getAllOfFilm(int filmId) throws DAOException;
 
-    List<Comment> getByStatus(String status) throws DAOException;
+    List<Comment> getByStatus(CommentStatus status) throws DAOException;
 }

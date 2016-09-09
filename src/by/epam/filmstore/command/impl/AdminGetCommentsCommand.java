@@ -2,6 +2,7 @@ package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.domain.Comment;
+import by.epam.filmstore.domain.CommentStatus;
 import by.epam.filmstore.service.ICommentService;
 import by.epam.filmstore.service.ServiceFactory;
 import by.epam.filmstore.service.exception.ServiceException;
@@ -18,17 +19,15 @@ import java.util.List;
 public class AdminGetCommentsCommand implements Command {
     private static final String COMMENT_LIST = "commentList";
     private static final String COMMENTS_PAGE = "/WEB-INF/jsp/admin/comments.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
     private static final int LIMIT = 1000;
-    private static final String ORDER = "name";
-    private static final String STATUS = "new";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         ICommentService commentService = ServiceFactory.getInstance().getCommentService();
 
         try {
-            List<Comment> commentList = commentService.getByStatus(STATUS);
+            List<Comment> commentList = commentService.getByStatus(CommentStatus.NEW);
 
             request.setAttribute(COMMENT_LIST, commentList);
 

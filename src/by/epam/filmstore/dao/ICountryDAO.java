@@ -12,6 +12,8 @@ public interface ICountryDAO {
 
     void save(Country country) throws DAOException;
 
+    void update(Country country) throws DAOException;
+
     // false if not found
     boolean delete(int countryId) throws DAOException;
 

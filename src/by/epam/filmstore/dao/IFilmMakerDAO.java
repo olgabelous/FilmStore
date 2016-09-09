@@ -12,6 +12,8 @@ public interface IFilmMakerDAO {
 
     void save(FilmMaker filmMaker) throws DAOException;
 
+    void update(FilmMaker filmMaker) throws DAOException;
+
     // false if not found
     boolean delete(int id) throws DAOException;
 

@@ -6,6 +6,7 @@ import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.domain.Genre;
 import by.epam.filmstore.service.IGenreService;
 import by.epam.filmstore.service.exception.ServiceException;
+import by.epam.filmstore.service.exception.ServiceValidationException;
 import by.epam.filmstore.util.DAOHelper;
 
 import java.util.List;
@@ -30,11 +31,28 @@ public class GenreServiceImpl implements IGenreService {
     }
 
     @Override
-    public boolean delete(int id) throws ServiceException {
-        IGenreDAO dao = DAOFactory.getMySqlDAOFactory().getIGenreDAO();
+    public void update(int id, String genreName) throws ServiceException {
         if(id <= 0){
-            throw new ServiceException("Genre id must be positive number!");
+            throw new ServiceValidationException("Genre id must be positive number!");
         }
+        IGenreDAO dao = DAOFactory.getMySqlDAOFactory().getIGenreDAO();
+        Genre genre = new Genre(id, genreName);
+        try {
+            DAOHelper.transactionExecute(() -> {
+                dao.update(genre);
+                return null;
+            });
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public boolean delete(int id) throws ServiceException {
+        if(id <= 0){
+            throw new ServiceValidationException("Genre id must be positive number!");
+        }
+        IGenreDAO dao = DAOFactory.getMySqlDAOFactory().getIGenreDAO();
         try {
             return DAOHelper.execute(() -> dao.delete(id));
         } catch (DAOException e) {

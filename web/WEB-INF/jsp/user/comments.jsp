@@ -16,21 +16,21 @@
 <fmt:message bundle="${loc}" key="locale.user.edit" var="edit" />
 <fmt:message bundle="${loc}" key="locale.user.my_orders" var="my_orders" />
 
-<jsp:useBean id="user" class="by.epam.filmstore.domain.User" scope="request"/>
+<jsp:useBean id="user" class="by.epam.filmstore.domain.User" scope="session"/>
 <jsp:include page="../fragments/bodyHeader.jsp"/>
 
 <div class="section m-y-1">
     <div class="container">
         <div class="row">
-            <div class="col-md-3 col-md-offset-1 p-y-2">
+            <div class="col-md-2">
                 <c:choose>
                     <c:when test="${not empty user.photo}">
-                        <img src="${user.photo}"
-                             class="img-circle img-fluid">
+                        <img src="ImageController?img=15.jpg"
+                             class="center-block img-circle img-fluid" width="250">
                     </c:when>
                     <c:otherwise>
                         <img src="https://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png"
-                             class="img-circle img-fluid">
+                             class="img-circle img-fluid" width="250">
                     </c:otherwise>
                 </c:choose>
 
@@ -40,7 +40,7 @@
 
             </div>
 
-            <div class="col-md-7 p-y-2">
+            <div class="col-md-8 col-lg-offset-2">
                 <h1 class="">${my_comments}</h1>
             </div>
         </div>

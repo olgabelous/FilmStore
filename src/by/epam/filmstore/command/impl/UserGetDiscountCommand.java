@@ -18,13 +18,13 @@ import java.util.List;
 /**
  * Created by Olga Shahray on 16.08.2016.
  */
-public class GetDiscountCommand implements Command {
+public class UserGetDiscountCommand implements Command {
     private static final String USER = "user";
     private static final String DISCOUNT_LIST = "discountList";
     private static final String DISCOUNT = "discount";
     private static final String TOTAL_AMOUNT = "totalAmount";
-    private static final String DISCOUNT_PAGE = "/WEB-INF/jsp/discount.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String DISCOUNT_PAGE = "/WEB-INF/jsp/user/discount.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

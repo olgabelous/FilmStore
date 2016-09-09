@@ -8,7 +8,8 @@ import by.epam.filmstore.domain.User;
 import by.epam.filmstore.service.IUserService;
 import by.epam.filmstore.service.exception.ServiceAuthException;
 import by.epam.filmstore.service.exception.ServiceException;
-import by.epam.filmstore.service.util.ServiceHelper;
+import by.epam.filmstore.service.exception.ServiceValidationException;
+import by.epam.filmstore.service.util.ServiceValidation;
 import by.epam.filmstore.util.DAOHelper;
 
 import java.time.LocalDateTime;
@@ -21,10 +22,10 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User authorize(String login, String password) throws ServiceException {
-        if(!ServiceHelper.isLoginValid(login)){
+        if(!ServiceValidation.isLoginValid(login)){
             throw new ServiceAuthException("Wrong login!");
         }
-        if(!ServiceHelper.isPasswordValid(password)){
+        if(!ServiceValidation.isPasswordValid(password)){
             throw new ServiceAuthException("Wrong password!");
         }
 
@@ -45,13 +46,13 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User saveUser(String name, String email, String pass, String phone) throws ServiceException {
-        if(!ServiceHelper.isLoginValid(email)){
+        if(!ServiceValidation.isLoginValid(email)){
             throw new ServiceAuthException("Wrong email!");
         }
-        if(!ServiceHelper.isPasswordValid(pass)){
+        if(!ServiceValidation.isPasswordValid(pass)){
             throw new ServiceAuthException("Wrong password!");
         }
-        if (ServiceHelper.isNullOrEmpty(name, phone)){
+        if (ServiceValidation.isNullOrEmpty(name, phone)){
             throw new ServiceAuthException("Fields must not be empty!");
         }
         IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
@@ -69,7 +70,7 @@ public class UserServiceImpl implements IUserService {
     public User get(int id) throws ServiceException {
 
         if(id <= 0){
-            throw new ServiceException("User id must be positive number!");
+            throw new ServiceValidationException("User id must be positive number!");
         }
         IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
         try {
@@ -86,7 +87,7 @@ public class UserServiceImpl implements IUserService {
             throw new ServiceException("User id must be positive number!");
         }
         if (params.length != 7){
-            throw new ServiceException("incorrect params");
+            throw new ServiceValidationException("incorrect params");
         }
         String name = params[0];
         String email = params[1];
@@ -95,14 +96,14 @@ public class UserServiceImpl implements IUserService {
         String photo = params[4];
         String date = params[5];
         String role = params[6];
-        if(!ServiceHelper.isLoginValid(email)){
+        if(!ServiceValidation.isLoginValid(email)){
             throw new ServiceAuthException("Wrong email!");
         }
-        if(!ServiceHelper.isPasswordValid(pass)){
+        if(!ServiceValidation.isPasswordValid(pass)){
             throw new ServiceAuthException("Wrong password!");
         }
-        if (ServiceHelper.isNullOrEmpty(name, phone, date, role) ){
-            throw new ServiceException("incorrect params");
+        if (ServiceValidation.isNullOrEmpty(name, phone, date, role) ){
+            throw new ServiceValidationException("incorrect params");
         }
         LocalDateTime dateReg = LocalDateTime.parse(date);
         Role userRole;
@@ -110,7 +111,7 @@ public class UserServiceImpl implements IUserService {
             userRole = Role.valueOf(role.toUpperCase());
         }
         catch(IllegalArgumentException e){
-            throw new ServiceException("Such role does not exist");
+            throw new ServiceValidationException("Such role does not exist");
         }
         //end validation
 
@@ -130,7 +131,7 @@ public class UserServiceImpl implements IUserService {
     public boolean delete(int id) throws ServiceException {
         IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
         if(id <= 0){
-            throw new ServiceException("User id must be positive number!");
+            throw new ServiceValidationException("User id must be positive number!");
         }
         try {
             return DAOHelper.execute(() -> dao.delete(id));

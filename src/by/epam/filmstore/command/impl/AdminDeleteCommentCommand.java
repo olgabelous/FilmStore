@@ -16,7 +16,7 @@ import java.io.IOException;
 public class AdminDeleteCommentCommand  implements Command {
     private static final String USER_ID = "userId";
     private static final String FILM_ID = "filmId";
-    private static final String COMMENTS_PAGE = "/FilmStore/UserServlet?command=admin-get-comments";
+    private static final String COMMENTS_PAGE = "Controller?command=admin-get-comments";
     private static final String ERROR_PAGE = "/error.jsp";
     private static final int STATUS_OK = 200;
     private static final String ERROR_MESSAGE = "errorMassage";

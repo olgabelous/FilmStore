@@ -18,7 +18,7 @@ import java.sql.Connection;
 public abstract class AbstractDAO {
 
     //получаем Connection либо exception в случае если соединения не существует
-    protected Connection getConnection() throws ConnectionPoolException, DAOException {
+    protected Connection getConnectionFromThreadLocal() throws ConnectionPoolException, DAOException {
         if(DAOHelper.getCurrentConnection() == null){
             throw new DAOException("Connection doesn't exist");
         }

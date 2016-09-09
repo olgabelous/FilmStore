@@ -15,20 +15,27 @@ import java.io.IOException;
  */
 public class AdminAddCountryCommand implements Command {
 
+    private static final String ID = "id";
     private static final String COUNTRY_NAME = "countryName";
-    private static final String COUNTRY_PAGE = "/FilmStore/UserServlet?command=admin-get-countries";
+    private static final String COUNTRY_PAGE = "Controller?command=admin-get-countries";
     private static final String ERROR_PAGE = "/error.jsp";
     private static final String EXCEPTION = "exception";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        String id = request.getParameter(ID);
         String countryName = request.getParameter(COUNTRY_NAME);
 
         ICountryService service = ServiceFactory.getInstance().getCountryService();
 
         try{
-            service.save(countryName);
+            if(id == null || id.isEmpty()) {
+                service.save(countryName);
+            }
+            else{
+                service.update(Integer.parseInt(id), countryName);
+            }
             response.sendRedirect(COUNTRY_PAGE);
 
         }catch(ServiceException e){

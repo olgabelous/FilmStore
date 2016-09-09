@@ -12,6 +12,8 @@ public interface IGenreDAO {
 
     void save(Genre genre) throws DAOException;
 
+    void update(Genre genre) throws DAOException;
+
     // false if not found
     boolean delete(int id) throws DAOException;
 

@@ -52,6 +52,12 @@ public class Film {
         this.link = link;
     }
 
+    public Film(int id, String title, double price) {
+        this.id = id;
+        this.title = title;
+        this.price = price;
+    }
+
     public Film(int id, String title) {
         this.id = id;
         this.title = title;

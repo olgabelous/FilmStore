@@ -19,7 +19,7 @@ public class AdminGetCountriesCommand implements Command {
 
     private static final String COUNTRY_LIST = "countryList";
     private static final String COUNTRIES_PAGE = "/WEB-INF/jsp/admin/countries.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

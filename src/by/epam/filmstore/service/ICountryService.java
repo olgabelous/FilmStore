@@ -12,6 +12,8 @@ public interface ICountryService {
 
     void save(String countryName) throws ServiceException;
 
+    void update(int id, String countryName) throws ServiceException;
+
     boolean delete(int id) throws ServiceException;
 
     List<Country> getAll() throws ServiceException;

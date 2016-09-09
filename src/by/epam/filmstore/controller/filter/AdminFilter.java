@@ -19,7 +19,7 @@ public class AdminFilter implements Filter {
     private List<CommandName> adminCommands;
     private ServletContext context;
     private static final String COMMAND = "command";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -31,6 +31,20 @@ public class AdminFilter implements Filter {
         adminCommands.add(CommandName.ADMIN_GET_DISCOUNTS);
         adminCommands.add(CommandName.ADMIN_GET_FILM_MAKERS);
         adminCommands.add(CommandName.ADMIN_GET_COMMENTS);
+        adminCommands.add(CommandName.ADMIN_SAVE_FILM);
+        adminCommands.add(CommandName.ADMIN_SAVE_GENRE);
+        adminCommands.add(CommandName.ADMIN_SAVE_COUNTRY);
+        adminCommands.add(CommandName.ADMIN_SAVE_DISCOUNT);
+        adminCommands.add(CommandName.ADMIN_SAVE_FILM_MAKER);
+        adminCommands.add(CommandName.ADMIN_UPDATE_USER);
+        adminCommands.add(CommandName.ADMIN_UPDATE_COMMENT);
+        adminCommands.add(CommandName.ADMIN_DELETE_USER);
+        adminCommands.add(CommandName.ADMIN_DELETE_FILM);
+        adminCommands.add(CommandName.ADMIN_DELETE_GENRE);
+        adminCommands.add(CommandName.ADMIN_DELETE_COUNTRY);
+        adminCommands.add(CommandName.ADMIN_DELETE_DISCOUNT);
+        adminCommands.add(CommandName.ADMIN_DELETE_FILM_MAKER);
+        adminCommands.add(CommandName.ADMIN_DELETE_COMMENT);
 
         context = filterConfig.getServletContext();
     }

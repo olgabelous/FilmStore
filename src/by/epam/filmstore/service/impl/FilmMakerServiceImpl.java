@@ -7,7 +7,8 @@ import by.epam.filmstore.domain.FilmMaker;
 import by.epam.filmstore.domain.Profession;
 import by.epam.filmstore.service.IFilmMakerService;
 import by.epam.filmstore.service.exception.ServiceException;
-import by.epam.filmstore.service.util.ServiceHelper;
+import by.epam.filmstore.service.exception.ServiceValidationException;
+import by.epam.filmstore.service.util.ServiceValidation;
 import by.epam.filmstore.util.DAOHelper;
 
 import java.util.List;
@@ -17,24 +18,17 @@ import java.util.List;
  */
 public class FilmMakerServiceImpl implements IFilmMakerService {
 
-
     @Override
     public void save(String... params) throws ServiceException {
         if (params.length != 2){
-            throw new ServiceException("Invalid arguments: FilmMakerServiceImpl");
+            throw new ServiceValidationException("Invalid arguments: FilmMakerServiceImpl");
         }
         String name = params[0];
         String prof = params[1];
-        if(ServiceHelper.isNullOrEmpty(name, prof)){
-            throw new ServiceException("Invalid arguments: FilmMakerServiceImpl. Fields must not be null");
+        if(ServiceValidation.isNullOrEmpty(name, prof)){
+            throw new ServiceValidationException("Invalid arguments: FilmMakerServiceImpl. Fields must not be null");
         }
-        Profession profession;
-        try{
-            profession = Profession.valueOf(prof.toUpperCase());
-        }
-        catch(IllegalArgumentException e){
-            throw new ServiceException("Such profession does not exist");
-        }
+        Profession profession = ServiceValidation.getProfession(prof);
 
         FilmMaker fm = new FilmMaker(name, profession);
         IFilmMakerDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmMakerDAO();
@@ -47,6 +41,30 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
             throw new ServiceException(e);
         }
 
+    }
+
+    @Override
+    public void update(int id, String... params) throws ServiceException {
+        if (id <= 0 || params.length != 2){
+            throw new ServiceValidationException("Invalid arguments: FilmMakerServiceImpl");
+        }
+        String name = params[0];
+        String prof = params[1];
+        if(ServiceValidation.isNullOrEmpty(name, prof)){
+            throw new ServiceException("Invalid arguments: FilmMakerServiceImpl. Fields must not be null");
+        }
+        Profession profession = ServiceValidation.getProfession(prof);
+
+        FilmMaker fm = new FilmMaker(id, name, profession);
+        IFilmMakerDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmMakerDAO();
+        try {
+            DAOHelper.transactionExecute(() -> {
+                dao.update(fm);
+                return null;
+            });
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     @Override

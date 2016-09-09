@@ -2,6 +2,7 @@ package by.epam.filmstore.dao;
 
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.domain.Order;
+import by.epam.filmstore.domain.OrderStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static by.epam.filmstore.TestData.*;
-import static by.epam.filmstore.TestData.TEST_FILM1;
 
 /**
  * Created by Olga Shahray on 19.06.2016.
@@ -62,7 +62,7 @@ public class OrderDAOTest {
 
     @Test
     public void getAllOfUser() throws DAOException{
-        List<Order> allOrders = orderDao.getAllOfUser(TEST_USER.getId());
+        List<Order> allOrders = orderDao.getOrdersOfUser(TEST_USER.getId(), OrderStatus.PAID);
         Assert.assertEquals(allOrders, Arrays.asList(TEST_ORDER1, TEST_ORDER2));
     }
 

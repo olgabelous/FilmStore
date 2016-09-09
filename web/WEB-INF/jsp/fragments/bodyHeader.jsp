@@ -25,7 +25,7 @@
 
 <div class="navbar navbar-full navbar-inverse" role="navigation">
     <div class="container">
-    <a class="navbar-header navbar-brand" href="/index.jsp">FilmStore</a>
+    <a class="navbar-header navbar-brand" href="index.jsp">FilmStore</a>
     <ul class="nav navbar-nav pull-right">
         <li class="nav-item active">
             <c:choose>
@@ -33,8 +33,8 @@
                     <li class="nav-item dropdown-open">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">${sessionScope.user.name}<b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="/FilmStore/UserServlet?command=get-user&id=${sessionScope.user.id}">${profile}</a></li>
-                            <li><a href="/FilmStore/UserServlet?command=logout">${sign_out}</a></li>
+                            <li><a href="Controller?command=get-user&id=${sessionScope.user.id}">${profile}</a></li>
+                            <li><a href="Controller?command=logout">${sign_out}</a></li>
                         </ul>
                     </li>
                     <a class="nav-link" href="#"></a>
@@ -44,15 +44,13 @@
                 </c:otherwise>
             </c:choose>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="FilmStore/UserServlet?command=change_language&language=ru">RU|</a>
-        </li>
-        <li class="nav-item">
+
+        <%--<li class="nav-item">
             <a class="nav-link" href="FilmStore/UserServlet?command=change_language&language=en">EN</a>
-        </li>
+        </li>--%>
 
         <li class="nav-item dropdown-open">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">${pageContext.response.locale}<b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">${pageContext.response.locale.language}<b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a onclick="show('en')">English</a></li>
                             <li><a onclick="show('ru')">Русский</a></li>
@@ -60,7 +58,10 @@
         </li>
         <script type="text/javascript">
             function show(lang){
-                window.location.href = window.location.href.split('?')[0]+"?lang="+lang;
+                var _url = window.location.href;
+                if(_url.indexOf("lang") !== -1) {_url = _url.substring(0, _url.lastIndexOf("lang")-1);}
+                _url += (_url.split('?')[1] ? '&':'?') + "lang="+lang;
+                window.location.href = _url;
             }
         </script>
     </ul>
@@ -80,21 +81,21 @@
 
                     <div style="padding-top:30px" class="panel-body" >
 
-                        <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+                        <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12">
+                            ${requestScope.errorMessage}
+                        </div>
 
-                        <form id="loginform" class="form-horizontal" role="form" action="/FilmStore/UserServlet" method="post">
+                        <form id="loginform" class="form-horizontal" role="form" action="Controller" method="post">
                             <input type="hidden" name="command" value="user-authorization" /> <br />
                             <div style="margin-bottom: 25px" class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                                <input id="login-username" type="text" class="form-control" name="login" value="" placeholder="email">
+                                <input id="login-username" type="text" class="form-control" name="login" value="" placeholder="email" required>
                             </div>
 
                             <div style="margin-bottom: 25px" class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-lock" aria-hidden="true"></i></span>
-                                <input id="login-password" type="password" class="form-control" name="password" placeholder="${password}">
+                                <input id="login-password" type="password" class="form-control" name="password" placeholder="${password}" required>
                             </div>
-
-
 
                             <div class="input-group">
                                 <div class="checkbox">
@@ -111,7 +112,6 @@
                                 <div class="col-sm-12 controls">
                                     <button id="btn-login" type="submit" class="btn btn-success">${enter}</button>
                                     <a id="btn-fblogin" href="#" class="btn btn-primary">Login with Facebook</a>
-
                                 </div>
                             </div>
 
@@ -139,8 +139,8 @@
                     <div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="#" onclick="$('#signupbox').hide(); $('#loginbox').show()">${sign_in}</a></div>
                 </div>
                 <div class="panel-body" >
-                    <form id="signupform" class="form-horizontal" role="form" action="/FilmStore/UserServlet" method="post">
-                        <input type="hidden" name="command" value="save-new-user" /> <br />
+                    <form id="signupform" class="form-horizontal" role="form" action="Controller" method="post">
+                        <input type="hidden" name="command" value="save-new-user" /> <br>
                         <div id="signupalert" style="display:none" class="alert alert-danger">
                             <p>Error:</p>
                             <span></span>
@@ -149,33 +149,33 @@
                         <div class="form-group">
                             <label for="email" class="col-md-3 control-label">Email</label>
                             <div class="col-md-9">
-                                <input type="email" class="form-control" name="email" placeholder="Email Address" required>
+                                <input type="email" class="form-control" name="email" id="email" placeholder="Email Address" required>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="name" class="col-md-3 control-label">${name}</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control" name="name" placeholder="${name}" required>
+                                <input type="text" class="form-control" name="name" id="name" placeholder="${name}" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="phone" class="col-md-3 control-label">${phone}</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control" name="phone" placeholder="${phone}" required>
+                                <input type="text" class="form-control" name="phone" id="phone" placeholder="${phone}" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="password" class="col-md-3 control-label">${pass}</label>
                             <div class="col-md-9">
-                                <input type="password" class="form-control" name="password" placeholder="${pass}" required>
+                                <input type="password" class="form-control" name="password" id="password" placeholder="${pass}" required>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="repeat-pass" class="col-md-3 control-label">${repeat_pass}</label>
                             <div class="col-md-9">
-                                <input type="password" class="form-control" name="repeat-pass" placeholder="${repeat_pass}" required >
+                                <input type="password" class="form-control" name="repeat-pass" id="repeat-pass" placeholder="${repeat_pass}" required >
                             </div>
                         </div>
 

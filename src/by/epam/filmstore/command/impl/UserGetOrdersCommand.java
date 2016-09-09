@@ -17,12 +17,12 @@ import java.util.List;
 /**
  * Created by Olga Shahray on 15.08.2016.
  */
-public class GetOrdersOfUserCommand implements Command {
+public class UserGetOrdersCommand implements Command {
 
     private static final String USER = "user";
     private static final String ORDER_LIST = "orderList";
-    private static final String ORDERS_PAGE = "/WEB-INF/jsp/orders.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String ORDERS_PAGE = "/WEB-INF/jsp/user/orders.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

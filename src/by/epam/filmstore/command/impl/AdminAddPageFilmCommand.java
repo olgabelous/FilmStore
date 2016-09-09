@@ -2,12 +2,10 @@ package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.domain.Country;
+import by.epam.filmstore.domain.Film;
 import by.epam.filmstore.domain.FilmMaker;
 import by.epam.filmstore.domain.Genre;
-import by.epam.filmstore.service.ICountryService;
-import by.epam.filmstore.service.IFilmMakerService;
-import by.epam.filmstore.service.IGenreService;
-import by.epam.filmstore.service.ServiceFactory;
+import by.epam.filmstore.service.*;
 import by.epam.filmstore.service.exception.ServiceException;
 
 import javax.servlet.ServletException;
@@ -20,6 +18,8 @@ import java.util.List;
  * Created by Olga Shahray on 01.09.2016.
  */
 public class AdminAddPageFilmCommand implements Command {
+    private static final String ID = "id";
+    private static final String FILM = "film";
     private static final String GENRES = "genres";
     private static final String FILM_MAKERS = "filmMakers";
     private static final String COUNTRIES = "countries";
@@ -32,12 +32,19 @@ public class AdminAddPageFilmCommand implements Command {
         ICountryService countryService = ServiceFactory.getInstance().getCountryService();
         IGenreService genreService = ServiceFactory.getInstance().getGenreService();
         IFilmMakerService filmMakerService = ServiceFactory.getInstance().getFilmMakerService();
+        IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 
         try {
+            Film film = null;
+            String id = request.getParameter(ID);
+            if(id != null && !id.isEmpty()) {
+                film = filmService.get(Integer.parseInt(id));
+            }
             List<Country> countries = countryService.getAll();
             List<Genre> genres = genreService.getAll();
             List<FilmMaker> filmMakers = filmMakerService.getAll();
 
+            request.setAttribute(FILM, film);
             request.setAttribute(COUNTRIES, countries);
             request.setAttribute(FILM_MAKERS, filmMakers);
             request.setAttribute(GENRES, genres);

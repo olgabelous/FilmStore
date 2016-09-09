@@ -15,10 +15,11 @@ import java.io.IOException;
  */
 public class AdminDeleteCountryCommand  implements Command {
     private static final String ID = "id";
-    private static final String COUNTRY_PAGE = "/FilmStore/UserServlet?command=admin-get-countries";
+    private static final String COUNTRY_PAGE = "Controller?command=admin-get-countries";
     private static final String ERROR_PAGE = "/error.jsp";
     private static final int STATUS_OK = 200;
     private static final String ERROR_MESSAGE = "errorMassage";
+    private static final String EXCEPTION = "exception";
     private static final String ERROR_MESSAGE_TEXT = "Not found";
 
 
@@ -40,9 +41,8 @@ public class AdminDeleteCountryCommand  implements Command {
                 request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
             }
 
-
-
         } catch (ServiceException | NumberFormatException e ) {
+            request.setAttribute(EXCEPTION, e);
             request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
         }
     }

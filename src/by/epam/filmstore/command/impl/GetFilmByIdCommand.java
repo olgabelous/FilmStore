@@ -17,6 +17,10 @@ import java.io.IOException;
 public class GetFilmByIdCommand implements Command {
 
     private static final String ID = "id";
+    private static final String FILM = "film";
+    private static final String FILM_PAGE = "/WEB-INF/jsp/singleFilm.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
+    private static final String EXCEPTION = "exception";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -28,14 +32,14 @@ public class GetFilmByIdCommand implements Command {
 
             Film film = filmService.get(id);
 
-            request.setAttribute("film", film);
+            request.setAttribute(FILM, film);
 
-            request.getRequestDispatcher("/WEB-INF/jsp/singleFilm.jsp").forward(request, response);
+            request.getRequestDispatcher(FILM_PAGE).forward(request, response);
 
 
         } catch (ServiceException | NumberFormatException e) {
-            request.setAttribute("message", e.getMessage());
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            request.setAttribute(EXCEPTION, e);
+            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
         }
     }
 }

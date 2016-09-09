@@ -5,6 +5,7 @@ import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Film;
 import by.epam.filmstore.domain.Order;
+import by.epam.filmstore.domain.OrderStatus;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -23,14 +24,14 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
     private static final String INSERT_ORDER = "INSERT INTO orders (film_id, user_id, date_sale, sum, status) VALUES(?,?,?,?,?)";
     private static final String SELECT_ORDER = "SELECT id, film_id, user_id, date_sale, sum, status FROM orders WHERE orders.id =?";
     private static final String DELETE_ORDER = "DELETE FROM orders WHERE orders.id=?";
-    private static final String SELECT_ALL_ORDERS_OF_USER = "SELECT orders.id, orders.film_id, films.title, orders.date_sale, orders.sum, " +
-            "orders.status FROM orders INNER JOIN Films ON orders.film_id = films.id WHERE orders.user_id=?";
+    private static final String SELECT_ALL_ORDERS_OF_USER = "SELECT orders.id, orders.film_id, films.title, films.price, orders.date_sale, orders.sum, " +
+            "orders.status FROM orders INNER JOIN Films ON orders.film_id = films.id WHERE orders.user_id=? AND orders.status = ?";
     private static final String SELECT_ALL_ORDERS_OF_FILM = "SELECT id, film_id, user_id, date_sale, sum, status " +
             "FROM orders WHERE film_id=?";
     private static final String SELECT_ALL_ORDERS = "SELECT id, film_id, user_id, date_sale, sum, status FROM orders";
     private static final String UPDATE_ORDER_STATUS = "UPDATE orders SET status=? WHERE orders.id=?";
     private static final String SELECT_TOTAL_AMOUNT_OF_USER = "SELECT SUM(Orders.sum) FROM Orders WHERE Orders.user_id = ? " +
-            "AND Orders.status = 'completed'";
+            "AND Orders.status = 'paid'";
 
 
     @Override
@@ -38,14 +39,14 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(INSERT_ORDER, Statement.RETURN_GENERATED_KEYS);
 
             preparedStatement.setInt(1, order.getFilm().getId());
             preparedStatement.setInt(2, order.getUser().getId());
             preparedStatement.setTimestamp(3, Timestamp.valueOf(order.getDateSale()));
             preparedStatement.setDouble(4, order.getSum());
-            preparedStatement.setString(5, order.getStatus());
+            preparedStatement.setString(5, order.getStatus().name());
 
             int row = preparedStatement.executeUpdate();
             if(row == 0){
@@ -74,15 +75,15 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
     }
 
     @Override
-    public void update(Order order) throws DAOException {
+    public void updateStatus(int orderId, OrderStatus status) throws DAOException {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(UPDATE_ORDER_STATUS);
 
-            preparedStatement.setString(1, order.getStatus());
-            preparedStatement.setInt(2, order.getId());
+            preparedStatement.setString(1, status.name());
+            preparedStatement.setInt(2, orderId);
 
             int row = preparedStatement.executeUpdate();
             if (row == 0) {
@@ -108,7 +109,7 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(DELETE_ORDER);
 
             preparedStatement.setInt(1, id);
@@ -135,7 +136,7 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ORDER);
 
             preparedStatement.setInt(1, id);
@@ -146,7 +147,7 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
 
                     order.setDateSale(rs.getTimestamp(4).toLocalDateTime());
                     order.setSum(rs.getDouble(5));
-                    order.setStatus(rs.getString(6));
+                    order.setStatus(OrderStatus.valueOf(rs.getString(6).toUpperCase()));
                 }
                 else{
                     throw new DAOException("Error getting order by id");
@@ -168,25 +169,27 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
     }
 
     @Override
-    public List<Order> getAllOfUser(int userId) throws DAOException {
+    public List<Order> getOrdersOfUser(int userId, OrderStatus status) throws DAOException {
         List<Order> allOrders = new ArrayList<>();
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ALL_ORDERS_OF_USER);
 
             preparedStatement.setInt(1, userId);
+            preparedStatement.setString(2, status.name());
+
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 Order order = null;
 
                 while (rs.next()) {
                     order = new Order();
                     order.setId(rs.getInt(1));
-                    order.setFilm(new Film(rs.getInt(2), rs.getString(3)));
-                    order.setDateSale(rs.getTimestamp(4).toLocalDateTime());
-                    order.setSum(rs.getDouble(5));
-                    order.setStatus(rs.getString(6));
+                    order.setFilm(new Film(rs.getInt(2), rs.getString(3), rs.getDouble(4)));
+                    order.setDateSale(rs.getTimestamp(5).toLocalDateTime());
+                    order.setSum(rs.getDouble(6));
+                    order.setStatus(OrderStatus.valueOf(rs.getString(7).toUpperCase()));
 
                     allOrders.add(order);
                 }
@@ -212,7 +215,7 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ALL_ORDERS_OF_FILM);
 
             preparedStatement.setInt(1, filmId);
@@ -225,7 +228,7 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
 
                     order.setDateSale(rs.getTimestamp(4).toLocalDateTime());
                     order.setSum(rs.getDouble(5));
-                    order.setStatus(rs.getString(6));
+                    order.setStatus(OrderStatus.valueOf(rs.getString(6).toUpperCase()));
 
                     allOrders.add(order);
                 }
@@ -251,7 +254,7 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ALL_ORDERS);
 
             try (ResultSet rs = preparedStatement.executeQuery()) {
@@ -263,7 +266,7 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
 
                     order.setDateSale(rs.getTimestamp(4).toLocalDateTime());
                     order.setSum(rs.getDouble(5));
-                    order.setStatus(rs.getString(6));
+                    order.setStatus(OrderStatus.valueOf(rs.getString(6).toUpperCase()));
 
                     allOrders.add(order);
                 }
@@ -288,7 +291,7 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         PreparedStatement preparedStatement = null;
 
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_TOTAL_AMOUNT_OF_USER);
 
             preparedStatement.setInt(1, userId);

@@ -19,7 +19,7 @@ public class AdminGetGenresCommand implements Command {
 
     private static final String GENRE_LIST = "genreList";
     private static final String GENRES_PAGE = "/WEB-INF/jsp/admin/genres.jsp";
-    private static final String ERROR_PAGE = "error.jsp";
+    private static final String ERROR_PAGE = "/error.jsp";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

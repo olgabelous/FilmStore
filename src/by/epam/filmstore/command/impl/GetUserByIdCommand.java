@@ -18,8 +18,7 @@ import java.io.IOException;
 public class GetUserByIdCommand implements Command {
     private static final String ID = "id";
     private static final String USER = "user";
-    private static final String ADMIN_PAGE = "/WEB-INF/jsp/admin/admin.jsp";
-    private static final String USER_PAGE = "/WEB-INF/jsp/user/user.jsp";
+    private static final String USER_PAGE = "/WEB-INF/jsp/profile.jsp";
     private static final String ERROR_PAGE = "/error.jsp";
     private static final String ERROR_ATTRIBUTE = "errorMessage";
     private static final String ERROR_MESSAGE = "Access denied";

@@ -14,22 +14,30 @@ import java.io.IOException;
  * Created by Olga Shahray on 29.08.2016.
  */
 public class AdminAddFilmMakerCommand implements Command {
+
+    private static final String ID = "id";
     private static final String NAME = "name";
     private static final String PROFESSION = "profession";
-    private static final String FILM_MAKER_PAGE = "/FilmStore/UserServlet?command=admin-get-film-makers";
+    private static final String FILM_MAKER_PAGE = "Controller?command=admin-get-film-makers";
     private static final String ERROR_PAGE = "/error.jsp";
     private static final String EXCEPTION = "exception";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        String id = request.getParameter(ID);
         String name = request.getParameter(NAME);
         String profession = request.getParameter(PROFESSION);
 
         IFilmMakerService service = ServiceFactory.getInstance().getFilmMakerService();
 
         try{
-            service.save(name, profession);
+            if(id == null || id.isEmpty()) {
+                service.save(name, profession);
+            }
+            else{
+                service.update(Integer.parseInt(id), name, profession);
+            }
             response.sendRedirect(FILM_MAKER_PAGE);
 
         }catch(ServiceException e){

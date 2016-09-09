@@ -18,6 +18,8 @@ public class ServiceFactory {
     private IFilmMakerService filmMakerService = new FilmMakerServiceImpl();
     private ICountryService countryService = new CountryServiceImpl();
     private IGenreService genreService = new GenreServiceImpl();
+    private IPaymentService paymentService = new PaymentServiceImpl();
+    private IFileStoreService fileStoreService = new FileStoreServiceImpl();
 
     public static ServiceFactory getInstance(){
         return factory;
@@ -36,4 +38,6 @@ public class ServiceFactory {
     public IGenreService getGenreService() {
         return genreService;
     }
+    public IPaymentService getPaymentService() { return paymentService; }
+    public IFileStoreService getFileStoreService() { return fileStoreService; }
 }
