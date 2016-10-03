@@ -1,26 +1,35 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
+import by.epam.filmstore.command.PageName;
 import by.epam.filmstore.domain.Film;
+import by.epam.filmstore.domain.Role;
+import by.epam.filmstore.domain.User;
 import by.epam.filmstore.service.IFilmService;
 import by.epam.filmstore.service.ServiceFactory;
 import by.epam.filmstore.service.exception.ServiceException;
+import by.epam.filmstore.service.exception.ServiceValidationException;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Created by Olga Shahray on 10.08.2016.
+ * @author Olga Shahray
  */
 public class GetFilmByIdCommand implements Command {
 
     private static final String ID = "id";
     private static final String FILM = "film";
-    private static final String FILM_PAGE = "/WEB-INF/jsp/singleFilm.jsp";
-    private static final String ERROR_PAGE = "/error.jsp";
-    private static final String EXCEPTION = "exception";
+    private static final String IS_IN_WISH_LIST = "isInWishList";
+    private static final String USER = "user";
+    private static final int ERROR_STATUS = 404;
+
+    private static final Logger LOG = LogManager.getLogger(GetFilmByIdCommand.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -28,18 +37,30 @@ public class GetFilmByIdCommand implements Command {
         IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 
         try {
-            int id = Integer.parseInt(request.getParameter(ID));
+            int filmId = Integer.parseInt(request.getParameter(ID));
 
-            Film film = filmService.get(id);
+            Film film = filmService.get(filmId);
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                User loggedUser = (User) session.getAttribute(USER);
+                if (loggedUser != null && loggedUser.getRole().equals(Role.USER)) {
+                    boolean isFilmInWishList = filmService.isFavoriteFilm(loggedUser.getId(), filmId);
+                    request.setAttribute(IS_IN_WISH_LIST, isFilmInWishList);
+                }
+            }
 
             request.setAttribute(FILM, film);
 
-            request.getRequestDispatcher(FILM_PAGE).forward(request, response);
+            request.getRequestDispatcher(PageName.COMMON_FILM_PAGE).forward(request, response);
 
-
-        } catch (ServiceException | NumberFormatException e) {
-            request.setAttribute(EXCEPTION, e);
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+        }
+        catch (ServiceValidationException | NumberFormatException e){
+            LOG.error("Data is not valid", e);
+            response.sendError(ERROR_STATUS);
+        }
+        catch(ServiceException e){
+            LOG.error("Exception is caught", e);
+            response.sendError(ERROR_STATUS);
         }
     }
 }

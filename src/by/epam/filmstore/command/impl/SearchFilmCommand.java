@@ -19,36 +19,42 @@ import java.util.List;
 /**
  * @author Olga Shahray
  */
-public class LoadMainPageCommand implements Command {
-
-    private static final int YEAR = 2016;
-    private static final String RATING = "rating";
-    private static final int LIMIT = 12;
-    private static final String NEW_FILMS = "newfilms";
-    private static final String BEST_FILMS = "bestfilms";
+public class SearchFilmCommand implements Command {
+    private static final String Q = "q";
+    private static final String SEARCH_QUERY = "searchQuery";
+    private static final String FILM_LIST = "filmList";
+    private static final String WARNING = "warning";
+    private static final String WARNING_TEXT = "Sorry, we don't have such films. Please choose another params.";
     private static final int ERROR_STATUS = 404;
 
-    private static final Logger LOG = LogManager.getLogger(LoadMainPageCommand.class);
+    private static final Logger LOG = LogManager.getLogger(SearchFilmCommand.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        String searchLine = request.getParameter(Q);
         IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 
         try {
-            List<Film> newFilmList = filmService.getByYear(YEAR,0, LIMIT);
-            request.setAttribute(NEW_FILMS, newFilmList);
+            List<Film> filmList = filmService.search(searchLine);
 
-            List<Film> bestFilmList = filmService.getAll(RATING, 0, LIMIT).getObjectList();
-            request.setAttribute(BEST_FILMS, bestFilmList);
+            if(filmList.size() == 0){
+                request.setAttribute(WARNING, WARNING_TEXT);
+            }
+            else{
+                request.setAttribute(FILM_LIST, filmList);
+            }
 
-            request.getRequestDispatcher(PageName.COMMON_MAIN_PAGE).forward(request, response);
+            request.setAttribute(SEARCH_QUERY, searchLine);
+
+            request.getRequestDispatcher(PageName.COMMON_FILMS_PAGE).forward(request, response);
 
         }
         catch (ServiceValidationException e){
             LOG.error("Data is not valid", e);
             response.sendError(ERROR_STATUS);
-        }catch (ServiceException e) {
+        }
+        catch(ServiceException e){
             LOG.error("Exception is caught", e);
             response.sendError(ERROR_STATUS);
         }

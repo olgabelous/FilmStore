@@ -9,7 +9,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Created by Olga Shahray on 14.08.2016.
+ * @author Olga Shahray
  */
 public class LogoutCommand implements Command {
 

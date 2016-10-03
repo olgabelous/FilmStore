@@ -15,15 +15,13 @@ import java.io.IOException;
 /**
  * @author Olga Shahray
  */
-public class GetUserByIdCommand implements Command {
-    private static final String ID = "id";
+public class UserShowUpdateProfilePageCommand implements Command {
+
     private static final String USER = "user";
-    private static final int ERROR_STATUS = 404;
     private static final String INDEX_PAGE = "Controller?command=load-main-page";
     private static final String ACCESS_DENIED_ERROR = "accessDeniedError";
     private static final String MESSAGE = "Please log in";
-
-    private static final Logger LOG = LogManager.getLogger(GetUserByIdCommand.class);
+    private static final Logger LOG = LogManager.getLogger(UserShowUpdateProfilePageCommand.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -31,28 +29,16 @@ public class GetUserByIdCommand implements Command {
         if (session != null) {
             User loggedUser = (User) session.getAttribute(USER);
             if (loggedUser != null) {
-                try {
-                    int id = Integer.parseInt(request.getParameter(ID));
-                    if (loggedUser.getId() == id) {
 
-                        //response.sendRedirect(PageName.USER_PROFILE_PAGE);
-                        request.getRequestDispatcher(PageName.USER_PROFILE_PAGE).forward(request, response);
-                    }
-                    else{
-                        LOG.warn("Logged user id and requested id is not identical");
-                        response.sendError(ERROR_STATUS);
-                    }
-                }  catch (NumberFormatException e) {
-                    LOG.warn("User id is not a number", e);
-                    response.sendError(ERROR_STATUS);
-                }
+                request.getRequestDispatcher(PageName.USER_PERSONAL_INFO_PAGE).forward(request, response);
+
             } else {
-                LOG.warn("Access denied. Logged user is null");
+                LOG.warn("Access denied to command user-show-update-profile. Logged user is null");
                 request.setAttribute(ACCESS_DENIED_ERROR, MESSAGE);
                 request.getRequestDispatcher(INDEX_PAGE).forward(request, response);
             }
         } else {
-            LOG.warn("Access denied. Session is null");
+            LOG.warn("Access denied to command user-show-update-profile. Session is null");
             request.setAttribute(ACCESS_DENIED_ERROR, MESSAGE);
             request.getRequestDispatcher(INDEX_PAGE).forward(request, response);
         }

@@ -1,12 +1,16 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
+import by.epam.filmstore.command.PageName;
 import by.epam.filmstore.domain.Discount;
 import by.epam.filmstore.domain.User;
 import by.epam.filmstore.service.IDiscountService;
 import by.epam.filmstore.service.IOrderService;
 import by.epam.filmstore.service.ServiceFactory;
 import by.epam.filmstore.service.exception.ServiceException;
+import by.epam.filmstore.service.exception.ServiceValidationException;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -16,43 +20,42 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 16.08.2016.
+ * @author Olga Shahray
  */
 public class UserGetDiscountCommand implements Command {
     private static final String USER = "user";
     private static final String DISCOUNT_LIST = "discountList";
     private static final String DISCOUNT = "discount";
     private static final String TOTAL_AMOUNT = "totalAmount";
-    private static final String DISCOUNT_PAGE = "/WEB-INF/jsp/user/discount.jsp";
-    private static final String ERROR_PAGE = "/error.jsp";
+    private static final int ERROR_STATUS = 404;
+
+    private static final Logger LOG = LogManager.getLogger(UserGetDiscountCommand.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        IDiscountService discountService = ServiceFactory.getInstance().getDiscountService();
-        IOrderService orderService = ServiceFactory.getInstance().getOrderService();
-
         HttpSession session = request.getSession(false);
-
+        User loggedUser = (User) session.getAttribute(USER);
         try {
-            if (session != null){
-                User loggedUser = (User)session.getAttribute(USER);
-                List<Discount> discountList = discountService.getAll();
-                double discount = discountService.getDiscount(loggedUser.getId());
-                double totalAmount = orderService.getTotalAmount(loggedUser.getId());
+            IDiscountService discountService = ServiceFactory.getInstance().getDiscountService();
+            IOrderService orderService = ServiceFactory.getInstance().getOrderService();
 
-                request.setAttribute(DISCOUNT_LIST, discountList);
-                request.setAttribute(DISCOUNT, discount);
-                request.setAttribute(TOTAL_AMOUNT, totalAmount);
+            List<Discount> discountList = discountService.getAll();
+            double discount = discountService.getDiscount(loggedUser.getId());
+            double totalAmount = orderService.getTotalAmount(loggedUser.getId());
 
-                request.getRequestDispatcher(DISCOUNT_PAGE).forward(request, response);
-            }
-            else {
-                request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
-            }
+            request.setAttribute(DISCOUNT_LIST, discountList);
+            request.setAttribute(DISCOUNT, discount);
+            request.setAttribute(TOTAL_AMOUNT, totalAmount);
 
+            request.getRequestDispatcher(PageName.USER_DISCOUNT_PAGE).forward(request, response);
 
+        } catch (ServiceValidationException e) {
+            LOG.warn("Data is not valid", e);
+            response.sendError(ERROR_STATUS);
         } catch (ServiceException e) {
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+            LOG.error("Exception is caught", e);
+            response.sendError(ERROR_STATUS);
         }
+
     }
 }
