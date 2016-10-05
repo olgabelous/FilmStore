@@ -13,6 +13,14 @@ public interface IFileStoreService {
 
     String save(byte[] file, String fileStorePath, String path) throws IOException;//Output
 
+    boolean save(byte[] file, String fullPath) throws IOException;//Output
+
     byte[] get(String fileStorePath, String path) throws IOException;//InputStream
+
+    byte[] get(String fullPath) throws IOException;//InputStream
+
+    void delete(String fileStorePath, String path) throws IOException;
+
+    void delete(String fullPath) throws IOException;
 
 }

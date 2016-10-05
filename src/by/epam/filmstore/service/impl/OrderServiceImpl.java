@@ -22,7 +22,7 @@ import java.util.List;
  * Created by Olga Shahray on 15.08.2016.
  */
 public class OrderServiceImpl implements IOrderService {
-
+    private final static String ID_MUST_BE_POSITIVE = "Id must be positive number";
     private static final int _100PERCENT = 100;
 
     @Override
@@ -53,7 +53,7 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public boolean delete(int orderId) throws ServiceException {
         if(ServiceValidation.isNotPositive(orderId)){
-            throw new ServiceValidationException("Invalid arguments");
+            throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
         }
         IOrderDAO dao = DAOFactory.getMySqlDAOFactory().getIOrderDAO();
         try {
@@ -66,7 +66,7 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public void updateStatus(int orderId, OrderStatus status) throws ServiceException {
         if(ServiceValidation.isNotPositive(orderId)){
-            throw new ServiceValidationException("Invalid arguments");
+            throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
         }
         IOrderDAO dao = DAOFactory.getMySqlDAOFactory().getIOrderDAO();
         try {
@@ -80,26 +80,39 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<Order> getAllOfUser(int userId) throws ServiceException {
-        if(ServiceValidation.isNotPositive(userId)){
-            throw new ServiceValidationException("Invalid arguments");
+    public void updateStatus(int[] orderIdArr, OrderStatus status) throws ServiceException {
+        for(int orderId : orderIdArr){
+            if(ServiceValidation.isNotPositive(orderId)){
+                throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
+            }
+        }
+        if(status == null){
+            throw new ServiceValidationException("Order status must not be null");
         }
         IOrderDAO dao = DAOFactory.getMySqlDAOFactory().getIOrderDAO();
         try {
-            return DAOHelper.execute(() -> dao.getOrdersOfUser(userId, OrderStatus.PAID));
+            DAOHelper.transactionExecute(() -> {
+                for(int orderId : orderIdArr){
+                    dao.updateStatus(orderId, status);
+                }
+                return null;
+            });
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
     }
 
     @Override
-    public List<Order> getOrdersInCart(int userId) throws ServiceException {
+    public List<Order> getUserOrdersByStatus(int userId, OrderStatus status) throws ServiceException {
         if(ServiceValidation.isNotPositive(userId)){
-            throw new ServiceValidationException("Invalid arguments");
+            throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
+        }
+        if(status == null){
+            throw new ServiceValidationException("Order status must not be null");
         }
         IOrderDAO dao = DAOFactory.getMySqlDAOFactory().getIOrderDAO();
         try {
-            return DAOHelper.execute(() -> dao.getOrdersOfUser(userId, OrderStatus.UNPAID));
+            return DAOHelper.execute(() -> dao.getOrdersOfUser(userId, status));
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -108,11 +121,24 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public double getTotalAmount(int userId) throws ServiceException {
         if(ServiceValidation.isNotPositive(userId)){
-            throw new ServiceValidationException("Invalid arguments");
+            throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
         }
         IOrderDAO dao = DAOFactory.getMySqlDAOFactory().getIOrderDAO();
         try {
             return DAOHelper.execute(() -> dao.getTotalAmount(userId));
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public Order get(int orderId) throws ServiceException {
+        if(ServiceValidation.isNotPositive(orderId)){
+            throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
+        }
+        IOrderDAO dao = DAOFactory.getMySqlDAOFactory().getIOrderDAO();
+        try {
+            return DAOHelper.execute(() -> dao.get(orderId));
         } catch (DAOException e) {
             throw new ServiceException(e);
         }

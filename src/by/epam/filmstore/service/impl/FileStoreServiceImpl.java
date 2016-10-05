@@ -17,9 +17,33 @@ public class FileStoreServiceImpl implements IFileStoreService {
     }
 
     @Override
+    public boolean save(byte[] file, String fullPath) throws IOException {
+        Files.write(Paths.get(fullPath), file);
+        return true;
+    }
+
+    @Override
     public byte[] get(String fileStorePath, String fileName) throws IOException {
 
         return Files.readAllBytes(Paths.get(fileStorePath, fileName));
+    }
+
+    @Override
+    public byte[] get(String fullPath) throws IOException {
+
+        return Files.readAllBytes(Paths.get(fullPath));
+    }
+
+    @Override
+    public void delete (String fileStorePath, String fileName) throws IOException {
+
+        Files.delete(Paths.get(fileStorePath, fileName));
+    }
+
+    @Override
+    public void delete(String fullPath) throws IOException {
+
+        Files.delete(Paths.get(fullPath));
     }
 
     /*@Override

@@ -2,6 +2,7 @@ package by.epam.filmstore.service.util;
 
 import by.epam.filmstore.domain.Profession;
 import by.epam.filmstore.service.exception.ServiceException;
+import by.epam.filmstore.service.exception.ServiceValidationException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,7 +19,6 @@ public class ServiceValidation {
         if(login == null || login.isEmpty()){
             return false;
         }
-
         Pattern pattern = Pattern.compile(".+@.+\\..+");
         Matcher matcher = pattern.matcher(login);
 
@@ -27,8 +27,28 @@ public class ServiceValidation {
     }
 
     public static boolean isPasswordValid(String password){
+        if(password == null || password.isEmpty() || password.length() < 6){
+            return false;
+        }
+        /*Pattern pattern = Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,})");
+        Matcher matcher = pattern.matcher(password);
 
-        return !(password == null || password.isEmpty() || password.length() < 5);
+        return matcher.matches();*/
+        return  true;
+
+    }
+
+    public static boolean isNameValid(String name){
+        Pattern pattern = Pattern.compile("^[a-zA-ZА-Яа-я]+$");
+        Matcher matcher = pattern.matcher(name);
+
+        return matcher.matches();
+
+    }
+
+    public static boolean isNewPasswordValid(String password, String repeatPass){
+
+        return password.equals(repeatPass);
 
     }
 
@@ -56,7 +76,7 @@ public class ServiceValidation {
         return false;
     }
     public static boolean isNotPositive(double d) {
-        return d<=0;
+        return d<0;
     }
 
     public static Profession getProfession(String prof) throws ServiceException {
@@ -64,7 +84,7 @@ public class ServiceValidation {
             return Profession.valueOf(prof.toUpperCase());
         }
         catch(IllegalArgumentException e){
-            throw new ServiceException("Such profession does not exist");
+            throw new ServiceValidationException("Such profession does not exist");
         }
     }
 

@@ -18,9 +18,11 @@ public interface IOrderService {
 
     void updateStatus(int orderId, OrderStatus status) throws ServiceException;
 
-    List<Order> getAllOfUser(int userId) throws ServiceException;
+    void updateStatus(int[] orderIdArr, OrderStatus status) throws ServiceException;
 
-    List<Order> getOrdersInCart(int userId) throws ServiceException;
+    List<Order> getUserOrdersByStatus(int userId, OrderStatus status) throws ServiceException;
 
     double getTotalAmount(int userId) throws ServiceException;
+
+    Order get(int orderId) throws ServiceException;
 }

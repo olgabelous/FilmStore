@@ -16,11 +16,13 @@ import java.util.List;
  * Created by Olga Shahray on 16.08.2016.
  */
 public class DiscountServiceImpl implements IDiscountService {
+    private final static String MUST_NOT_BE_NEGATIVE = "Parameters must not be negative";
+    private final static String ID_MUST_BE_POSITIVE = "Id must be positive number";
 
     @Override
     public void save(double sumFrom, double value) throws ServiceException {
-        if(ServiceValidation.isNotPositive(value) && sumFrom < 0){
-            throw new ServiceValidationException("Invalid arguments");
+        if(ServiceValidation.isNotPositive(value) || ServiceValidation.isNotPositive(sumFrom)){
+            throw new ServiceValidationException(MUST_NOT_BE_NEGATIVE);
         }
         IDiscountDAO dao = DAOFactory.getMySqlDAOFactory().getIDiscountDAO();
         Discount discount = new Discount(sumFrom, value);
@@ -36,8 +38,11 @@ public class DiscountServiceImpl implements IDiscountService {
 
     @Override
     public void update(int id, double sumFrom, double value) throws ServiceException {
-        if(ServiceValidation.isNotPositive(id) || ServiceValidation.isNotPositive(value) || sumFrom < 0){
-            throw new ServiceValidationException("Invalid arguments");
+        if(ServiceValidation.isNotPositive(id)){
+            throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
+        }
+        if(ServiceValidation.isNotPositive(value) || ServiceValidation.isNotPositive(sumFrom)){
+            throw new ServiceValidationException(MUST_NOT_BE_NEGATIVE);
         }
         IDiscountDAO dao = DAOFactory.getMySqlDAOFactory().getIDiscountDAO();
         Discount discount = new Discount(id, sumFrom, value);
@@ -53,10 +58,10 @@ public class DiscountServiceImpl implements IDiscountService {
 
     @Override
     public boolean delete(int id) throws ServiceException {
-        IDiscountDAO dao = DAOFactory.getMySqlDAOFactory().getIDiscountDAO();
-        if(id <= 0){
-            throw new ServiceValidationException("Discount id must be positive number!");
+        if(ServiceValidation.isNotPositive(id)){
+            throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
         }
+        IDiscountDAO dao = DAOFactory.getMySqlDAOFactory().getIDiscountDAO();
         try {
             return DAOHelper.execute(() -> dao.delete(id));
         } catch (DAOException e) {
@@ -68,7 +73,7 @@ public class DiscountServiceImpl implements IDiscountService {
     public List<Discount> getAll() throws ServiceException {
         IDiscountDAO dao = DAOFactory.getMySqlDAOFactory().getIDiscountDAO();
         try {
-            return DAOHelper.execute(() -> dao.getDiscountsList());
+            return DAOHelper.execute(dao::getDiscountsList);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -76,6 +81,9 @@ public class DiscountServiceImpl implements IDiscountService {
 
     @Override
     public double getDiscount(int userId) throws ServiceException {
+        if(ServiceValidation.isNotPositive(userId)){
+            throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
+        }
         IDiscountDAO dao = DAOFactory.getMySqlDAOFactory().getIDiscountDAO();
         try {
             return DAOHelper.transactionExecute(() -> dao.getUserDiscount(userId).getValue());

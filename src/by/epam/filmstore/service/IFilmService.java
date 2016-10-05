@@ -1,9 +1,11 @@
 package by.epam.filmstore.service;
 
 import by.epam.filmstore.domain.Film;
+import by.epam.filmstore.domain.dto.PagingListDTO;
 import by.epam.filmstore.service.exception.ServiceException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Olga Shahray on 17.07.2016.
@@ -18,12 +20,19 @@ public interface IFilmService {
 
     boolean delete(int id) throws ServiceException;
 
-    List<Film> getByGenre(String genre) throws ServiceException;
+    List<Film> getByYear(int year, int offset, int count) throws ServiceException;
 
-    List<Film> getByYear(String year, int offset, int count) throws ServiceException;
+    PagingListDTO<Film> getFilteredFilms(Map<String, List<String>> filterParams, String order, int offset, int count)  throws ServiceException;
 
-    //int countFilms()  throws ServiceException;
+    PagingListDTO<Film> getAll(String order, int offset, int count) throws ServiceException;
 
-    List<Film> getAll(String order, int limit) throws ServiceException;
+    PagingListDTO<Film> getFavoriteFilms(int id, int offset, int count) throws ServiceException;
 
+    void saveFavotiteFilm(int id, int filmId) throws ServiceException;
+
+    boolean deleteFavotiteFilm(int id, int filmId) throws ServiceException;
+
+    List<Film> search(String searchLine)throws ServiceException;
+
+    boolean isFavoriteFilm(int id, int filmId) throws ServiceException;
 }

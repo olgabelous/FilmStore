@@ -1,6 +1,7 @@
 package by.epam.filmstore.service;
 
 import by.epam.filmstore.domain.FilmMaker;
+import by.epam.filmstore.domain.dto.PagingListDTO;
 import by.epam.filmstore.service.exception.ServiceException;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface IFilmMakerService {
     // null if not found
     FilmMaker get(int id) throws ServiceException;
 
-    List<FilmMaker> getAll(String order, int limit) throws ServiceException;
+    PagingListDTO<FilmMaker> getAll(int offset, int count) throws ServiceException;
 
     List<FilmMaker> getAll() throws ServiceException;
 }

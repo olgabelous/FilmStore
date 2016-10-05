@@ -19,6 +19,9 @@ public class CountryServiceImpl implements ICountryService {
 
     @Override
     public void save(String countryName) throws ServiceException {
+        if(ServiceValidation.isNullOrEmpty(countryName)){
+            throw new ServiceValidationException("Country name must not be empty");
+        }
         ICountryDAO dao = DAOFactory.getMySqlDAOFactory().getICountryDAO();
         Country country = new Country(countryName);
         try {
@@ -35,6 +38,9 @@ public class CountryServiceImpl implements ICountryService {
     public void update(int id, String countryName) throws ServiceException {
         if(ServiceValidation.isNotPositive(id)){
             throw new ServiceValidationException("Country id must be positive number!");
+        }
+        if(ServiceValidation.isNullOrEmpty(countryName)){
+            throw new ServiceValidationException("Country name must not be empty");
         }
         ICountryDAO dao = DAOFactory.getMySqlDAOFactory().getICountryDAO();
         Country country = new Country(id, countryName);
@@ -65,7 +71,7 @@ public class CountryServiceImpl implements ICountryService {
     public List<Country> getAll() throws ServiceException {
         ICountryDAO dao = DAOFactory.getMySqlDAOFactory().getICountryDAO();
         try {
-            return DAOHelper.execute(() -> dao.getAll());
+            return DAOHelper.execute(dao::getAll);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }

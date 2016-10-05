@@ -5,9 +5,11 @@ import by.epam.filmstore.dao.IUserDAO;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.domain.Role;
 import by.epam.filmstore.domain.User;
+import by.epam.filmstore.domain.dto.PagingListDTO;
 import by.epam.filmstore.service.IUserService;
 import by.epam.filmstore.service.exception.ServiceAuthException;
 import by.epam.filmstore.service.exception.ServiceException;
+import by.epam.filmstore.service.exception.ServiceIncorrectParamLengthException;
 import by.epam.filmstore.service.exception.ServiceValidationException;
 import by.epam.filmstore.service.util.ServiceValidation;
 import by.epam.filmstore.util.DAOHelper;
@@ -45,12 +47,21 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User saveUser(String name, String email, String pass, String phone) throws ServiceException {
+    public User saveUser(String name, String email, String pass, String confPass, String phone) throws ServiceException {
+        if(checkEmail(email) == 1){
+            throw new ServiceAuthException("Email has already existed!");
+        }
+        if(name.length()> 50){
+            throw new ServiceAuthException("Name too long");
+        }
         if(!ServiceValidation.isLoginValid(email)){
-            throw new ServiceAuthException("Wrong email!");
+            throw new ServiceAuthException("Invalid email!");
         }
         if(!ServiceValidation.isPasswordValid(pass)){
-            throw new ServiceAuthException("Wrong password!");
+            throw new ServiceAuthException("Invalid password!");
+        }
+        if(!ServiceValidation.isNewPasswordValid(pass, confPass)){
+            throw new ServiceAuthException("Passwords are not identical");
         }
         if (ServiceValidation.isNullOrEmpty(name, phone)){
             throw new ServiceAuthException("Fields must not be empty!");
@@ -81,13 +92,13 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void update(int id, String... params) throws ServiceException {
+    public User update(int id, String... params) throws ServiceException {
         // validation
-        if(id <= 0){
+        if(ServiceValidation.isNotPositive(id)){
             throw new ServiceException("User id must be positive number!");
         }
         if (params.length != 7){
-            throw new ServiceValidationException("incorrect params");
+            throw new ServiceIncorrectParamLengthException("Param length must be 7");
         }
         String name = params[0];
         String email = params[1];
@@ -97,13 +108,13 @@ public class UserServiceImpl implements IUserService {
         String date = params[5];
         String role = params[6];
         if(!ServiceValidation.isLoginValid(email)){
-            throw new ServiceAuthException("Wrong email!");
+            throw new ServiceAuthException("Incorrect email");
         }
         if(!ServiceValidation.isPasswordValid(pass)){
-            throw new ServiceAuthException("Wrong password!");
+            throw new ServiceAuthException("Password is not valid");
         }
         if (ServiceValidation.isNullOrEmpty(name, phone, date, role) ){
-            throw new ServiceValidationException("incorrect params");
+            throw new ServiceValidationException("Fields must not be empty");
         }
         LocalDateTime dateReg = LocalDateTime.parse(date);
         Role userRole;
@@ -118,13 +129,12 @@ public class UserServiceImpl implements IUserService {
         User user = new User(id, name, email, pass, phone, photo, dateReg, userRole);
         IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
         try {
-            DAOHelper.transactionExecute(() -> {
-                dao.update(user);
-                return null;
-            });
+            final User finalUser = user;
+            user = DAOHelper.transactionExecute(() -> dao.update(finalUser));
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
+        return user;
     }
 
     @Override
@@ -141,13 +151,44 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<User> getAll(int limit) throws ServiceException {
+    public PagingListDTO<User> getAll(int offset, int count) throws ServiceException {
+        if(offset < 0 || count < 0){
+            throw new ServiceValidationException("Offset and count must not be negative");
+        }
         IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
-
         try {
-            return DAOHelper.execute(() -> dao.getAll(limit));
+            return DAOHelper.execute(() -> {
+                List<User> list = dao.getAll(offset, count);
+                int countUsers = dao.getCountUsers();
+                return new PagingListDTO<User>(countUsers, list);
+            });
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
+    }
+
+    @Override
+    public int checkEmail(String email) throws ServiceException {
+        IUserDAO dao = DAOFactory.getMySqlDAOFactory().getIUserDAO();
+        if(ServiceValidation.isNullOrEmpty(email)){
+            throw new ServiceValidationException("Invalid email");
+        }
+        try {
+            return DAOHelper.execute(() -> dao.checkIfEmailExist(email));
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public void updateUserPass(User loggedUser, String newPass, String confirmPass) throws ServiceException{
+        if(ServiceValidation.isNullOrEmpty(newPass, confirmPass)){
+            throw new ServiceValidationException("Fields must not be empty");
+        }
+        if(!newPass.equals(confirmPass)){
+            throw new ServiceValidationException("New password and confirm password must be identical");
+        }
+        update(loggedUser.getId(), loggedUser.getName(), loggedUser.getEmail(), newPass, loggedUser.getPhone(), loggedUser.getPhoto(),
+                loggedUser.getDateRegistration().toString(), loggedUser.getRole().name());
     }
 }
