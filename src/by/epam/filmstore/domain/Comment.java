@@ -7,6 +7,7 @@ import java.util.Objects;
  * Created by Olga Shahray on 17.06.2016.
  */
 public class Comment {
+    private int id;
     private User user;
     private Film film;
     private int mark;
@@ -74,12 +75,21 @@ public class Comment {
         this.status = status;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o.getClass() != this.getClass()) return false;
         Comment comment = (Comment) o;
-        return mark == comment.mark &&
+        return id == comment.id &&
+                mark == comment.mark &&
                 Objects.equals(user, comment.user) &&
                 Objects.equals(film, comment.film) &&
                 Objects.equals(text, comment.text) &&
@@ -89,18 +99,6 @@ public class Comment {
 
     @Override
     public int hashCode() {
-        return Objects.hash(user, film, mark, text, dateComment, status);
-    }
-
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "user=" + user +
-                ", film=" + film +
-                ", mark=" + mark +
-                ", text='" + text + '\'' +
-                ", dateComment=" + dateComment +
-                ", status='" + status + '\'' +
-                '}';
+        return Objects.hash(id, user, film, mark, text, dateComment, status);
     }
 }

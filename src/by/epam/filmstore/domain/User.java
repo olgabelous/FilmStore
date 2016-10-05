@@ -1,8 +1,7 @@
 package by.epam.filmstore.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Olga Shahray on 17.06.2016.
@@ -16,12 +15,11 @@ public class User {
     private String photo;
     private LocalDateTime dateRegistration;
     private Role role;
-    private List<Genre> favoriteGenres = new ArrayList<>();
 
     public User() {}
 
     public User(int id, String name, String email, String pass, String phone, String photo,
-                LocalDateTime dateRegistration, Role role, List<Genre> favoriteGenres) {
+                LocalDateTime dateRegistration, Role role) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -30,7 +28,6 @@ public class User {
         this.photo = photo;
         this.dateRegistration = dateRegistration;
         this.role = role;
-        this.favoriteGenres = favoriteGenres;
     }
 
     public User(String name, String email, String pass, String phone, LocalDateTime dateRegistration, Role role) {
@@ -42,20 +39,15 @@ public class User {
         this.role = role;
     }
 
+    public User(int id, String name, String photo) {
+        this.id = id;
+        this.name = name;
+        this.photo = photo;
+    }
     public User(int id, String name) {
         this.id = id;
         this.name = name;
-    }
 
-    public User(int id, String name, String email, String pass, String phone, String photo, LocalDateTime dateRegistration, Role role) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.pass = pass;
-        this.phone = phone;
-        this.photo = photo;
-        this.dateRegistration = dateRegistration;
-        this.role = role;
     }
 
     public int getId() {
@@ -122,50 +114,24 @@ public class User {
         this.role = role;
     }
 
-    public List<Genre> getFavoriteGenres() {
-        return favoriteGenres;
-    }
-
-    public void setFavoriteGenres(List<Genre> favoriteGenres) {
-        this.favoriteGenres = favoriteGenres;
-    }
-
-    public void addFavoriteGenre(Genre genre){
-        this.favoriteGenres.add(genre);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o.getClass() != this.getClass()) return false;
-
         User user = (User) o;
-
-        if (id != user.id) return false;
-        if (name != null ? !name.equals(user.name) : user.name != null) return false;
-        if (email != null ? !email.equals(user.email) : user.email != null) return false;
-        if (pass != null ? !pass.equals(user.pass) : user.pass != null) return false;
-        if (phone != null ? !phone.equals(user.phone) : user.phone != null) return false;
-        if (photo != null ? !photo.equals(user.photo) : user.photo != null) return false;
-        if (dateRegistration != null ? !dateRegistration.equals(user.dateRegistration) : user.dateRegistration != null)
-            return false;
-        if (role != user.role) return false;
-        return !(favoriteGenres != null ? !favoriteGenres.equals(user.favoriteGenres) : user.favoriteGenres != null);
-
+        return id == user.id &&
+                Objects.equals(name, user.name) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(pass, user.pass) &&
+                Objects.equals(phone, user.phone) &&
+                Objects.equals(photo, user.photo) &&
+                Objects.equals(dateRegistration, user.dateRegistration) &&
+                role == user.role;
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (pass != null ? pass.hashCode() : 0);
-        result = 31 * result + (phone != null ? phone.hashCode() : 0);
-        result = 31 * result + (photo != null ? photo.hashCode() : 0);
-        result = 31 * result + (dateRegistration != null ? dateRegistration.hashCode() : 0);
-        result = 31 * result + (role != null ? role.hashCode() : 0);
-        result = 31 * result + (favoriteGenres != null ? favoriteGenres.hashCode() : 0);
-        return result;
+        return Objects.hash(id, name, email, pass, phone, photo, dateRegistration, role);
     }
 
     @Override
@@ -179,7 +145,6 @@ public class User {
                 ", photo='" + photo + '\'' +
                 ", dateRegistration=" + dateRegistration +
                 ", role=" + role +
-                ", favoriteGenres=" + favoriteGenres +
                 '}';
     }
 }

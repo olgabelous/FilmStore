@@ -1,8 +1,9 @@
-package by.epam.filmstore.domain;
+package by.epam.filmstore.jspbean;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
+import java.io.IOException;
 import java.io.Writer;
 
 /**
@@ -23,14 +24,15 @@ public class Paginator extends SimpleTagSupport {
     public void doTag() throws JspException {
         Writer out = getWriter();
 
-        boolean lastPage = currPage == totalPages;
+        boolean lastPage = (currPage == totalPages || totalPages == 0);
         int pgStart = Math.max(currPage - maxLinks / 2, 1);
         int pgEnd = pgStart + maxLinks;
         if (pgEnd > totalPages + 1) {
             int diff = pgEnd - totalPages;
             pgStart -= diff - 1;
-            if (pgStart < 1)
+            if (pgStart < 1) {
                 pgStart = 1;
+            }
             pgEnd = totalPages + 1;
         }
 
@@ -38,7 +40,7 @@ public class Paginator extends SimpleTagSupport {
             out.write("<ul class=\"paginatorList\">");
 
             if (currPage > 1)
-                out.write(constructLink(currPage - 1, "Previous", "paginatorPrev"));
+                out.write(constructLink(currPage - 1, "&laquo;", "paginatorPrev"));
 
             for (int i = pgStart; i < pgEnd; i++) {
                 if (i == currPage)
@@ -48,12 +50,12 @@ public class Paginator extends SimpleTagSupport {
             }
 
             if (!lastPage)
-                out.write(constructLink(currPage + 1, "Next", "paginatorNext paginatorLast"));
+                out.write(constructLink(currPage + 1, "&raquo;", "paginatorNext paginatorLast"));
 
             out.write("</ul>");
 
-        } catch (java.io.IOException ex) {
-            throw new JspException("Error in Paginator tag", ex);
+        } catch (IOException e) {
+            throw new JspException("Error in Paginator tag", e);
         }
     }
 
