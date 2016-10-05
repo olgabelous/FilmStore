@@ -31,8 +31,10 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
             "FROM users WHERE users.email=? and users.password =?";
     private static final String DELETE_USER_BY_EMAIL = "DELETE FROM users WHERE email=?";
     private static final String DELETE_USER = "DELETE FROM users WHERE id=?";
-    private static final String SELECT_ALL_USERS = "SELECT id, name, email, password, phone, photo, date_reg, role FROM users LIMIT ?";
+    private static final String SELECT_ALL_USERS = "SELECT id, name, email, password, phone, photo, date_reg, role FROM users LIMIT ?, ?";
+    private static final String COUNT_ALL_USERS = "SELECT COUNT(id) FROM users";
     private static final String UPDATE_USER = "UPDATE users SET name=?, email=?, password=?, phone=?, photo=?, date_reg=?, role=? WHERE id=?";
+    private static final String SELECT_EMAIL_COUNT = "SELECT COUNT(1) FROM users WHERE email = ?";
 
     @Override
     public User save(User user) throws DAOException {
@@ -163,7 +165,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
     }
 
     @Override
-    public void update(User user) throws DAOException {
+    public User update(User user) throws DAOException {
         PreparedStatement preparedStatement = null;
 
         try {
@@ -183,6 +185,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
             if (row == 0) {
                 throw new DAOException("Error updating user");
             }
+            return user;
         } catch (ConnectionPoolException | SQLException e) {
             throw new DAOException("Error updating user", e);
         }
@@ -333,7 +336,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
     }
 
     @Override
-    public List<User> getAll(int limit) throws DAOException {
+    public List<User> getAll(int offset, int count) throws DAOException {
         List<User> allUsers = new ArrayList<>();
         PreparedStatement preparedStatement = null;
 
@@ -341,7 +344,8 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
             Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);
 
-            preparedStatement.setInt(1, limit);
+            preparedStatement.setInt(1, offset);
+            preparedStatement.setInt(2, count);
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 User user = null;
                 while (rs.next()) {
@@ -374,26 +378,22 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
     }
 
     @Override
-    public List<Genre> getFavoriteGenresOfUser(int userId) throws DAOException {
-        List<Genre> favoriteGenres = new ArrayList<>();
+    public int getCountUsers() throws DAOException {
+        int count = 0;
         PreparedStatement preparedStatement = null;
 
         try {
             Connection connection = getConnectionFromThreadLocal();
-            preparedStatement = connection.prepareStatement(SELECT_FAVORITE_GENRES);
+            preparedStatement = connection.prepareStatement(COUNT_ALL_USERS);
 
-            preparedStatement.setInt(1, userId);
             try (ResultSet rs = preparedStatement.executeQuery()) {
-                Genre genre = null;
-                while (rs.next()) {
-                    genre = new Genre();
-                    genre.setId(rs.getInt(1));
-                    genre.setGenreName(rs.getString(2));
-                    favoriteGenres.add(genre);
+                if (rs.next()) {
+                    count = rs.getInt(1);
                 }
             }
+            return count;
         } catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Error getting getting favorite genres of user", e);
+            throw new DAOException("Error getting count users", e);
         }
         finally {
             if(preparedStatement != null){
@@ -404,7 +404,36 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
                 }
             }
         }
-        return favoriteGenres;
+    }
+
+    @Override
+    public int checkIfEmailExist(String email)  throws DAOException{
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            preparedStatement = connection.prepareStatement(SELECT_EMAIL_COUNT);
+
+            preparedStatement.setString(1, email);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                } else {
+                    throw new DAOException("Error check if email exist");
+                }
+            }
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error check if email exist", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in user dao", e);
+                }
+            }
+        }
     }
 
 }

@@ -20,8 +20,9 @@ public interface IFilmMakerDAO {
     // null if not found
     FilmMaker get(int id) throws DAOException;
 
-    List<FilmMaker> getAll(String order, int limit) throws DAOException;
+    List<FilmMaker> getAll(int offset, int count) throws DAOException;
 
     List<FilmMaker> getAll() throws DAOException;
 
+    int getCountFilmMakers() throws DAOException;
 }

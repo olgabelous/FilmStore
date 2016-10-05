@@ -22,9 +22,10 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
     private static final String INSERT_FILM_MAKER = "INSERT INTO allfilmmakers (name, profession) VALUES(?,?)";
     private static final String SELECT_FILM_MAKER = "SELECT id, name, profession FROM allfilmmakers WHERE allfilmmakers.id = ?";
     private static final String DELETE_FILM_MAKER = "DELETE FROM allfilmmakers WHERE allfilmmakers.id=?";
-    private static final String SELECT_ALL_FILM_MAKERS = "SELECT id, name, profession FROM allfilmmakers ORDER BY ? LIMIT ?";
+    private static final String SELECT_ALL_FILM_MAKERS = "SELECT id, name, profession FROM allfilmmakers LIMIT ?,?";
     private static final String SELECT_ALL_FILM_MAKERS1 = "SELECT id, name, profession FROM allfilmmakers";
     private static final String UPDATE_FILM_MAKER = "UPDATE allfilmmakers SET name=?, profession=? WHERE id=?";
+    private static final String COUNT_FILM_MAKER = "SELECT COUNT(id) FROM allfilmmakers";
 
     @Override
     public void save(FilmMaker filmMaker) throws DAOException {
@@ -155,15 +156,15 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
     }
 
     @Override
-    public List<FilmMaker> getAll(String order, int limit) throws DAOException {
+    public List<FilmMaker> getAll(int offset, int count) throws DAOException {
         List<FilmMaker> allFilmMakers = new ArrayList<>();
         PreparedStatement preparedStatement = null;
 
         try {
             Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_ALL_FILM_MAKERS);
-            preparedStatement.setString(1, order);
-            preparedStatement.setInt(2, limit);
+            preparedStatement.setInt(1, offset);
+            preparedStatement.setInt(2, count);
             try(ResultSet rs = preparedStatement.executeQuery()) {
                 FilmMaker filmMaker = null;
                 while(rs.next()) {
@@ -223,5 +224,33 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
             }
         }
         return allFilmMakers;
+    }
+
+    @Override
+    public int getCountFilmMakers() throws DAOException {
+        int count = 0;
+        PreparedStatement preparedStatement = null;
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            preparedStatement = connection.prepareStatement(COUNT_FILM_MAKER);
+
+            try(ResultSet rs = preparedStatement.executeQuery()) {
+                if(rs.next()) {
+                    count = rs.getInt(1);
+                }
+            }
+            return count;
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error deleting film maker", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in film maker", e);
+                }
+            }
+        }
     }
 }

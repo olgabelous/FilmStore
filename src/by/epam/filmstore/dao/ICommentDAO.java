@@ -11,19 +11,21 @@ import java.util.List;
  */
 public interface ICommentDAO {
 
-    void save(int userId, int filmId, Comment comment) throws DAOException;
+    void save(Comment comment) throws DAOException;
 
-    void update(int filmId, int userId, CommentStatus status) throws DAOException;
+    void update(int id, CommentStatus status) throws DAOException;
 
     // false if not found
-    boolean delete(int userId, int filmId) throws DAOException;
+    boolean delete(int id) throws DAOException;
 
     // null if not found
-    Comment get(int userId, int filmId) throws DAOException;
+    Comment get(int id) throws DAOException;
 
     List<Comment> getAllOfUser(int userId) throws DAOException;
 
     List<Comment> getAllOfFilm(int filmId) throws DAOException;
 
-    List<Comment> getByStatus(CommentStatus status) throws DAOException;
+    List<Comment> getByStatus(CommentStatus status, int offset, int count) throws DAOException;
+
+    int getCount(CommentStatus status) throws DAOException;
 }

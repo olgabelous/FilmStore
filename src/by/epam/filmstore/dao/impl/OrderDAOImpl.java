@@ -6,6 +6,7 @@ import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Film;
 import by.epam.filmstore.domain.Order;
 import by.epam.filmstore.domain.OrderStatus;
+import by.epam.filmstore.domain.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,16 +23,18 @@ import java.util.List;
 public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
 
     private static final String INSERT_ORDER = "INSERT INTO orders (film_id, user_id, date_sale, sum, status) VALUES(?,?,?,?,?)";
-    private static final String SELECT_ORDER = "SELECT id, film_id, user_id, date_sale, sum, status FROM orders WHERE orders.id =?";
+    private static final String SELECT_ORDER = "SELECT orders.id, orders.film_id, films.title, films.poster, films.price, films.video, orders.date_sale, orders.sum, " +
+            "orders.status, users.id, users.name FROM orders INNER JOIN films ON orders.film_id = films.id " +
+            "INNER JOIN users ON orders.user_id = users.id WHERE orders.id =?";
     private static final String DELETE_ORDER = "DELETE FROM orders WHERE orders.id=?";
-    private static final String SELECT_ALL_ORDERS_OF_USER = "SELECT orders.id, orders.film_id, films.title, films.price, orders.date_sale, orders.sum, " +
-            "orders.status FROM orders INNER JOIN Films ON orders.film_id = films.id WHERE orders.user_id=? AND orders.status = ?";
+    private static final String SELECT_ALL_ORDERS_OF_USER = "SELECT orders.id, orders.film_id, films.title, films.poster, films.price, films.video, orders.date_sale, orders.sum, " +
+            "orders.status FROM orders INNER JOIN films ON orders.film_id = films.id WHERE orders.user_id=? AND orders.status = ?";
     private static final String SELECT_ALL_ORDERS_OF_FILM = "SELECT id, film_id, user_id, date_sale, sum, status " +
             "FROM orders WHERE film_id=?";
     private static final String SELECT_ALL_ORDERS = "SELECT id, film_id, user_id, date_sale, sum, status FROM orders";
     private static final String UPDATE_ORDER_STATUS = "UPDATE orders SET status=? WHERE orders.id=?";
-    private static final String SELECT_TOTAL_AMOUNT_OF_USER = "SELECT SUM(Orders.sum) FROM Orders WHERE Orders.user_id = ? " +
-            "AND Orders.status = 'paid'";
+    private static final String SELECT_TOTAL_AMOUNT_OF_USER = "SELECT SUM(orders.sum) FROM orders WHERE orders.user_id = ? " +
+            "AND orders.status = 'paid'";
 
 
     @Override
@@ -144,10 +147,11 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
                 if(rs.next()) {
                     order = new Order();
                     order.setId(rs.getInt(1));
-
-                    order.setDateSale(rs.getTimestamp(4).toLocalDateTime());
-                    order.setSum(rs.getDouble(5));
-                    order.setStatus(OrderStatus.valueOf(rs.getString(6).toUpperCase()));
+                    order.setFilm(new Film(rs.getInt(2), rs.getString(3), rs.getString(4), rs.getDouble(5), rs.getString(6)));
+                    order.setDateSale(rs.getTimestamp(7).toLocalDateTime());
+                    order.setSum(rs.getDouble(8));
+                    order.setStatus(OrderStatus.valueOf(rs.getString(9).toUpperCase()));
+                    order.setUser(new User(rs.getInt(10), rs.getString(11)));
                 }
                 else{
                     throw new DAOException("Error getting order by id");
@@ -186,10 +190,10 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
                 while (rs.next()) {
                     order = new Order();
                     order.setId(rs.getInt(1));
-                    order.setFilm(new Film(rs.getInt(2), rs.getString(3), rs.getDouble(4)));
-                    order.setDateSale(rs.getTimestamp(5).toLocalDateTime());
-                    order.setSum(rs.getDouble(6));
-                    order.setStatus(OrderStatus.valueOf(rs.getString(7).toUpperCase()));
+                    order.setFilm(new Film(rs.getInt(2), rs.getString(3), rs.getString(4), rs.getDouble(5), rs.getString(6)));
+                    order.setDateSale(rs.getTimestamp(7).toLocalDateTime());
+                    order.setSum(rs.getDouble(8));
+                    order.setStatus(OrderStatus.valueOf(rs.getString(9).toUpperCase()));
 
                     allOrders.add(order);
                 }

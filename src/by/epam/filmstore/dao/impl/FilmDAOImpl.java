@@ -4,10 +4,12 @@ import by.epam.filmstore.dao.IFilmDAO;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.*;
+import by.epam.filmstore.util.DAOHelper;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Olga Shahray on 18.06.2016.
@@ -19,13 +21,13 @@ import java.util.List;
 public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
 
     private static final String INSERT_FILM = "INSERT INTO films(title, release_year, country_id, description, " +
-            "duration, age_restriction, price, link)VALUES(?,?,?,?,?,?,?,?)";
+            "duration, age_restriction, price, poster, video, date_add)VALUES(?,?,?,?,?,?,?,?,?,?)";
     private static final String INSERT_FILM_GENRE = "INSERT INTO filmgenres (film_id, genre_id) VALUES(?,?)";
     private static final String DELETE_FILM_GENRE = "DELETE FROM filmgenres WHERE film_id=?";
     private static final String INSERT_FILM_MAKER = "INSERT INTO filmmakers (film_id, person_id) VALUES(?,?)";
     private static final String DELETE_FILM_MAKER = "DELETE FROM filmmakers WHERE film_id=?";
     private static final String SELECT_FILM_BY_ID = "SELECT films.id, title, release_year, description, duration, " +
-            "age_restriction, price, link, rating, films.country_id, country.country FROM Films INNER JOIN Country " +
+            "age_restriction, price, poster, video, date_add, rating, films.country_id, country.country FROM films INNER JOIN country " +
             "ON films.country_id = country.id WHERE films.id=?";
     private static final String SELECT_FILM_GENRES = "SELECT DISTINCT filmgenres.genre_id, allgenres.genre FROM filmgenres, allgenres" +
             " WHERE allgenres.id = filmgenres.genre_id AND filmgenres.film_id = ?";
@@ -33,20 +35,20 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             " FROM allfilmmakers, filmmakers WHERE allfilmmakers.id = filmmakers.person_id AND filmmakers.film_id = ?";
     private static final String DELETE_FILM_BY_TITLE = "DELETE FROM films WHERE title=?";
     private static final String DELETE_FILM = "DELETE FROM films WHERE id=?";
-    private static final String SELECT_ALL_FILMS = "SELECT films.id, title, release_year, description, duration, " +
-            "age_restriction, price, link, rating, films.country_id, country.country FROM Films INNER JOIN Country " +
-            "ON films.country_id = country.id ORDER BY ? DESC LIMIT ?";
-    private static final String SELECT_FILMS_BY_GENRE = "SELECT DISTINCT films.id, films.title, films.release_year, " +
-            "films.description, films.duration, films.age_restriction, films.price, films.link, films.rating " +
-            "FROM  FilmGenres, Films WHERE films.id = filmgenres.film_id AND filmgenres.genre_id = " +
-            "(SELECT AllGenres.id FROM AllGenres WHERE Allgenres.genre = ?)";
     private static final String SELECT_FILMS_BY_YEAR = "SELECT films.id, title, release_year, description, duration, " +
-            "age_restriction, price, link, rating FROM Films WHERE films.release_year = ? LIMIT ?, ?";
+            "age_restriction, price, poster, rating FROM films WHERE films.release_year = ? LIMIT ?, ?";
     private static final String SELECT_FILMS_BY_RATING = "SELECT films.id, title, release_year, description, duration, " +
-            "age_restriction, price, link, rating FROM Films WHERE films.rating >= ?";
+            "age_restriction, price, poster, rating FROM films WHERE films.rating >= ?";
     private static final String UPDATE_FILM = "UPDATE films SET title=?, release_year=?, country_id=?, description=?, " +
-            "duration=?, age_restriction=?, price=?, link=? WHERE id=?";
-    //private static final String COUNT_FILMS = "SELECT COUNT(*) FROM films";
+            "duration=?, age_restriction=?, price=?, poster=?, video=? WHERE id=?";
+    private static final String COUNT_FAVORITE_FILMS = "SELECT count(films.id) FROM preferences, films where films.id=preferences.film_id AND preferences.user_id=?";
+    private static final String SELECT_FAVORITE_FILMS = "SELECT films.id, title, release_year, duration, " +
+            "age_restriction, price, poster, rating, country_id, country FROM preferences, films inner join country ON " +
+            "country_id=country.id WHERE films.id=preferences.film_id AND preferences.user_id=? LIMIT ?, ?";
+    private static final String INSERT_FAVORITE_FILM = "INSERT INTO preferences(user_id, film_id)VALUES(?,?)";
+    private static final String DELETE_FAVORITE_FILM = "DELETE FROM preferences WHERE user_id=? AND film_id=?";
+    private static final String COUNT_FAVORITE_FILM = "SELECT count(*) FROM preferences where preferences.user_id=? " +
+            "AND preferences.film_id = ?";
 
 
     @Override
@@ -64,7 +66,9 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             preparedStatement.setInt(5, film.getDuration());
             preparedStatement.setInt(6, film.getAgeRestriction());
             preparedStatement.setDouble(7, film.getPrice());
-            preparedStatement.setString(8, film.getLink());
+            preparedStatement.setString(8, film.getPoster());
+            preparedStatement.setString(9, film.getVideo());
+            preparedStatement.setDate(10, Date.valueOf(film.getDateAdd()));
 
             int row = preparedStatement.executeUpdate();
             if(row == 0){
@@ -201,8 +205,9 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             preparedStatement.setInt(5, film.getDuration());
             preparedStatement.setInt(6, film.getAgeRestriction());
             preparedStatement.setDouble(7, film.getPrice());
-            preparedStatement.setString(8, film.getLink());
-            preparedStatement.setInt(9, film.getId());
+            preparedStatement.setString(8, film.getPoster());
+            preparedStatement.setString(9, film.getVideo());
+            preparedStatement.setInt(10, film.getId());
 
             int row = preparedStatement.executeUpdate();
             if (row == 0) {
@@ -295,9 +300,11 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
                     film.setDuration(rs.getInt(5));
                     film.setAgeRestriction(rs.getInt(6));
                     film.setPrice(rs.getDouble(7));
-                    film.setLink(rs.getString(8));
-                    film.setRating(rs.getDouble(9));
-                    film.setCountry(new Country(rs.getInt(10), rs.getString(11)));
+                    film.setPoster(rs.getString(8));
+                    film.setVideo(rs.getString(9));
+                    film.setDateAdd(rs.getDate(10).toLocalDate());
+                    film.setRating(rs.getDouble(11));
+                    film.setCountry(new Country(rs.getInt(12), rs.getString(13)));
                 }
                 else{
                     throw new DAOException("Error getting film by id");
@@ -319,16 +326,19 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     }
 
     @Override
-    public List<Film> getByGenre(String genre) throws DAOException {
+    public List<Film> getFilteredFilms(Map<String, List<String>> filterParams, String orderBy, int offset, int count) throws DAOException {
         List<Film> filmList = new ArrayList<>();
-        PreparedStatement preparedStatement = null;
-
+//// TODO: 01.10.2016 date_add
+        PreparedStatement prStatFimls = null;
+        String query = DAOHelper.buildFilterFilmQuery(filterParams);
         try {
             Connection connection = getConnectionFromThreadLocal();
-            preparedStatement = connection.prepareStatement(SELECT_FILMS_BY_GENRE);
+            prStatFimls = connection.prepareStatement(query);
 
-            preparedStatement.setString(1, genre);
-            try(ResultSet rs = preparedStatement.executeQuery()) {
+            prStatFimls.setString(1, orderBy);
+            prStatFimls.setInt(2, offset);
+            prStatFimls.setInt(3, count);
+            try(ResultSet rs = prStatFimls.executeQuery()) {
                 Film film = null;
                 while(rs.next()) {
                     film = new Film();
@@ -339,14 +349,147 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
                     film.setDuration(rs.getInt(5));
                     film.setAgeRestriction(rs.getInt(6));
                     film.setPrice(rs.getDouble(7));
-                    film.setLink(rs.getString(8));
+                    film.setPoster(rs.getString(8));
                     film.setRating(rs.getDouble(9));
+                    film.setCountry(new Country(rs.getInt(10), rs.getString(11)));
+                    film.setDateAdd(rs.getDate(12).toLocalDate());
 
                     filmList.add(film);
                 }
             }
         }catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Error getting films by genre", e);
+            throw new DAOException("Error getting films by filter", e);
+        }
+        finally {
+            if(prStatFimls != null){
+                try {
+                    prStatFimls.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in film dao", e);
+                }
+            }
+        }
+        return filmList;
+    }
+    @Override
+    public int getCountFilm(Map<String, List<String>> filterParams) throws DAOException {
+       int filmCount = 0;
+
+        PreparedStatement prStatCount = null;
+        String query = DAOHelper.buildCountFilmQuery(filterParams);
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            prStatCount = connection.prepareStatement(query);
+
+            try(ResultSet rs = prStatCount.executeQuery()) {
+                if(rs.next()) {
+                    filmCount = rs.getInt(1);
+                }
+            }
+        }catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error getting films by filter", e);
+        }
+        finally {
+            if(prStatCount != null){
+                try {
+                    prStatCount.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in film dao", e);
+                }
+            }
+        }
+        return filmCount;
+    }
+
+    @Override
+    public List<Film> getFavoriteFilms(int userId, int offset, int count)  throws DAOException {
+        List<Film> filmList = new ArrayList<>();
+        PreparedStatement prStatFimls = null;
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            prStatFimls = connection.prepareStatement(SELECT_FAVORITE_FILMS);
+
+            prStatFimls.setInt(1, userId);
+            prStatFimls.setInt(2, offset);
+            prStatFimls.setInt(3, count);
+            try(ResultSet rs = prStatFimls.executeQuery()) {
+                Film film = null;
+                while(rs.next()) {
+                    film = new Film();
+                    film.setId(rs.getInt(1));
+                    film.setTitle(rs.getString(2));
+                    film.setYear(rs.getDate(3).toLocalDate().getYear());
+                    film.setDuration(rs.getInt(4));
+                    film.setAgeRestriction(rs.getInt(5));
+                    film.setPrice(rs.getDouble(6));
+                    film.setPoster(rs.getString(7));
+                    film.setRating(rs.getDouble(8));
+                    film.setCountry(new Country(rs.getInt(9), rs.getString(10)));
+
+                    filmList.add(film);
+                }
+            }
+        }catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error getting favorite films", e);
+        }
+        finally {
+            if(prStatFimls != null){
+                try {
+                    prStatFimls.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in film dao", e);
+                }
+            }
+        }
+        return filmList;
+    }
+
+    @Override
+    public int getCountFavoriteFilm(int userId) throws DAOException {
+        int count = 0;
+        PreparedStatement prStatCount = null;
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            prStatCount = connection.prepareStatement(COUNT_FAVORITE_FILMS);
+            prStatCount.setInt(1, userId);
+
+            try(ResultSet rs = prStatCount.executeQuery()) {
+                if(rs.next()) {
+                    count=rs.getInt(1);
+                }
+            }
+            return count;
+        }catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error getting favorite films count", e);
+        }
+        finally {
+            if(prStatCount != null){
+                try {
+                    prStatCount.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in film dao", e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void saveFavoriteFilm(int userId, int filmId) throws DAOException {
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            preparedStatement = connection.prepareStatement(INSERT_FAVORITE_FILM);
+
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, filmId);
+
+            int row = preparedStatement.executeUpdate();
+            if(row == 0){
+                throw new DAOException("Error saving favorite film");
+            }
+        } catch (ConnectionPoolException | SQLException e) {
+            throw new DAOException("Error saving film", e);
         }
         finally {
             if(preparedStatement != null){
@@ -357,7 +500,109 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean deleteFavoriteFilm(int userId, int filmId) throws DAOException {
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            preparedStatement = connection.prepareStatement(DELETE_FAVORITE_FILM);
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, filmId);
+
+            int row = preparedStatement.executeUpdate();
+            return row != 0;
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error deleting favorite film", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in film dao", e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<Film> search(String[] keywords) throws DAOException {
+        List<Film> filmList = new ArrayList<>();
+
+        PreparedStatement prStatFimls = null;
+        String query = DAOHelper.buildSearchedFilmQuery(keywords);
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            prStatFimls = connection.prepareStatement(query);
+
+            /*prStatFimls.setString(1, orderBy);
+            prStatFimls.setInt(2, offset);
+            prStatFimls.setInt(3, count);*/
+            try(ResultSet rs = prStatFimls.executeQuery()) {
+                Film film = null;
+                while(rs.next()) {
+                    film = new Film();
+                    film.setId(rs.getInt(1));
+                    film.setTitle(rs.getString(2));
+                    film.setYear(rs.getDate(3).toLocalDate().getYear());
+                    film.setDescription(rs.getString(4));
+                    film.setDuration(rs.getInt(5));
+                    film.setAgeRestriction(rs.getInt(6));
+                    film.setPrice(rs.getDouble(7));
+                    film.setPoster(rs.getString(8));
+                    film.setRating(rs.getDouble(9));
+                    film.setCountry(new Country(rs.getInt(10), rs.getString(11)));
+                    film.setDateAdd(rs.getDate(12).toLocalDate());
+
+                    filmList.add(film);
+                }
+            }
+        }catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error seaching films", e);
+        }
+        finally {
+            if(prStatFimls != null){
+                try {
+                    prStatFimls.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in film dao", e);
+                }
+            }
+        }
         return filmList;
+    }
+
+    @Override
+    public boolean isFavoriteFilm(int userId, int filmId) throws DAOException {
+        PreparedStatement preparedStatement = null;
+        int count = 0;
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            preparedStatement = connection.prepareStatement(COUNT_FAVORITE_FILM);
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, filmId);
+
+            try(ResultSet rs = preparedStatement.executeQuery()) {
+                if(rs.next()) {
+                    count = rs.getInt(1);
+                }
+            }
+            return count == 1;
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error gettint count favorite film", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in film dao", e);
+                }
+            }
+        }
     }
 
     @Override
@@ -384,7 +629,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
                     film.setDuration(rs.getInt(5));
                     film.setAgeRestriction(rs.getInt(6));
                     film.setPrice(rs.getDouble(7));
-                    film.setLink(rs.getString(8));
+                    film.setPoster(rs.getString(8));
                     film.setRating(rs.getDouble(9));
 
                     filmList.add(film);
@@ -403,50 +648,6 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             }
         }
         return filmList;
-    }
-
-    @Override
-    public List<Film> getAll(String order, int limit) throws DAOException {
-        List<Film> allFilms = new ArrayList<>();
-        PreparedStatement preparedStatement = null;
-
-        try {
-            Connection connection = getConnectionFromThreadLocal();
-            preparedStatement = connection.prepareStatement(SELECT_ALL_FILMS);
-            preparedStatement.setString(1, order);
-            preparedStatement.setInt(2, limit);
-
-            try(ResultSet rs = preparedStatement.executeQuery()) {
-                Film film = null;
-                while(rs.next()) {
-                    film = new Film();
-                    film.setId(rs.getInt(1));
-                    film.setTitle(rs.getString(2));
-                    film.setYear(rs.getDate(3).toLocalDate().getYear());
-                    film.setDescription(rs.getString(4));
-                    film.setDuration(rs.getInt(5));
-                    film.setAgeRestriction(rs.getInt(6));
-                    film.setPrice(rs.getDouble(7));
-                    film.setLink(rs.getString(8));
-                    film.setRating(rs.getDouble(9));
-                    film.setCountry(new Country(rs.getInt(10), rs.getString(11)));
-
-                    allFilms.add(film);
-                }
-            }
-        }catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Error getting all films", e);
-        }
-        finally {
-            if(preparedStatement != null){
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    throw new DAOException("Error closing prepared statement in film dao", e);
-                }
-            }
-        }
-        return allFilms;
     }
 
     @Override

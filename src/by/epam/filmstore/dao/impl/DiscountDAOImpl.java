@@ -26,8 +26,8 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
     private static final String DELETE_DISCOUNT = "DELETE FROM discount WHERE discount_id = ?";
     private static final String UPDATE_DISCOUNT = "UPDATE discount SET discount.sum_from = ?, discount.value = ? WHERE discount_id = ?";
     private static final String SELECT_USER_DISCOUNT = "SELECT discount_id, discount.sum_from, discount.value FROM filmstore.discount " +
-            "WHERE sum_from <= (SELECT SUM(Orders.sum) FROM Orders WHERE Orders.user_id = ? AND Orders.status = 'paid') " +
-            "ORDER BY sum_from DESC LIMIT 1";
+            " WHERE sum_from <= (SELECT COALESCE((SELECT SUM(orders.sum) FROM orders WHERE orders.user_id = ? AND orders.status = 'paid' " +
+            "),0)) ORDER BY sum_from DESC LIMIT 1";
 
 
     @Override

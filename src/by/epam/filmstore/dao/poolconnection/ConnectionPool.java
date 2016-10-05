@@ -136,6 +136,8 @@ public final class ConnectionPool {
             if (!connectionQueue.offer(this)) {
                 throw new SQLException("Error allocating connection in the pool.");
             }
+
+            connection.setAutoCommit(true);
         }
 
         @Override

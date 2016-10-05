@@ -23,29 +23,30 @@ import java.util.List;
 public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
 
     private static final String INSERT_COMMENT = "INSERT INTO comments (film_id, user_id, mark, comment, date_com, status) VALUES(?,?,?,?,?,?)";
-    private static final String SELECT_COMMENT = "SELECT * FROM comments WHERE user_id=? AND film_id=?";
-    private static final String DELETE_COMMENT = "DELETE FROM comments WHERE user_id=? AND film_id=?";
-    private static final String SELECT_ALL_COMMENTS_OF_USER = "SELECT comments.film_id, films.title, comments.mark, comments.comment, " +
-            "comments.date_com, comments.status FROM comments INNER JOIN Films ON comments.film_id = films.id WHERE user_id=?";
+    private static final String SELECT_COMMENT = "SELECT * FROM comments WHERE id=?";
+    private static final String DELETE_COMMENT = "DELETE FROM comments WHERE id=?";
+    private static final String SELECT_ALL_COMMENTS_OF_USER = "SELECT comments.film_id, films.title, films.poster, comments.mark, comments.comment, " +
+            "comments.date_com, comments.status, comments.id  FROM comments INNER JOIN films ON comments.film_id = films.id WHERE user_id=?";
     private static final String SELECT_ALL_COMMENTS_OF_FILM = "SELECT mark, comment, date_com, status, user_id, " +
-            "users.name FROM comments INNER JOIN users ON comments.user_id = users.id WHERE film_id=? AND status = 'checked'";
-    private static final String UPDATE_COMMENT = "UPDATE comments SET status=? WHERE film_id=? and user_id=?";
+            "users.name, users.photo FROM comments INNER JOIN users ON comments.user_id = users.id WHERE film_id=? AND status = 'checked'";
+    private static final String UPDATE_COMMENT = "UPDATE comments SET status=? WHERE id=?";
     private static final String SELECT_COMMENTS_BY_STATUS = "SELECT mark, comment, date_com, status, user_id, " +
-            "users.name, film_id, films.title FROM comments INNER JOIN users ON comments.user_id = users.id " +
-            "INNER JOIN films ON comments.film_id = films.id WHERE status = ?";
+            "users.name, film_id, films.title, films.poster, comments.id FROM comments INNER JOIN users ON comments.user_id = users.id " +
+            "INNER JOIN films ON comments.film_id = films.id WHERE status = ? LIMIT ?, ?";
+    private static final String COUNT_COMMENTS_BY_STATUS = "SELECT COUNT(id) FROM comments WHERE status = ?";
 
 
     @Override
     @PartOfTransaction
-    public void save(int userId, int filmId, Comment comment) throws DAOException {
+    public void save(Comment comment) throws DAOException {
         PreparedStatement preparedStatement = null;
 
         try {
             Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(INSERT_COMMENT);
 
-            preparedStatement.setInt(1, filmId);
-            preparedStatement.setInt(2, userId);
+            preparedStatement.setInt(1, comment.getFilm().getId());
+            preparedStatement.setInt(2, comment.getUser().getId());
             preparedStatement.setInt(3, comment.getMark());
             preparedStatement.setString(4, comment.getText());
             preparedStatement.setTimestamp(5, Timestamp.valueOf(comment.getDateComment()));
@@ -71,7 +72,7 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
 
     @Override
     @PartOfTransaction
-    public void update(int filmId, int userId, CommentStatus status) throws DAOException {
+    public void update(int id, CommentStatus status) throws DAOException {
         PreparedStatement preparedStatement = null;
 
         try{
@@ -79,8 +80,7 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
             preparedStatement = connection.prepareStatement(UPDATE_COMMENT);
 
             preparedStatement.setString(1, status.name());
-            preparedStatement.setInt(2, filmId);
-            preparedStatement.setInt(3, userId);
+            preparedStatement.setInt(2, id);
 
             int row = preparedStatement.executeUpdate();
             if (row == 0) {
@@ -102,15 +102,14 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
 
     @Override
     @PartOfTransaction
-    public boolean delete(int userId, int filmId) throws DAOException {
+    public boolean delete(int id) throws DAOException {
         PreparedStatement preparedStatement = null;
 
         try {
             Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(DELETE_COMMENT);
 
-            preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(2, filmId);
+            preparedStatement.setInt(1, id);
             int row = preparedStatement.executeUpdate();
             return  row != 0;
 
@@ -130,7 +129,7 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
 
     @Override
     @PartOfTransaction
-    public Comment get(int userId, int filmId) throws DAOException {
+    public Comment get(int id) throws DAOException {
         Comment comment = null;
         PreparedStatement preparedStatement = null;
 
@@ -138,8 +137,7 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
             Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(SELECT_COMMENT);
 
-            preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(2, filmId);
+            preparedStatement.setInt(1, id);
             try(ResultSet rs = preparedStatement.executeQuery()) {
                 if(rs.next()) {
                     comment = new Comment();
@@ -185,11 +183,12 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
                 while (rs.next()) {
                     comment = new Comment();
 
-                    comment.setFilm(new Film(rs.getInt(1), rs.getString(2)));
-                    comment.setMark(rs.getInt(3));
-                    comment.setText(rs.getString(4));
-                    comment.setDateComment(rs.getTimestamp(5).toLocalDateTime());
-                    comment.setStatus(CommentStatus.valueOf(rs.getString(6).toUpperCase()));
+                    comment.setFilm(new Film(rs.getInt(1), rs.getString(2), rs.getString(3)));
+                    comment.setMark(rs.getInt(4));
+                    comment.setText(rs.getString(5));
+                    comment.setDateComment(rs.getTimestamp(6).toLocalDateTime());
+                    comment.setStatus(CommentStatus.valueOf(rs.getString(7).toUpperCase()));
+                    comment.setId(rs.getInt(8));
 
                     allComments.add(comment);
                 }
@@ -230,7 +229,7 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
                     comment.setText(rs.getString(2));
                     comment.setDateComment(rs.getTimestamp(3).toLocalDateTime());
                     comment.setStatus(CommentStatus.valueOf(rs.getString(4).toUpperCase()));
-                    comment.setUser(new User(rs.getInt(5), rs.getString(6)));
+                    comment.setUser(new User(rs.getInt(5), rs.getString(6), rs.getString(7)));
 
                     allComments.add(comment);
                 }
@@ -252,7 +251,7 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
 
     @Override
     @PartOfTransaction
-    public List<Comment> getByStatus(CommentStatus status) throws DAOException {
+    public List<Comment> getByStatus(CommentStatus status, int offset, int count) throws DAOException {
         List<Comment> allComments = new ArrayList<>();
         PreparedStatement preparedStatement = null;
 
@@ -261,6 +260,8 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
             preparedStatement = connection.prepareStatement(SELECT_COMMENTS_BY_STATUS);
 
             preparedStatement.setString(1, status.name());
+            preparedStatement.setInt(2, offset);
+            preparedStatement.setInt(3, count);
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 Comment comment = null;
 
@@ -272,7 +273,8 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
                     comment.setDateComment(rs.getTimestamp(3).toLocalDateTime());
                     comment.setStatus(CommentStatus.valueOf(rs.getString(4).toUpperCase()));
                     comment.setUser(new User(rs.getInt(5), rs.getString(6)));
-                    comment.setFilm(new Film(rs.getInt(7), rs.getString(8)));
+                    comment.setFilm(new Film(rs.getInt(7), rs.getString(8), rs.getString(9)));
+                    comment.setId(rs.getInt(10));
 
                     allComments.add(comment);
                 }
@@ -290,5 +292,36 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
             }
         }
         return allComments;
+    }
+
+    @Override
+    public int getCount(CommentStatus status) throws DAOException {
+        int count = 0;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Connection connection = getConnectionFromThreadLocal();
+            preparedStatement = connection.prepareStatement(COUNT_COMMENTS_BY_STATUS);
+
+            preparedStatement.setString(1, status.name());
+
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            }
+            return count;
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Error getting count comments by status", e);
+        }
+        finally {
+            if(preparedStatement != null){
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    throw new DAOException("Error closing prepared statement in comment dao", e);
+                }
+            }
+        }
     }
 }
