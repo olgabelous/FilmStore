@@ -19,6 +19,7 @@ public class FilmstoreServletContextListener implements ServletContextListener {
             poolManager.init();
         } catch (ServiceConnectionPoolManagerException e) {
             e.printStackTrace();
+            throw new RuntimeException("Connection pool is not created");
         }
         System.out.println("Connection pool is created");
     }

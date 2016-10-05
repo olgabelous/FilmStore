@@ -2,6 +2,7 @@ package by.epam.filmstore.controller;
 
 import by.epam.filmstore.service.IFileStoreService;
 import by.epam.filmstore.service.ServiceFactory;
+import by.epam.filmstore.service.exception.ServiceValidationException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -11,6 +12,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -30,11 +32,15 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {
     private static final int FIRST_VALUE = 0;
     private ServletContext servletContext;
     private static final String FILE_STORE_PATH = "fileStorePath";
+    private static final String POSTER_STORE_PATH = "posterStorePath";
+    private static final String PHOTO_STORE_PATH = "photoStorePath";
+    private static final String GENERAL_IMAGE_PATH = "generalImagePath";
+    private static final String ENCODING_UTF8 = "UTF-8";
 
     /**
      * Constructor.
      */
-    public FileUploadWrapper(HttpServletRequest request) throws IOException {
+    public FileUploadWrapper(HttpServletRequest request) throws IOException, ServiceValidationException {
         super(request);
         this.servletContext = request.getServletContext();
         ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
@@ -56,6 +62,11 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {
         allNames.addAll(regularParamsMap.keySet());
         allNames.addAll(fileParamsMap.keySet());
         return Collections.enumeration(allNames);
+    }
+
+    @Override
+    public void setCharacterEncoding(String enc) throws UnsupportedEncodingException {
+        super.setCharacterEncoding(enc);
     }
 
     /**
@@ -137,23 +148,39 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {
     * @param item
     * @throws Exception
     */
-    private String saveAndGetPathUploadedFile(FileItem item) throws IOException {
-        if(item == null){return "";}
+    private String saveAndGetPathUploadedFile(FileItem item) throws IOException, ServiceValidationException {
+        if(item == null || item.getSize() == 0){
+            return "";
+        }
+        if(!isImageFile(item)){
+            throw new ServiceValidationException("Incorrect file type");
+        }
         String ending = item.getName().substring(item.getName().lastIndexOf('.'));
-        String fileStorePath = servletContext.getInitParameter(FILE_STORE_PATH);
-        String fileName = String.valueOf(System.currentTimeMillis())+ending;
-        //String path = "/assets/filmposter/"+fileName;
+        //String fileStorePath = servletContext.getInitParameter(FILE_STORE_PATH);
+        String fileName = String.valueOf(System.currentTimeMillis()) + ending;
+        String fileStorePath = "";
+        String fieldName = item.getFieldName();
+        if(fieldName.equals("poster")){
+            fileStorePath =  servletContext.getRealPath(servletContext.getInitParameter(POSTER_STORE_PATH) + fileName);
+        }
+        else if(fieldName.equals("photo")){
+            fileStorePath = servletContext.getRealPath(servletContext.getInitParameter(PHOTO_STORE_PATH) + fileName);
+        }
+        else{
+            fileStorePath = servletContext.getRealPath(servletContext.getInitParameter(GENERAL_IMAGE_PATH) + fileName);
+        }
+
         IFileStoreService fileStoreService = ServiceFactory.getInstance().getFileStoreService();
 
         //создаём файл
         //записываем в него данные
-        return fileStoreService.save(item.get(), fileStorePath, fileName);
+        return fileStoreService.save(item.get(), fileStorePath) ? fileName : "";
 
     }
 
 
     // PRIVATE
-    private void convertToMaps(List<FileItem> fileItemList) throws IOException {
+    private void convertToMaps(List<FileItem> fileItemList) throws IOException, ServiceValidationException {
         for (FileItem item : fileItemList) {
             if (isFileUploadField(item)) {
                 fileParamsMap.put(item.getFieldName(), item);
@@ -176,20 +203,25 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {
         return regularParamsMap.get(item.getFieldName()) != null;
     }
 
-    private void addSingleValueItem(FileItem item) {
+    private void addSingleValueItem(FileItem item) throws UnsupportedEncodingException {
         List<String> list = new ArrayList<>();
-        list.add(item.getString());
+        list.add(item.getString(ENCODING_UTF8));
         regularParamsMap.put(item.getFieldName(), list);
     }
 
-    private void addMultivaluedItem(FileItem item) {
+    private void addMultivaluedItem(FileItem item) throws UnsupportedEncodingException {
         List<String> values = regularParamsMap.get(item.getFieldName());
-        values.add(item.getString());
+        values.add(item.getString(ENCODING_UTF8));
     }
 
     private void addPathOfFileItem(String fieldName, String path) {
         List<String> list = new ArrayList<>();
         list.add(path);
         regularParamsMap.put(fieldName, list);
+    }
+
+    private boolean isImageFile(FileItem item){
+        String fileName = item.getName();
+        return (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png"));
     }
 }

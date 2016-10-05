@@ -15,45 +15,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 28.08.2016.
+ * @author Olga Shahray
  */
-public class AdminFilter implements Filter {
-    private List<CommandName> adminCommands;
+public class UserFilter implements Filter {
+    private List<CommandName> userCommands;
+
     private static final String COMMAND = "command";
     private static final String USER = "user";
     private static final String INDEX_PAGE = "Controller?command=load-main-page";
     private static final String ACCESS_DENIED_ERROR = "accessDeniedError";
-    private static final String ACCESS_DENIED_ERROR_USER = "accessDeniedErrorUser";
+    private static final String ACCESS_DENIED_ERROR_ADMIN = "accessDeniedErrorAdmin";
     private static final String MESSAGE = "Please log in";
 
-    private static final Logger LOG = LogManager.getLogger(AdminFilter.class);
+    private static final Logger LOG = LogManager.getLogger(UserFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        adminCommands = new ArrayList<>();
-        adminCommands.add(CommandName.ADMIN_GET_USERS);
-        adminCommands.add(CommandName.ADMIN_GET_FILMS);
-        adminCommands.add(CommandName.ADMIN_GET_GENRES);
-        adminCommands.add(CommandName.ADMIN_GET_COUNTRIES);
-        adminCommands.add(CommandName.ADMIN_GET_DISCOUNTS);
-        adminCommands.add(CommandName.ADMIN_GET_FILM_MAKERS);
-        adminCommands.add(CommandName.ADMIN_GET_COMMENTS);
-        adminCommands.add(CommandName.ADMIN_ADD_PAGE_FILM);
-        adminCommands.add(CommandName.ADMIN_SAVE_FILM);
-        adminCommands.add(CommandName.ADMIN_SAVE_GENRE);
-        adminCommands.add(CommandName.ADMIN_SAVE_COUNTRY);
-        adminCommands.add(CommandName.ADMIN_SAVE_DISCOUNT);
-        adminCommands.add(CommandName.ADMIN_SAVE_FILM_MAKER);
-        adminCommands.add(CommandName.ADMIN_UPDATE_USER);
-        adminCommands.add(CommandName.ADMIN_UPDATE_COMMENT);
-        adminCommands.add(CommandName.ADMIN_DELETE_USER);
-        adminCommands.add(CommandName.ADMIN_DELETE_FILM);
-        adminCommands.add(CommandName.ADMIN_DELETE_GENRE);
-        adminCommands.add(CommandName.ADMIN_DELETE_COUNTRY);
-        adminCommands.add(CommandName.ADMIN_DELETE_DISCOUNT);
-        adminCommands.add(CommandName.ADMIN_DELETE_FILM_MAKER);
-        adminCommands.add(CommandName.ADMIN_DELETE_COMMENT);
+        userCommands = new ArrayList<>();
 
+        userCommands.add(CommandName.USER_PAY_ORDER);
+        userCommands.add(CommandName.USER_DELETE_ORDER);
+        userCommands.add(CommandName.USER_ADD_TO_CART);
+        userCommands.add(CommandName.USER_CART);
+        userCommands.add(CommandName.USER_GET_DISCOUNT);
+        userCommands.add(CommandName.USER_DELETE_FAVORITE_FILM);
+        userCommands.add(CommandName.USER_ADD_FAVORITE_FILM);
+        userCommands.add(CommandName.USER_GET_FAVORITE_FILMS);
+        userCommands.add(CommandName.USER_GET_COMMENTS);
+        userCommands.add(CommandName.USER_GET_ORDERS);
+        userCommands.add(CommandName.USER_ADD_COMMENT);
+        userCommands.add(CommandName.USER_WATCH_FILM);
     }
 
     @Override
@@ -64,17 +55,17 @@ public class AdminFilter implements Filter {
             filterChain.doFilter(servletRequest, servletResponse);
         }
         CommandName command  = CommandHelper.getInstance().getCommandName(commandName);
-        if(adminCommands.contains(command)){
+        if(userCommands.contains(command)){
             HttpSession session = request.getSession(false);
             if (session != null){
                 User loggedUser = (User)session.getAttribute(USER);
                 if (loggedUser != null) {
-                    if (loggedUser.getRole().equals(Role.ADMIN)) {
+                    if (loggedUser.getRole().equals(Role.USER)) {
                         filterChain.doFilter(servletRequest, servletResponse);
                     }
                     else{
-                        LOG.warn("Access denied to command " + commandName + ". Role of logged user is not 'ADMIN'");
-                        request.setAttribute(ACCESS_DENIED_ERROR_USER, MESSAGE);
+                        LOG.warn("Access denied to command " + commandName + ". Role of logged user is not 'USER'");
+                        request.setAttribute(ACCESS_DENIED_ERROR_ADMIN, MESSAGE);
                         request.getRequestDispatcher(INDEX_PAGE).forward(request, servletResponse);
                     }
                 }

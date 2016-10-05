@@ -17,24 +17,32 @@ public class CommandHelper {
 
     private CommandHelper(){
 
-        commands.put(CommandName.USER_AUTHORIZATION, new LoginationCommand());
-        commands.put(CommandName.SAVE_NEW_USER, new SaveNewUserCommand());
-        commands.put(CommandName.GET_FILMS_BY_YEAR, new GetFilmsByYearCommand());
         commands.put(CommandName.LOAD_MAIN_PAGE, new LoadMainPageCommand());
+        commands.put(CommandName.USER_AUTHORIZATION, new LoginationCommand());
+        commands.put(CommandName.CHECK_EMAIL, new CheckEmailExistCommand());
+        commands.put(CommandName.SAVE_NEW_USER, new SaveNewUserCommand());
+        commands.put(CommandName.GET_FILTERED_FILMS, new GetFilteredFilmsCommand());
         commands.put(CommandName.GET_FILM_BY_ID, new GetFilmByIdCommand());
         commands.put(CommandName.LOGOUT, new LogoutCommand());
         commands.put(CommandName.GET_USER, new GetUserByIdCommand());
+        commands.put(CommandName.SEARCH_FILM, new SearchFilmCommand());
 
         commands.put(CommandName.USER_GET_ORDERS, new UserGetOrdersCommand());
         commands.put(CommandName.USER_GET_COMMENTS, new UserGetCommentsCommand());
-        commands.put(CommandName.USER_GET_FAVORITE_GENRES, new GetFavoriteGenresCommand());
-        commands.put(CommandName.USER_SAVE_FAVORITE_GENRES, new SaveFavoriteGenresCommand());
+        commands.put(CommandName.USER_GET_FAVORITE_FILMS, new UserGetFavoriteFilmsCommand());
+        commands.put(CommandName.USER_ADD_FAVORITE_FILM, new UserSaveFavoriteFilmCommand());
+        commands.put(CommandName.USER_DELETE_FAVORITE_FILM, new UserDeleteFavoriteFilmCommand());
         commands.put(CommandName.USER_GET_DISCOUNT, new UserGetDiscountCommand());
         commands.put(CommandName.USER_ADD_TO_CART, new UserAddToCartCommand());
         commands.put(CommandName.USER_CART, new UserCartCommand());
         commands.put(CommandName.USER_DELETE_ORDER, new UserDeleteOrderCommand());
         commands.put(CommandName.USER_PAY_ORDER, new UserPayOrderCommand());
         commands.put(CommandName.USER_ADD_COMMENT, new UserAddCommentCommand());
+        commands.put(CommandName.USER_PERSONAL_INFO, new UserPersonalInfoCommand());
+        commands.put(CommandName.USER_SHOW_UPDATE_PAGE_PROFILE, new UserShowUpdateProfilePageCommand());
+        commands.put(CommandName.USER_UPDATE_PROFILE, new UserUpdateProfileCommand());
+        commands.put(CommandName.USER_CHANGE_PASSWORD, new UserChangePasswordCommand());
+        commands.put(CommandName.USER_WATCH_FILM, new UserWatchFilmCommand());
 
         commands.put(CommandName.ADMIN_GET_COMMENTS, new AdminGetCommentsCommand());
         commands.put(CommandName.ADMIN_GET_COUNTRIES, new AdminGetCountriesCommand());
@@ -56,28 +64,30 @@ public class CommandHelper {
         commands.put(CommandName.ADMIN_SAVE_DISCOUNT, new AdminAddDiscountCommand());
         commands.put(CommandName.ADMIN_SAVE_FILM_MAKER, new AdminAddFilmMakerCommand());
         commands.put(CommandName.ADMIN_SAVE_GENRE, new AdminAddGenreCommand());
-        commands.put(CommandName.ADMIN_SAVE_FILM, new AdminAddFilmCommand());
-        commands.put(CommandName.ADMIN_ADD_PAGE_FILM, new AdminAddPageFilmCommand());
-
+        commands.put(CommandName.ADMIN_SAVE_FILM, new AdminSaveFilmCommand());
+        commands.put(CommandName.ADMIN_ADD_PAGE_FILM, new AdminShowAddFilmPageCommand());
         commands.put(CommandName.ADMIN_UPDATE_COMMENT, new AdminUpdateCommentCommand());
         commands.put(CommandName.ADMIN_UPDATE_USER, new AdminUpdateUserCommand());
 
     }
 
     public Command getCommand(String name) {
+        if(name == null || name.isEmpty()){
+            return null;
+        }
         name = name.replace('-', '_');
-        CommandName commandName = null;
         try {
-           commandName  = CommandName.valueOf(name.toUpperCase());
+            return commands.get(CommandName.valueOf(name.toUpperCase()));
         }
         catch (IllegalArgumentException e){
-
+            return null;
         }
-
-        return commands.get(commandName);
     }
 
     public CommandName getCommandName(String name) {
+        if(name == null || name.isEmpty()){
+            return null;
+        }
         name = name.replace('-', '_');
         try{
             return CommandName.valueOf(name.toUpperCase());
@@ -85,7 +95,6 @@ public class CommandHelper {
         catch (IllegalArgumentException e){
             return null;
         }
-
     }
 
     public static CommandHelper getInstance() {

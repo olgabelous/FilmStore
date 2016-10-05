@@ -1,5 +1,7 @@
 package by.epam.filmstore.controller.filter;
 
+import org.apache.log4j.Logger;
+
 import javax.servlet.*;
 import java.io.IOException;
 
@@ -10,10 +12,12 @@ public class CharsetFilter implements Filter {
 
     private String encoding;
     private ServletContext context;
+    private static final String CHARACTER_ENCODIND = "characterEncoding";
+    public static final Logger LOG=Logger.getLogger(CharsetFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        encoding = filterConfig.getInitParameter("characterEncoding");
+        encoding = filterConfig.getInitParameter(CHARACTER_ENCODIND);
         context = filterConfig.getServletContext();
     }
 
@@ -21,7 +25,7 @@ public class CharsetFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         servletRequest.setCharacterEncoding(encoding);
         servletResponse.setCharacterEncoding(encoding);
-        context.log("Charset was set.");
+        //LOG.info("Charset was set.");
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

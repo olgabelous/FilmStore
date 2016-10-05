@@ -13,8 +13,12 @@ import java.io.IOException;
  * Created by Olga Shahray on 07.09.2016.
  */
 public class ImageController extends HttpServlet {
-    private static final String FILE_STORE_PATH = "fileStorePath";
+    //private static final String FILE_STORE_PATH = "fileStorePath";
+    private static final String POSTER_STORE_PATH = "posterStorePath";
+    private static final String PHOTO_STORE_PATH = "photoStorePath";
+    private static final String GENERAL_IMAGE_PATH = "generalImagePath";
     private static final String IMG = "img";
+    private static final String TYPE = "type";
     private static final String CONTENT_TYPE = "image/*";
 
     @Override
@@ -25,8 +29,24 @@ public class ImageController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         IFileStoreService service = ServiceFactory.getInstance().getFileStoreService();
-        String fileStorePath = req.getServletContext().getInitParameter(FILE_STORE_PATH);
-        byte[] image = service.get(fileStorePath, req.getParameter(IMG));
+       // String fileStorePath = req.getServletContext().getInitParameter(FILE_STORE_PATH);
+        String type = req.getParameter(TYPE);
+        String fileStorePath = "";
+
+        if("poster".equals(type)){
+            String posterStorePath = req.getServletContext().getInitParameter(POSTER_STORE_PATH);
+            fileStorePath = req.getServletContext().getRealPath(posterStorePath + req.getParameter(IMG));
+        }
+        else if("photo".equals(type)){
+            String photoStorePath = req.getServletContext().getInitParameter(PHOTO_STORE_PATH);
+            fileStorePath = req.getServletContext().getRealPath(photoStorePath + req.getParameter(IMG));
+        }
+        else{
+            String generalImagePath = req.getServletContext().getInitParameter(GENERAL_IMAGE_PATH);
+            fileStorePath = req.getServletContext().getRealPath(generalImagePath + req.getParameter(IMG));
+        }
+        //byte[] image = service.get(fileStorePath, req.getParameter(IMG));
+        byte[] image = service.get(fileStorePath);
         resp.setContentType(CONTENT_TYPE);
         resp.getOutputStream().write(image);//
         //IOUtils.toByteArray(image)
