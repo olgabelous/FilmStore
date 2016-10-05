@@ -49,24 +49,3 @@ $(document).on("click", ".edit-country", function () {
     $(".modal-body #name").val( country_name );
 });
 
-$(document).on("click", ".apply", function () {
-    var input = $("<input>")
-        .attr("type", "hidden")
-        .attr("name", "status").val("checked");
-    $('#commentForm').append($(input));
-    $('#commentForm').submit();
-});
-
-$(document).on("click", ".reject", function () {
-    var input = $("<input>")
-        .attr("type", "hidden")
-        .attr("name", "status").val("rejected");
-    $('#commentForm').append($(input));
-    $('#commentForm').submit();
-});
-
-/*$(document).ready(function(){
-    $("#department").val("${requestScope.selectedDepartment}").attr('selected', 'selected');
-});*/
-
-
