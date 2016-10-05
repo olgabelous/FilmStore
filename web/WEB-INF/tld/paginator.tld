@@ -7,7 +7,7 @@
 
     <tag>
         <name>display</name>
-        <tag-class>by.epam.filmstore.domain.Paginator</tag-class>
+        <tag-class>by.epam.filmstore.jspbean.Paginator</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>uri</name>

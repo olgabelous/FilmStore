@@ -5,81 +5,103 @@
 
 <jsp:include page="../fragments/headTag.jsp"/>
 
-<body>
-<fmt:setLocale value="${sessionScope.locale}" /><!-- locale = ru -->
-<fmt:setBundle basename="resources.locale" var="loc" /><!-- locale_ru  -->
+<fmt:setLocale value="${sessionScope.locale}"/><!-- locale = ru -->
+<fmt:setBundle basename="resources.locale" var="loc"/><!-- locale_ru -->
 
-<fmt:message bundle="${loc}" key="locale.user.my_page" var="my_page" />
-<fmt:message bundle="${loc}" key="locale.user.name" var="name" />
-<fmt:message bundle="${loc}" key="locale.user.email" var="email" />
-<fmt:message bundle="${loc}" key="locale.user.phone" var="phone" />
-<fmt:message bundle="${loc}" key="locale.user.edit" var="edit" />
-<fmt:message bundle="${loc}" key="locale.user.my_orders" var="my_orders" />
+<fmt:message bundle="${loc}" key="locale.menu.my_orders" var="my_orders"/>
+<fmt:message bundle="${loc}" key="locale.film.film_title" var="film_title"/>
+<fmt:message bundle="${loc}" key="locale.order.date" var="date"/>
+<fmt:message bundle="${loc}" key="locale.order.sum" var="sum"/>
+<fmt:message bundle="${loc}" key="locale.order.status" var="status"/>
+<fmt:message bundle="${loc}" key="locale.order.paid" var="paid"/>
+<fmt:message bundle="${loc}" key="locale.order.watch" var="watch"/>
+<fmt:message bundle="${loc}" key="locale.order.message" var="message"/>
 
-<jsp:useBean id="user" class="by.epam.filmstore.domain.User" scope="session"/>
-<jsp:include page="../fragments/bodyHeader.jsp"/>
+<body class="w3-content" style="max-width:1600px">
 
-<div class="section m-y-1">
-    <div class="container">
-        <div class="row">
+<jsp:include page="../fragments/userMenu.jsp"/>
 
-            <div class="col-md-3">
-                <c:choose>
-                    <c:when test="${not empty user.photo}">
-                        <img src="ImageController?img=15.jpg"
-                             class="center-block img-circle img-fluid" width="250">
-                    </c:when>
-                    <c:otherwise>
-                        <img src="https://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png"
-                             class="center-block img-circle img-fluid" width="200" height="200">
-                    </c:otherwise>
-                </c:choose>
-            </div>
+<!-- !PAGE CONTENT! -->
+<div class="w3-main w3-white" style="margin-left:300px">
 
-            <div class="col-md-9">
-                <h1 class="p-y-2 text-xs-left">${my_orders}</h1>
+    <!-- Header -->
+    <header class="w3-container ">
+        <jsp:include page="../fragments/userSmallPic.jsp"/>
 
-                    <div class="col-lg-9">
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th>Название фильма</th>
-                                <th>Дата</th>
-                                <th>Сумма</th>
-                                <th>Статус</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <c:forEach var="order" items="${requestScope.orderList}">
+        <div class="w3-section w3-bottombar">
+            <h1><b>${my_orders}</b></h1>
+            <br><br>
+        </div>
+    </header>
+
+    <!-- Table-->
+
+    <div id="content">
+        <div class="container">
+
+
+            <div class="row">
+                <div class="col-md-9" id="basket">
+
+                    <p class="text-muted lead">${message}</p>
+
+                    <div class="box">
+
+                        <div class="table table-responsive">
+                            <table class="table table-hover">
+                                <thead>
                                 <tr>
-                                    <td>${order.film.title}</td>
-                                    <td>${order.dateSale}</td>
-                                    <td>${order.sum}$</td>
-                                    <td>${order.status}</td>
+                                    <th colspan="2">${film_title}</th>
+                                    <th>${date}</th>
+                                    <th>${sum}</th>
+                                    <th>${status}</th>
+                                    <th></th>
                                 </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                <c:forEach var="order" items="${requestScope.orderList}">
+                                    <tr>
+                                        <td>
+                                            <a href="Controller?command=get-film-by-id&id=${order.film.id}">
+                                                <img src="ImageController?img=${order.film.poster}&type=poster" alt="poster">
+                                            </a>
+                                        </td>
+                                        <td>${order.film.title}</td>
+                                        <td>${order.dateSale.toString().replace('T', ' ')}</td>
+                                        <td>$${order.sum}</td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${order.status=='PAID'}">
+                                                    <span class="label label-success">${paid}</span>                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="label label-info">${order.status}</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            </td>
+                                        <td><a href="Controller?command=user-watch-film&order=${order.id}&id=${order.film.id}"
+                                                target="_blank" class="btn btn-template-main btn-sm">${watch}!</a>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+
                     </div>
+                    <!-- /.box -->
+
+                </div>
+                <!-- /.col-md-9 -->
             </div>
         </div>
+    </div>
+    <jsp:include page="../fragments/footer.jsp"/>
 
-        <div class="row">
-            <%--<div class="col-md-3 text-xs-center">
-                <h3>${user.name}</h3>
-            </div>--%>
-            <div class="col-md-3 text-xs-center">
-                <h3>User</h3>
-            </div>
-        </div>
-        <div class="row">
-            <jsp:include page="../fragments/userMenu.jsp"/>
-        </div>
-
-
-  </div>
+    <!-- End page content -->
 </div>
-
-
 </body>
 </html>
+
+
+
+

@@ -5,86 +5,130 @@
 
 <jsp:include page="../fragments/headTag.jsp"/>
 
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="resources.locale" var="loc"/>
+
+<fmt:message bundle="${loc}" key="locale.cart.my_cart" var="my_cart"/>
+<fmt:message bundle="${loc}" key="locale.cart.empty_cart" var="empty_cart"/>
+<fmt:message bundle="${loc}" key="locale.film.film_title" var="film_title"/>
+<fmt:message bundle="${loc}" key="locale.cart.film_price" var="film_price"/>
+<fmt:message bundle="${loc}" key="locale.cart.discount" var="discount"/>
+<fmt:message bundle="${loc}" key="locale.cart.price_with_discount" var="price_with_discount"/>
+<fmt:message bundle="${loc}" key="locale.cart.total" var="total"/>
+<fmt:message bundle="${loc}" key="locale.cart.continue_shop" var="continue_shop"/>
+<fmt:message bundle="${loc}" key="locale.cart.pay" var="pay"/>
+<fmt:message bundle="${loc}" key="locale.button.delete" var="delete"/>
+
 <body>
-<fmt:setLocale value="${sessionScope.locale}" /><!-- locale = ru -->
-<fmt:setBundle basename="resources.locale" var="loc" /><!-- locale_ru  -->
+<jsp:include page="../fragments/userMenu.jsp"/>
+<!-- !PAGE CONTENT! -->
+<div class="w3-main w3-white" style="margin-left:300px">
+    <!-- Header -->
+    <header class="w3-container">
+        <jsp:include page="../fragments/userSmallPic.jsp"/>
 
-<fmt:message bundle="${loc}" key="locale.user.my_page" var="my_page" />
-<fmt:message bundle="${loc}" key="locale.user.name" var="name" />
-<fmt:message bundle="${loc}" key="locale.user.email" var="email" />
-<fmt:message bundle="${loc}" key="locale.user.phone" var="phone" />
-<fmt:message bundle="${loc}" key="locale.user.edit" var="edit" />
-<fmt:message bundle="${loc}" key="locale.user.my_orders" var="my_orders" />
+        <div class="w3-section w3-bottombar">
+            <h1><b>${my_cart}</b></h1>
+            <br><br>
+        </div>
+    </header>
 
-<jsp:useBean id="user" class="by.epam.filmstore.domain.User" scope="session"/>
-<jsp:include page="../fragments/bodyHeader.jsp"/>
+    <div id="content">
+        <div class="container">
 
-<div class="section m-y-1">
-    <div class="container">
-        <div class="row">
-
-            <div class="col-md-3">
+            <div class="row">
                 <c:choose>
-                    <c:when test="${not empty user.photo}">
-                        <img src="ImageController?img=15.jpg"
-                             class="center-block img-circle img-fluid" width="250">
-                    </c:when>
-                    <c:otherwise>
-                        <img src="https://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png"
-                             class="center-block img-circle img-fluid m-y m-y-1" width="200" height="200">
-                    </c:otherwise>
-                </c:choose>
-            </div>
+                <c:when test="${empty requestScope.orderList}">
+                    <div class="col-md-12">
+                        <h4 class="text-muted lead">${empty_cart}</h4>
+                    </div>
+                </c:when>
+                <c:otherwise>
 
-            <div class="col-md-9">
-                <h1 class="p-y-2 text-xs-left">Моя корзина</h1>
+                <div class="col-md-9 clearfix" id="basket">
 
-                <div class="col-lg-9">
-                    <form action="Controller" method="post">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>Название фильма</th>
-                            <th>Цена фильма</th>
-                            <th>Сумма со скидкой</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:forEach var="order" items="${requestScope.orderList}">
-                            <tr>
-                                <td>${order.film.title}</td>
-                                <td>${order.film.price}</td>
-                                <td>${order.sum}$</td>
-                                <td><a href="Controller?command=user-delete-order&id=${order.id}" class="btn btn-danger">Delete</a></td>
-                            </tr>
-                        </c:forEach>
-                        </tbody>
-                    </table>
-                    <%--<jsp:useBean id="totalSum" class="java.lang.Double" scope="request"/>--%>
-                        <%--<c:set var="totalSum" scope="request"/>--%>
-                    <div>Сумма к оплате: ${requestScope.totalSum}</div>
-                        <input hidden name="command" value="user-pay-order">
-                        <input hidden name="order-list" value="${requestScope.orderList}">
-                        <input hidden name="total-sum" value="${requestScope.totalSum}">
-                        <button type="submit" class="btn btn-success">Оплатить</button>
-                    </form>
+                    <div class="box">
+
+                        <form action="Controller" method="post">
+                            <div class="table table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="2">${film_title}</th>
+                                        <th>${film_price}</th>
+                                        <th>${discount}</th>
+                                        <th colspan="2">${price_with_discount}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach var="order" items="${requestScope.orderList}">
+                                        <tr>
+                                            <td>
+                                                <a href="Controller?command=get-film-by-id&id=${order.film.id}">
+                                                    <img src="ImageController?img=${order.film.poster}&type=poster"
+                                                         alt="">
+                                                </a>
+                                            </td>
+                                            <td><a href="Controller?command=get-film-by-id&id=${order.film.id}">
+                                                <input hidden name="id" value="${order.id}">${order.film.title}</a>
+                                            </td>
+                                            <td>$${order.film.price}</td>
+                                            <td>$<fmt:formatNumber var="expiry"
+                                                                   value="${(order.film.price - order.sum)* 100.0 / 100.0}"
+                                                                   maxFractionDigits="2"/>${expiry}
+                                            </td>
+                                            <td>$${order.sum}</td>
+                                            <td><a href="Controller?command=user-delete-order&id=${order.id}" data-toggle="tooltip"
+                                                   data-placement="top" title="${delete}"><i
+                                                    class="fa fa-trash-o"></i></a>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th colspan="4">${total}</th>
+                                        <th colspan="2">$${requestScope.totalSum}</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <input hidden name="command" value="user-pay-order">
+                            <input hidden name="order-list" value="${requestScope.orderList}">
+                            <input hidden name="total-sum" value="${requestScope.totalSum}">
+
+                            <div class="box-footer">
+                                <div class="pull-left">
+                                    <a href="Controller?command=get-filtered-films" class="btn btn-default"><i
+                                            class="fa fa-chevron-left"></i> ${continue_shop}</a>
+                                </div>
+                                <div class="pull-right">
+
+                                    <button type="submit" class="btn btn-template-main">${pay} <i
+                                            class="fa fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- /.box -->
+                        </form>
+                        </c:otherwise>
+                        </c:choose>
+
+                    </div>
+
+                    <!-- /.table-responsive -->
+
                 </div>
+                <!-- /.col-md-9 -->
             </div>
+
         </div>
 
-        <div class="row">
-            <%--<div class="col-md-3 text-xs-center">
-                <h3>${user.name}</h3>
-            </div>--%>
-            <div class="col-md-3 text-xs-center">
-                <h3>User</h3>
-            </div>
-        </div>
-        <div class="row">
-            <jsp:include page="../fragments/userMenu.jsp"/>
-        </div>
     </div>
+    <!-- /.container -->
+    <jsp:include page="../fragments/footer.jsp"/>
 </div>
+<!-- /#content -->
 </body>
 </html>

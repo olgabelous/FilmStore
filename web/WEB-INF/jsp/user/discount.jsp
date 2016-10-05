@@ -5,70 +5,87 @@
 
 <jsp:include page="../fragments/headTag.jsp"/>
 
-<body>
-<fmt:setBundle basename="resources.locale" var="loc" /><!-- locale_ru  -->
+<fmt:setLocale value="${sessionScope.locale}"/><!-- locale = ru -->
+<fmt:setBundle basename="resources.locale" var="loc"/><!-- locale_ru -->
 
-<fmt:message bundle="${loc}" key="locale.user.my_discout" var="my_discount" />
-<fmt:message bundle="${loc}" key="locale.user.name" var="name" />
-<fmt:message bundle="${loc}" key="locale.user.my_orders" var="my_orders" />
+<fmt:message bundle="${loc}" key="locale.menu.my_discount" var="my_discount"/>
+<fmt:message bundle="${loc}" key="locale.discount.amount" var="amount"/>
+<fmt:message bundle="${loc}" key="locale.discount.sum_from" var="sum_from"/>
+<fmt:message bundle="${loc}" key="locale.discount.value" var="value"/>
+<fmt:message bundle="${loc}" key="locale.discount.from" var="from"/>
+<fmt:message bundle="${loc}" key="locale.discount.message" var="message"/>
 
-<jsp:useBean id="user" class="by.epam.filmstore.domain.User" scope="session"/>
-<jsp:include page="../fragments/bodyHeader.jsp"/>
+<body class="w3-content" style="max-width:1600px">
 
-<div class="section m-y-1">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-2">
-                <c:choose>
-                    <c:when test="${not empty user.photo}">
-                        <img src="ImageController?img=15.jpg"
-                             class="center-block img-circle img-fluid" width="250">
-                    </c:when>
-                    <c:otherwise>
-                        <img src="https://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png"
-                             class="img-circle img-fluid" width="200">
-                    </c:otherwise>
-                </c:choose>
+<jsp:include page="../fragments/userMenu.jsp"/>
+<!-- !PAGE CONTENT! -->
+<div class="w3-main w3-white" style="margin-left:300px">
 
-                <div class="col-md-12 text-xs-center">
-                    <h3>${user.name}</h3>
+    <!-- Header -->
+    <header class="w3-container">
+        <jsp:include page="../fragments/userSmallPic.jsp"/>
+
+        <div class="w3-section w3-bottombar">
+            <h1><b>${my_discount}</b></h1>
+
+
+            <h3><span class="label label-danger">${requestScope.discount}%</span></h3>
+            <br>
+            <h4 class="">${amount} <span class="label label-success">${requestScope.totalAmount}$</span></h4>
+
+        </div>
+    </header>
+
+    <!-- Table-->
+    <div id="content">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="text-muted lead">${message}</p>
                 </div>
 
+                <div class="col-md-9 clearfix">
+
+                    <div class="box">
+
+                        <div class="table table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>${sum_from}</th>
+                                    <th>${value}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <c:forEach var="discountItem" items="${requestScope.discountList}">
+                                    <tr>
+                                        <td>${from} ${discountItem.sumFrom}$</td>
+                                        <td>${discountItem.value}%</td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- /.box -->
+                    </div>
+
+                    <!-- /.table-responsive -->
+
+                </div>
+                <!-- /.col-md-9 -->
             </div>
 
-            <div class="col-md-8 col-lg-offset-2">
-                <h1 class="">${my_discount}</h1>
-                <c:out value="${requestScope.discount}%"/>
-                <h3 class="">Сумма выкупа</h3>
-                <c:out value="${requestScope.totalAmount}$"/>
-            </div>
         </div>
     </div>
-</div>
-<div class="section">
-    <div class="container">
-        <div class="row">
-            <jsp:include page="../fragments/userMenu.jsp"/>
-            <div class="col-lg-7">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>Сумма выкупа</th>
-                        <th>Процент скидки</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach var="discountItem" items="${requestScope.discountList}">
-                        <tr>
-                            <td>от ${discountItem.sumFrom}$</td>
-                            <td>${discountItem.value}%</td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    <!-- /.container -->
+    <jsp:include page="../fragments/footer.jsp"/>
+
+    <!-- End page content -->
 </div>
 </body>
 </html>
+
+
+

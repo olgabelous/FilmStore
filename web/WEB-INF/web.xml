@@ -10,10 +10,28 @@
         <param-name>fileStorePath</param-name>
         <param-value>d:/FileStore</param-value>
     </context-param>
-
+    <context-param>
+        <param-name>posterStorePath</param-name>
+        <param-value>/resources/images/poster/</param-value>
+    </context-param>
+    <context-param>
+        <param-name>photoStorePath</param-name>
+        <param-value>/resources/images/photo/</param-value>
+    </context-param>
+    <context-param>
+        <param-name>generalImagePath</param-name>
+        <param-value>/resources/images/</param-value>
+    </context-param>
     <welcome-file-list>
         <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>
+
+    <listener>
+        <listener-class>by.epam.filmstore.controller.listener.FilmstoreServletContextListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>by.epam.filmstore.controller.listener.FilmstoreHttpSessionListener</listener-class>
+    </listener>
 
     <servlet>
         <servlet-name>Welcome</servlet-name>
@@ -42,10 +60,6 @@
         <url-pattern>/ImageController</url-pattern>
     </servlet-mapping>
 
-    <listener>
-        <listener-class>by.epam.filmstore.controller.listener.FilmstoreServletContextListener</listener-class>
-    </listener>
-
     <filter>
         <filter-name>CharsetFilter</filter-name>
         <filter-class>by.epam.filmstore.controller.filter.CharsetFilter</filter-class>
@@ -57,6 +71,10 @@
     <filter>
         <filter-name>AdminFilter</filter-name>
         <filter-class>by.epam.filmstore.controller.filter.AdminFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>UserFilter</filter-name>
+        <filter-class>by.epam.filmstore.controller.filter.UserFilter</filter-class>
     </filter>
     <filter>
         <filter-name>ChangeLanguageFilter</filter-name>
@@ -76,13 +94,29 @@
         <url-pattern>/Controller</url-pattern>
     </filter-mapping>
     <filter-mapping>
+        <filter-name>ChangeLanguageFilter</filter-name>
+        <url-pattern>/Controller</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/Controller</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>ChangeLanguageFilter</filter-name>
+        <filter-name>UserFilter</filter-name>
         <url-pattern>/Controller</url-pattern>
     </filter-mapping>
 
 
+    <error-page>
+        <error-code>401</error-code>
+        <location>/WEB-INF/jsp/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/jsp/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/jsp/404.jsp</location>
+    </error-page>
 </web-app>

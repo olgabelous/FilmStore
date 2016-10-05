@@ -5,68 +5,98 @@
 
 <jsp:include page="../fragments/headTag.jsp"/>
 
-<body>
 <fmt:setLocale value="${sessionScope.locale}" /><!-- locale = ru -->
 <fmt:setBundle basename="resources.locale" var="loc" /><!-- locale_ru  -->
 
-<fmt:message bundle="${loc}" key="locale.admin.add_country" var="addCountry"/>
+<fmt:message bundle="${loc}" key="locale.menu.countries" var="countries"/>
+<fmt:message bundle="${loc}" key="locale.admin.add_country" var="add_country"/>
 <fmt:message bundle="${loc}" key="locale.common.id" var="id"/>
+<fmt:message bundle="${loc}" key="locale.common.action" var="action"/>
 <fmt:message bundle="${loc}" key="locale.country.country" var="country"/>
+<fmt:message bundle="${loc}" key="locale.country.edit_country" var="edit_country"/>
+<fmt:message bundle="${loc}" key="locale.country.enter_country" var="enter_country"/>
 <fmt:message bundle="${loc}" key="locale.button.save" var="save"/>
 <fmt:message bundle="${loc}" key="locale.button.edit" var="edit"/>
 <fmt:message bundle="${loc}" key="locale.button.delete" var="delete"/>
 <fmt:message bundle="${loc}" key="locale.button.close" var="close"/>
 
-<jsp:include page="../fragments/bodyHeader.jsp"/>
+<body class="w3-content" style="max-width:1600px">
 
+<jsp:include page="../fragments/adminMenu.jsp"/>
+<!-- !PAGE CONTENT! -->
+<div class="w3-main w3-white" style="margin-left:300px">
 
-<div class="section m-y-1">
-    <div class="container">
-        <div class="row">
-            <jsp:include page="../fragments/adminMenu.jsp"/>
-            <div class="col-lg-10 col-md-10">
-                <br>
-                <form class="form-horizontal" id="detailsForm" action="Controller" method="post">
-                    <input type="hidden" name="command" value="admin-save-country" /> <br />
+    <!-- Header -->
+    <header class="w3-container">
+        <jsp:include page="../fragments/userSmallPic.jsp"/>
 
-                    <div class="form-group">
-                        <label for="country" class="control-label col-xs-3">${addCountry}: </label>
+        <div class="w3-section w3-bottombar">
+            <h1><b>${countries}</b></h1>
+            <br><br>
+            <jsp:include page="../fragments/errorMessageAlert.jsp"/>
+        </div>
+    </header>
 
-                        <div class="col-xs-5">
-                            <input class="form-control" id="country" name="countryName" placeholder="Country">
+    <!-- Table-->
+    <div id="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9 clearfix" id="basket">
+                    <div>
+                        <form class="form-horizontal" id="detailsForm" action="Controller" method="post">
+                            <input type="hidden" name="command" value="admin-save-country"/> <br/>
+
+                            <div class="form-group">
+                                <label for="country" class="control-label col-xs-3">${add_country}: </label>
+
+                                <div class="col-xs-5">
+                                    <input class="form-control" id="country" name="countryName" placeholder="${country}">
+                                </div>
+                                <button type="submit" class="btn btn-template-primary">${save}</button>
+
+                            </div>
+                        </form>
+                    </div><br>
+                    <div class="box">
+                        <div class="table table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>${id}</th>
+                                    <th>${country}</th>
+                                    <th colspan="2" class="text-center">${action}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <c:forEach var="countryItem" items="${requestScope.countryList}">
+                                    <tr>
+                                        <td>${countryItem.id}</td>
+                                        <td>${countryItem.countryName}</td>
+                                        <td class="text-center"><a href="#myModal" data-toggle="modal" data-id="${countryItem.id}"
+                                               class="edit-country" data-country-name="${countryItem.countryName}"
+                                               data-placement="top" title="${edit}"><i class="fa fa-pencil"></i></a></td>
+                                        <td class="text-center"><a href="Controller?command=admin-delete-country&id=${countryItem.id}"
+                                               data-toggle="tooltip" data-placement="top" title="${delete}"><i class="fa fa-trash-o"></i></a></td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
                         </div>
-                        <button type="submit" class="btn btn-primary">${save}</button>
 
+                        <!-- /.box -->
                     </div>
-                </form>
-                <hr>
-
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>${id}</th>
-                        <th>${country}</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach var="countryItem" items="${requestScope.countryList}">
-                        <tr>
-                            <td>${countryItem.id}</td>
-                            <td>${countryItem.countryName}</td>
-                            <td><a href="#myModal" data-toggle="modal" data-id="${countryItem.id}" class="edit-country btn btn-primary"
-                                   data-country-name="${countryItem.countryName}">${edit}</a></td>
-                            <td><a href="Controller?command=admin-delete-country&id=${countryItem.id}" class="btn btn-danger">${delete}</a></td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.col-md-9 -->
             </div>
         </div>
     </div>
+    <!-- /.container -->
+    <br>
+    <br>
+    <jsp:include page="../fragments/footer.jsp"/>
+    <!-- End page content -->
 </div>
-
 <!-- Modal -->
 <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
@@ -75,22 +105,24 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Edit country</h4>
+                <h4 class="modal-title">${edit_country}</h4>
             </div>
             <form action="Controller" method="post">
-                <input type="hidden" name="command" value="admin-save-country" /> <br />
+                <input type="hidden" name="command" value="admin-save-country"/> <br/>
+
                 <div class="modal-body">
                     <input type="hidden" name="id" id="id" value=""/> <br>
 
                     <div class="form-group">
                         <label for="name">${country}:</label>
-                        <input type="text" class="form-control" id="name" name="countryName" placeholder="Enter country name" value="">
+                        <input type="text" class="form-control" id="name" name="countryName"
+                               placeholder="${enter_country}" value="">
                     </div>
 
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">${save}</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">${close}</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-template-primary">${save}</button>
+                        <button type="button" class="btn btn-template-main" data-dismiss="modal">${close}</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -99,3 +131,4 @@
 
 </body>
 </html>
+

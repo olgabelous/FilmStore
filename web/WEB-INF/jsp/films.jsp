@@ -7,41 +7,54 @@
 <jsp:include page="fragments/headTag.jsp"/>
 
 <body>
-<fmt:setLocale value="${sessionScope.locale}" /><!-- locale = ru -->
-<fmt:setBundle basename="resources.locale" var="loc" /><!-- locale_ru  -->
 
-<fmt:message bundle="${loc}" key="locale.index.new2016" var="new2016" />
-<fmt:message bundle="${loc}" key="locale.index.best" var="best" />
-
-<jsp:useBean id="errorMessage" class="java.lang.String" scope="request" />
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="resources.locale" var="loc" />
+<fmt:message bundle="${loc}" key="locale.films.empty_film_list" var="empty_film_list" />
 
 <jsp:include page="fragments/bodyHeader.jsp"/>
+<jsp:include page="fragments/filterPanel.jsp"/>
+<jsp:include page="fragments/filter.jsp"/>
 
-<div class="section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1 class="">${new2016}</h1></div>
-        </div>
-    </div>
-</div>
-<div class="p-y-3 section">
-    <div class="container">
-        <div class="row">
+<c:choose>
+    <c:when test="${not empty requestScope.warning}">
+        <c:set value="block" var="displayStatus"/>
+    </c:when>
+    <c:otherwise>
+        <c:set value="none" var="displayStatus"/>
+    </c:otherwise>
+</c:choose>
 
-        <c:forEach var="film" items="${requestScope.filmlist}">
-            <div class="col-md-2">
-                <a href="Controller?command=get-film-by-id&id=${film.id}"><img src="ImageController?img=${film.link}"  class="img-fluid m-y" alt="Обложка">
-                    <p class="m-y-1">${film.title}</p>
-                </a>
-            </div>
-        </c:forEach>
-        </div>
-    </div>
-    <c:url var="searchUri" value="/Controller?command=get_films_by_year&year=2016&page=##" />
-    <paginator:display maxLinks="10" currPage="${requestScope.currentPage}" totalPages="${requestScope.totalPages}" uri="${searchUri}" />
-
+<div style="display:${displayStatus}" class="alert alert-danger col-md-10 col-md-offset-1">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    ${empty_film_list}
 </div>
 
+<div class="section" style="min-height: calc(100% - 388px)">
+    <div class="container">
+        <div class="row box">
+            <c:forEach var="film" items="${requestScope.filmList}">
+                <div class="img w3-hover-shadow">
+                    <a href="Controller?command=get-film-by-id&id=${film.id}">
+                        <img src="ImageController?img=${film.poster}&type=poster"  class="img-fluid m-y" alt="Обложка">
+                        <div class="desc">
+                        <h6 class="text-uppercase">${film.title}</h6>
+                        <span style="font-size: medium; color: #2c8494;"><i class="fa fa-star" aria-hidden="true">${film.rating}</i></span>
+                                ${film.year}
+                        </div>
+                    </a>
+                </div>
+            </c:forEach>
+        </div>
+        <br>
+        <div class="col-lg-4 col-lg-offset-4">
+            <c:url var="searchUri" value="/Controller?${requestScope.query}&page=##"/>
+            <paginator:display maxLinks="10" currPage="${requestScope.currentPage}" totalPages="${requestScope.totalPages}" uri="${searchUri}" />
+        </div>
+    </div>
+    <br>
+    <br>
+</div>
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>

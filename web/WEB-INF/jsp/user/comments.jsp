@@ -5,75 +5,111 @@
 
 <jsp:include page="../fragments/headTag.jsp"/>
 
-<body>
-<fmt:setLocale value="${sessionScope.locale}" /><!-- locale = ru -->
-<fmt:setBundle basename="resources.locale" var="loc" /><!-- locale_ru  -->
+<fmt:setLocale value="${sessionScope.locale}"/><!-- locale = ru -->
+<fmt:setBundle basename="resources.locale" var="loc"/><!-- locale_ru -->
 
-<fmt:message bundle="${loc}" key="locale.user.my_comments" var="my_comments" />
-<fmt:message bundle="${loc}" key="locale.user.name" var="name" />
-<fmt:message bundle="${loc}" key="locale.user.email" var="email" />
-<fmt:message bundle="${loc}" key="locale.user.phone" var="phone" />
-<fmt:message bundle="${loc}" key="locale.user.edit" var="edit" />
-<fmt:message bundle="${loc}" key="locale.user.my_orders" var="my_orders" />
+<fmt:message bundle="${loc}" key="locale.menu.my_comments" var="my_comments"/>
+<fmt:message bundle="${loc}" key="locale.comment.comment_empty" var="comment_empty"/>
+<fmt:message bundle="${loc}" key="locale.comment.new_stat" var="new_stat"/>
+<fmt:message bundle="${loc}" key="locale.comment.checked" var="checked"/>
+<fmt:message bundle="${loc}" key="locale.comment.rejected" var="rejected"/>
 
-<jsp:useBean id="user" class="by.epam.filmstore.domain.User" scope="session"/>
-<jsp:include page="../fragments/bodyHeader.jsp"/>
+<body class="w3-content" style="max-width:1600px">
 
-<div class="section m-y-1">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-2">
-                <c:choose>
-                    <c:when test="${not empty user.photo}">
-                        <img src="ImageController?img=15.jpg"
-                             class="center-block img-circle img-fluid" width="250">
-                    </c:when>
-                    <c:otherwise>
-                        <img src="https://pingendo.github.io/pingendo-bootstrap/assets/user_placeholder.png"
-                             class="img-circle img-fluid" width="250">
-                    </c:otherwise>
-                </c:choose>
+<jsp:include page="../fragments/userMenu.jsp"/>
+<!-- !PAGE CONTENT! -->
+<div class="w3-main w3-white" style="margin-left:300px">
 
-                <div class="col-md-12 text-xs-center">
-                    <h3>${user.name}</h3>
+    <!-- Header -->
+    <header class="w3-container">
+        <jsp:include page="../fragments/userSmallPic.jsp"/>
+
+        <div class="w3-section w3-bottombar">
+            <h1><b>${my_comments}</b></h1>
+            <br><br>
+        </div>
+    </header>
+
+    <!-- Comments-->
+    <div id="content">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-9" id="blog-listing-medium">
+                    <c:choose>
+                        <c:when test="${empty requestScope.commentList}">
+                            <p class="text-muted lead">${comment_empty}</p>
+                        </c:when>
+                        <c:otherwise>
+                            <c:forEach var="comment" items="${requestScope.commentList}">
+                                <section class="post">
+                                    <div class="row">
+                                        <div class="col-md-2 col-md-offset-1">
+                                            <div class="image">
+                                                <a href="Controller?command=get-film-by-id&id=${comment.film.id}">
+                                                    <img src="ImageController?img=${comment.film.poster}&type=poster"
+                                                         class="img-responsive" style="width: 150px;" alt="">
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <h2>
+                                                <a href="Controller?command=get-film-by-id&id=${comment.film.id}">${comment.film.title}</a>
+                                            </h2>
+
+                                            <div class="clearfix">
+                                                <div id="${comment.film.id}" style="font-size: medium;"></div>
+                                                <script>
+                                                    $(function () {
+                                                        var stars = ${comment.mark*20};
+                                                        function addScore(score, $domElement) {
+                                                            var starWidth = "<style>.stars-container:after { width: " + score + "%} </style>";
+                                                            $("<span class='stars-container'>")
+                                                                    .text("★★★★★")
+                                                                    .append($(starWidth))
+                                                                    .appendTo($domElement);
+                                                        }
+
+                                                        var divid = ${comment.film.id};
+                                                        addScore(stars, $("#"+divid));
+                                                    });
+                                                </script>
+                                                <p class="date-comments">
+                                                    <i class="fa fa-calendar-o"></i> ${comment.dateComment.toString().replace('T', ' ')}
+                                                </p>
+                                            </div>
+                                            <p class="intro">${comment.text}</p>
+
+                                            <p class="read-more">
+                                                <c:choose>
+                                                    <c:when test="${comment.status=='NEW'}">
+                                                        <span class="label label-info">${new_stat}</span>
+                                                    </c:when>
+                                                    <c:when test="${comment.status=='REJECTED'}">
+                                                        <span class="label label-danger">${rejected}</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="label label-success">${checked}</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </section>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
-
+                <!-- /.col-md-9 -->
             </div>
-
-            <div class="col-md-8 col-lg-offset-2">
-                <h1 class="">${my_comments}</h1>
-            </div>
+            <!-- /.row -->
         </div>
+        <!-- /.container -->
     </div>
+
+    <jsp:include page="../fragments/footer.jsp"/>
+    <!-- End page content -->
 </div>
-<div class="section">
-    <div class="container">
-        <div class="row">
-            <jsp:include page="../fragments/userMenu.jsp"/>
-            <div class="col-lg-7">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>Название фильма</th>
-                        <th>Дата</th>
-                        <th>Комментарий</th>
-                        <th>Статус</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach var="comment" items="${requestScope.commentList}">
-                        <tr>
-                            <td>${comment.film.title}</td>
-                            <td>${comment.dateComment}</td>
-                            <td>${comment.mark}<br>${comment.text}</td>
-                            <td>${comment.status}</td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+
 </body>
 </html>
