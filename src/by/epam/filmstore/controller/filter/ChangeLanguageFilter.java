@@ -10,21 +10,26 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Created by Olga Shahray on 05.09.2016.
+ * Filter changes local according to required language.
+ * Default local is init parameter of filter.
+ *
+ * @author Olga Shahray
  */
 public class ChangeLanguageFilter implements Filter {
+
+    private String defaultLocal;
+    private static final String DEFAULT_LOCAL = "defaultLocal";
     private static final String LANG = "lang";
     private static final String LOCALE = "locale";
-
     private static final Logger LOG = LogManager.getLogger(ChangeLanguageFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        defaultLocal = filterConfig.getInitParameter(DEFAULT_LOCAL);
     }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        // TODO: 23.09.2016 проверить локаль, request accept lang
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         String lang = request.getParameter(LANG);
 
@@ -32,8 +37,8 @@ public class ChangeLanguageFilter implements Filter {
         String loc = (String)session.getAttribute(LOCALE);
 
         if(loc == null && (lang==null || lang.isEmpty())){
-            session.setAttribute(LOCALE, "ru");
-            LOG.info("Local was set: ru");
+            session.setAttribute(LOCALE, defaultLocal);
+            LOG.info("Local was set: " + defaultLocal);
             filterChain.doFilter(servletRequest, servletResponse);
         }
         else if(loc != null && (lang==null || lang.isEmpty())){
@@ -48,5 +53,6 @@ public class ChangeLanguageFilter implements Filter {
 
     @Override
     public void destroy() {
+        //do nothing
     }
 }

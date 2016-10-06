@@ -16,6 +16,8 @@ import javax.servlet.http.HttpSessionListener;
 import java.util.List;
 
 /**
+ * Listener that gets genre list and country list and sets them in session as attributes.
+ *
  * @author Olga Shahray
  */
 public class FilmstoreHttpSessionListener implements HttpSessionListener {
@@ -50,6 +52,6 @@ public class FilmstoreHttpSessionListener implements HttpSessionListener {
 
     @Override
     public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
-
+        //do nothing
     }
 }

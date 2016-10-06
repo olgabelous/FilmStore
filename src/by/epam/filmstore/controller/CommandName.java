@@ -1,7 +1,7 @@
 package by.epam.filmstore.controller;
 
 /**
- * Created by Olga Shahray on 23.07.2016.
+ * @author Olga Shahray
  */
 public enum CommandName {
 

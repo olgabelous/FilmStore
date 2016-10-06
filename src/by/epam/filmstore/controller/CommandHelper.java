@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Olga Shahray on 23.07.2016.
+ * Auxiliary class that contains instances of classes implementing interface Command
+ * corresponding to command names
+ *
+ * @author Olga Shahray
  */
 public class CommandHelper {
 
@@ -39,7 +42,6 @@ public class CommandHelper {
         commands.put(CommandName.USER_PAY_ORDER, new UserPayOrderCommand());
         commands.put(CommandName.USER_ADD_COMMENT, new UserAddCommentCommand());
         commands.put(CommandName.USER_PERSONAL_INFO, new UserPersonalInfoCommand());
-        commands.put(CommandName.USER_SHOW_UPDATE_PAGE_PROFILE, new UserShowUpdateProfilePageCommand());
         commands.put(CommandName.USER_UPDATE_PROFILE, new UserUpdateProfileCommand());
         commands.put(CommandName.USER_CHANGE_PASSWORD, new UserChangePasswordCommand());
         commands.put(CommandName.USER_WATCH_FILM, new UserWatchFilmCommand());
@@ -60,10 +62,10 @@ public class CommandHelper {
         commands.put(CommandName.ADMIN_DELETE_GENRE, new AdminDeleteGenreCommand());
         commands.put(CommandName.ADMIN_DELETE_USER, new AdminDeleteUserCommand());
 
-        commands.put(CommandName.ADMIN_SAVE_COUNTRY, new AdminAddCountryCommand());
-        commands.put(CommandName.ADMIN_SAVE_DISCOUNT, new AdminAddDiscountCommand());
-        commands.put(CommandName.ADMIN_SAVE_FILM_MAKER, new AdminAddFilmMakerCommand());
-        commands.put(CommandName.ADMIN_SAVE_GENRE, new AdminAddGenreCommand());
+        commands.put(CommandName.ADMIN_SAVE_COUNTRY, new AdminSaveCountryCommand());
+        commands.put(CommandName.ADMIN_SAVE_DISCOUNT, new AdminSaveDiscountCommand());
+        commands.put(CommandName.ADMIN_SAVE_FILM_MAKER, new AdminSaveFilmMakerCommand());
+        commands.put(CommandName.ADMIN_SAVE_GENRE, new AdminSaveGenreCommand());
         commands.put(CommandName.ADMIN_SAVE_FILM, new AdminSaveFilmCommand());
         commands.put(CommandName.ADMIN_ADD_PAGE_FILM, new AdminShowAddFilmPageCommand());
         commands.put(CommandName.ADMIN_UPDATE_COMMENT, new AdminUpdateCommentCommand());

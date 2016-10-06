@@ -15,9 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 28.08.2016.
+ * Filter checks access right of logged user to admin commands.
+ *
+ * @author Olga Shahray
  */
 public class AdminFilter implements Filter {
+
     private List<CommandName> adminCommands;
     private static final String COMMAND = "command";
     private static final String USER = "user";
@@ -28,6 +31,12 @@ public class AdminFilter implements Filter {
 
     private static final Logger LOG = LogManager.getLogger(AdminFilter.class);
 
+    /**
+     * Method initializes list of admin commands.
+     *
+     * @param filterConfig
+     * @throws ServletException
+     */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         adminCommands = new ArrayList<>();
@@ -56,6 +65,16 @@ public class AdminFilter implements Filter {
 
     }
 
+    /**
+     * <p>Method checks access right. If user has access right, filterChain calls doChain(servletRequest, servletResponse).
+     * If user does not have access right, filter sends error message and forwards to home page.</p>
+     *
+     * @param servletRequest
+     * @param servletResponse
+     * @param filterChain
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest)servletRequest;
@@ -97,6 +116,6 @@ public class AdminFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        //do nothing
     }
 }

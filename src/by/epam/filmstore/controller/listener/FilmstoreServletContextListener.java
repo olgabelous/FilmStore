@@ -8,7 +8,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
- * Created by Olga Shahray on 28.07.2016.
+ * Listener that initializes pool connection before web application is started
+ * and destroys it when web application is ended.
+ *
+ * @author Olga Shahray
  */
 public class FilmstoreServletContextListener implements ServletContextListener {
     //Run this before web application is started

@@ -8,10 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * Filter that wraps an underlying file upload request (before Servlet 3.0).
+ * <p>Filter wraps an underlying file upload request.
  *
- * <P>This filter should be configured only for those operations that use a
- * file upload request.
+ * This filter is configured only for those operations that use a
+ * file upload request.</p>
+ *
+ * @author Olga Shahray
  */
 public class FileUploadFilter implements Filter {
     private static final String ERROR_PAGE = "/error.jsp";

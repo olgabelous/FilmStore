@@ -11,19 +11,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Created by Olga Shahray on 23.07.2016.
+ * @author Olga Shahray
  */
 public class Controller extends HttpServlet {
+
     private static final String COMMAND = "command";
     private static final String ERROR_PAGE = "/WEB-INF/jsp/404.jsp";
-    private static final String EXCEPTION = "exception";
-
     private static final Logger LOG = LogManager.getLogger(Controller.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
     }
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

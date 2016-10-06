@@ -1,6 +1,8 @@
 package by.epam.filmstore.command;
 
 /**
+ * Class contains names of request and session parameters and attributes.
+ *
  * @author Olga Shahray
  */
 public class ParameterAndAttributeName {

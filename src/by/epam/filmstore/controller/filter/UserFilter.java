@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Filter checks access right of logged user to user commands.
+ *
  * @author Olga Shahray
  */
 public class UserFilter implements Filter {
@@ -29,6 +31,12 @@ public class UserFilter implements Filter {
 
     private static final Logger LOG = LogManager.getLogger(UserFilter.class);
 
+    /**
+     * Method initializes list of user commands.
+     *
+     * @param filterConfig
+     * @throws ServletException
+     */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         userCommands = new ArrayList<>();
@@ -47,6 +55,16 @@ public class UserFilter implements Filter {
         userCommands.add(CommandName.USER_WATCH_FILM);
     }
 
+    /**
+     * <p>Method checks access right. If user has access right, filterChain calls doChain(servletRequest, servletResponse).
+     * If user does not have access right, filter sends error message and forwards to home page.</p>
+     *
+     * @param servletRequest
+     * @param servletResponse
+     * @param filterChain
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest)servletRequest;

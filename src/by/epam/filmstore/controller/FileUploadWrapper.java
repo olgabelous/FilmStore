@@ -16,7 +16,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
- * Created by Olga Shahray on 06.09.2016.
+ * Wrapper is used to wrap http request and saved uploaded files.
+ *
+ * @author Olga Shahray
  */
 public class FileUploadWrapper extends HttpServletRequestWrapper {
 
@@ -31,7 +33,6 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {
     private final Map<String, FileItem> fileParamsMap = new LinkedHashMap<>();
     private static final int FIRST_VALUE = 0;
     private ServletContext servletContext;
-    private static final String FILE_STORE_PATH = "fileStorePath";
     private static final String POSTER_STORE_PATH = "posterStorePath";
     private static final String PHOTO_STORE_PATH = "photoStorePath";
     private static final String GENERAL_IMAGE_PATH = "generalImagePath";
@@ -73,7 +74,7 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {
      * Return the parameter value. Applies only to regular parameters, not to
      * file upload parameters.
      * <p>
-     * <P>If the parameter is not present in the underlying request,
+     * If the parameter is not present in the underlying request,
      * then <tt>null</tt> is returned.
      * <P>If the parameter is present, but has no  associated value,
      * then an empty string is returned.
@@ -84,9 +85,7 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {
     public String getParameter(String name) {
         String result = null;
         List<String> values = regularParamsMap.get(name);
-        if (values == null) {
-            //you might try the wrappee, to see if it has a value
-        } else if (values.isEmpty()) {
+        if (values == null || values.isEmpty()) {
             //param name known, but no values present
             result = "";
         } else {
@@ -142,8 +141,7 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {
 
 
     /**
-    * Сохраняет файл на сервере, в папке assets.
-    * Сама папка должна быть уже создана.
+    * Return the name of saved file. It saves file on required paths for posters and photos.
     *
     * @param item
     * @throws Exception
@@ -156,7 +154,6 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {
             throw new ServiceValidationException("Incorrect file type");
         }
         String ending = item.getName().substring(item.getName().lastIndexOf('.'));
-        //String fileStorePath = servletContext.getInitParameter(FILE_STORE_PATH);
         String fileName = String.valueOf(System.currentTimeMillis()) + ending;
         String fileStorePath = "";
         String fieldName = item.getFieldName();
@@ -172,8 +169,6 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {
 
         IFileStoreService fileStoreService = ServiceFactory.getInstance().getFileStoreService();
 
-        //создаём файл
-        //записываем в него данные
         return fileStoreService.save(item.get(), fileStorePath) ? fileName : "";
 
     }

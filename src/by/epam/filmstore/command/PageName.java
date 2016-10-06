@@ -1,6 +1,8 @@
 package by.epam.filmstore.command;
 
 /**
+ * Class contains paths to all jsp pages
+ *
  * @author Olga Shahray
  */
 public final class PageName {
