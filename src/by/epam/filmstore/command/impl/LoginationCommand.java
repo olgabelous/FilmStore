@@ -1,6 +1,7 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.CommentStatus;
 import by.epam.filmstore.domain.OrderStatus;
 import by.epam.filmstore.domain.Role;
@@ -20,16 +21,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+
 /**
+ * <p>Command authorizes user in system. It gets login and password from request and sends it to service layer.
+ * Authorized user is sent to home page.</p>
+ *
  * @author Olga Shahray
  */
 public class LoginationCommand implements Command {
 
-    private static final String LOGIN = "login";
-    private static final String PASSWORD = "password";
-    private static final String USER = "user";
-    private static final String COMMENT_NUM = "commentNum";
-    private static final String ORDER_IN_CART_NUM = "orderInCartNum";
     private static final String INDEX_PAGE = "Controller?command=load-main-page";
     private static final int ERROR_STATUS = 404;
     private static final String AUTH_ERROR = "authError";
@@ -37,8 +37,8 @@ public class LoginationCommand implements Command {
     private static final Logger LOG = LogManager.getLogger(LoginationCommand.class);
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String login = request.getParameter(LOGIN);
-        String password = request.getParameter(PASSWORD);
+        String login = request.getParameter(ParameterAndAttributeName.LOGIN);
+        String password = request.getParameter(ParameterAndAttributeName.PASSWORD);
 
         IUserService userService = ServiceFactory.getInstance().getUserService();
         HttpSession session = request.getSession(true);
@@ -49,14 +49,14 @@ public class LoginationCommand implements Command {
             if(user.getRole() == Role.ADMIN){
                 ICommentService commentService =  ServiceFactory.getInstance().getCommentService();
                 int newCommentNum = commentService.getCount(CommentStatus.NEW);
-                session.setAttribute(COMMENT_NUM, newCommentNum);
+                session.setAttribute(ParameterAndAttributeName.COMMENT_NUM, newCommentNum);
             }
             else{
                 IOrderService orderService = ServiceFactory.getInstance().getOrderService();
                 int orderInCartNum = orderService.getUserOrdersByStatus(user.getId(), OrderStatus.UNPAID).size();
-                session.setAttribute(ORDER_IN_CART_NUM, orderInCartNum);
+                session.setAttribute(ParameterAndAttributeName.ORDER_IN_CART_NUM, orderInCartNum);
             }
-            session.setAttribute(USER, user);
+            session.setAttribute(ParameterAndAttributeName.USER, user);
             response.sendRedirect(INDEX_PAGE);
 
         } catch (ServiceAuthException e) {

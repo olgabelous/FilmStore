@@ -1,6 +1,7 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.User;
 import by.epam.filmstore.service.IOrderService;
 import by.epam.filmstore.service.ServiceFactory;
@@ -16,12 +17,15 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
+ * <p>Command implements a request of user with role USER to add film in cart,
+ * i.e. to save new order. Unpaid orders are shown in cart.
+ * Access right is checked in class UserFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.UserFilter
  * @author Olga Shahray
  */
 public class UserAddToCartCommand implements Command {
-    private static final String FILM_ID = "filmId";
-    private static final String USER = "user";
-    private static final String PRICE = "price";
+
     private static final String CART_PAGE = "Controller?command=user-cart";
     private static final int ERROR_STATUS = 404;
 
@@ -30,10 +34,10 @@ public class UserAddToCartCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        User loggedUser = (User) session.getAttribute(USER);
+        User loggedUser = (User) session.getAttribute(ParameterAndAttributeName.USER);
         try {
-            int filmId = Integer.parseInt(request.getParameter(FILM_ID));
-            double price = Double.parseDouble(request.getParameter(PRICE));
+            int filmId = Integer.parseInt(request.getParameter(ParameterAndAttributeName.FILM_ID));
+            double price = Double.parseDouble(request.getParameter(ParameterAndAttributeName.PRICE));
 
             IOrderService service = ServiceFactory.getInstance().getOrderService();
             service.save(filmId, price, loggedUser);

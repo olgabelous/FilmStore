@@ -2,6 +2,7 @@ package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.command.PageName;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.Country;
 import by.epam.filmstore.domain.Film;
 import by.epam.filmstore.domain.Genre;
@@ -21,27 +22,16 @@ import java.io.IOException;
 import java.util.*;
 
 /**
+ * <p>Command implements a request to show films according to some filter parameters.
+ * It shown 6 records per page.
+ * </p>
+ *
  * @author Olga Shahray
  */
 public class GetFilteredFilmsCommand implements Command {
 
-    private static final String PAGE = "page";
-    private static final String TOTAL_PAGES = "totalPages";
-    private static final String CURRENT_PAGE = "currentPage";
-    private static final String FILM_LIST = "filmList";
-    private static final String GENRE_LIST = "genreList";
-    private static final String COUNTRY_LIST = "countryList";
-    private static final String ORDER = "order";
-    private static final String GENRES_FILTER = "genresFilter";
-    private static final String COUNTRY_FILTER = "countryFilter";
-    private static final String YEAR_FILTER = "yearFilter";
-    private static final String GENRE = "genre";
-    private static final String COUNTRY = "country";
-    private static final String YEAR = "year";
-    private static final String RATING = "rating";
     private static final String WARNING = "warning";
     private static final String WARNING_TEXT = "Sorry, we don't have such films. Please choose another params.";
-    private static final String QUERY = "query";
     private static final int ERROR_STATUS = 404;
 
     private static final Logger LOG = LogManager.getLogger(GetFilteredFilmsCommand.class);
@@ -55,23 +45,24 @@ public class GetFilteredFilmsCommand implements Command {
         Map<String, String> countriesFilterToSend = new HashMap<>();
         List<String> yearFilterToSend = new ArrayList<>();
 
-        String[] genres = request.getParameterValues(GENRE);
-        String[] countries = request.getParameterValues(COUNTRY);
-        String[] year = request.getParameterValues(YEAR);
-        String rating = request.getParameter(RATING);
-        String order = request.getParameter(ORDER);
+        String[] genres = request.getParameterValues(ParameterAndAttributeName.GENRE);
+        String[] countries = request.getParameterValues(ParameterAndAttributeName.COUNTRY);
+        String[] year = request.getParameterValues(ParameterAndAttributeName.YEAR);
+        String rating = request.getParameter(ParameterAndAttributeName.RATING);
+        String order = request.getParameter(ParameterAndAttributeName.ORDER);
         try {
             int page = 1;
             int recordsPerPage = 6;
-            if (request.getParameter(PAGE) != null) {
-                page = Integer.parseInt(request.getParameter(PAGE));
+            String pageNum = request.getParameter(ParameterAndAttributeName.PAGE);
+            if (pageNum != null) {
+                page = Integer.parseInt(pageNum);
             }
             HttpSession session = request.getSession();
-            List<Genre> genreList  = (List<Genre>) session.getAttribute(GENRE_LIST);
-            List<Country> countryList = (List<Country>) session.getAttribute(COUNTRY_LIST);
+            List<Genre> genreList  = (List<Genre>) session.getAttribute(ParameterAndAttributeName.GENRE_LIST);
+            List<Country> countryList = (List<Country>) session.getAttribute(ParameterAndAttributeName.COUNTRY_LIST);
 
             if (genres != null && genres.length != 0) {
-                filterParams.put(GENRE, Arrays.asList(genres));
+                filterParams.put(ParameterAndAttributeName.GENRE, Arrays.asList(genres));
                 for (Genre g : genreList) {
                     for (String s : genres) {
                         if (s.equals(String.valueOf(g.getId()))) {
@@ -80,9 +71,9 @@ public class GetFilteredFilmsCommand implements Command {
                     }
                 }
             }
-            request.setAttribute(GENRES_FILTER, genresFilterToSend);
+            request.setAttribute(ParameterAndAttributeName.GENRE_FILTER, genresFilterToSend);
             if (countries != null && countries.length != 0) {
-                filterParams.put(COUNTRY, Arrays.asList(countries));
+                filterParams.put(ParameterAndAttributeName.COUNTRY, Arrays.asList(countries));
                 for (Country c : countryList) {
                     for (String s : countries) {
                         if (s.equals(String.valueOf(c.getId()))) {
@@ -91,7 +82,7 @@ public class GetFilteredFilmsCommand implements Command {
                     }
                 }
             }
-            request.setAttribute(COUNTRY_FILTER, countriesFilterToSend);
+            request.setAttribute(ParameterAndAttributeName.COUNTRY_FILTER, countriesFilterToSend);
 
             if (year != null && year.length != 0) {
                 if(year[0].equals("2016")){
@@ -103,12 +94,12 @@ public class GetFilteredFilmsCommand implements Command {
                     yearFilterToSend = Arrays.asList(new String[]{year[0], String.valueOf(yearTo)});
                 }
 
-                filterParams.put(YEAR, yearFilterToSend);
+                filterParams.put(ParameterAndAttributeName.YEAR, yearFilterToSend);
             }
-            request.setAttribute(YEAR_FILTER, year);
+            request.setAttribute(ParameterAndAttributeName.YEAR_FILTER, year);
 
             if (rating != null && !rating.isEmpty()) {
-                filterParams.put(RATING, Collections.singletonList(rating));
+                filterParams.put(ParameterAndAttributeName.RATING, Collections.singletonList(rating));
             }
 
             IFilmService filmService = ServiceFactory.getInstance().getFilmService();
@@ -125,11 +116,10 @@ public class GetFilteredFilmsCommand implements Command {
             int totalPages = (int) Math.ceil(numOfRecords * 1.0 / recordsPerPage);
             String requestQueryString = request.getQueryString().split("&page")[0];
 
-            request.setAttribute(QUERY, requestQueryString);
-            request.setAttribute(FILM_LIST, filteredFilmList);
-            request.setAttribute(TOTAL_PAGES, totalPages);
-            request.setAttribute(CURRENT_PAGE, page);
-            request.setAttribute(CURRENT_PAGE, page);
+            request.setAttribute(ParameterAndAttributeName.QUERY, requestQueryString);
+            request.setAttribute(ParameterAndAttributeName.FILM_LIST, filteredFilmList);
+            request.setAttribute(ParameterAndAttributeName.TOTAL_PAGES, totalPages);
+            request.setAttribute(ParameterAndAttributeName.CURRENT_PAGE, page);
 
             request.getRequestDispatcher(PageName.COMMON_FILMS_PAGE).forward(request, response);
 

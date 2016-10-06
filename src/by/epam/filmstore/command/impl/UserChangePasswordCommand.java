@@ -1,6 +1,7 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.User;
 import by.epam.filmstore.service.IUserService;
 import by.epam.filmstore.service.ServiceFactory;
@@ -16,14 +17,16 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
+ * <p>Command implements a request of user to update password.
+ * Command checks access right.</p>
+ *
  * @author Olga Shahray
  */
 public class UserChangePasswordCommand implements Command {
     private static final String OLD_PASSWORD = "oldPass";
     private static final String NEW_PASSWORD = "newPass1";
     private static final String CONFIRM_PASSWORD = "newPass2";
-    private static final String USER = "user";
-    private static final String ERROR_MESSAGE = "errorMessage";
+
     private static final String USER_PAGE = "Controller?command=user-personal-info";
     private static final int ERROR_STATUS = 404;
     private static final String INDEX_PAGE = "Controller?command=load-main-page";
@@ -37,7 +40,7 @@ public class UserChangePasswordCommand implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            User loggedUser = (User) session.getAttribute(USER);
+            User loggedUser = (User) session.getAttribute(ParameterAndAttributeName.USER);
             if (loggedUser != null) {
 
                 String oldPass = request.getParameter(OLD_PASSWORD);
@@ -52,7 +55,7 @@ public class UserChangePasswordCommand implements Command {
 
                     } catch (ServiceValidationException e) {
                         LOG.warn("Data is not valid", e);
-                        request.setAttribute(ERROR_MESSAGE, e.getMessage());
+                        request.setAttribute(ParameterAndAttributeName.ERROR_MESSAGE, e.getMessage());
                         request.getRequestDispatcher(USER_PAGE).forward(request, response);
 
                     } catch (ServiceException e) {
@@ -62,7 +65,7 @@ public class UserChangePasswordCommand implements Command {
                 }
                 else{
                     LOG.warn("Old user password is not correct");
-                    request.setAttribute(ERROR_MESSAGE, MESSAGE1);
+                    request.setAttribute(ParameterAndAttributeName.ERROR_MESSAGE, MESSAGE1);
                     request.getRequestDispatcher(USER_PAGE).forward(request, response);
                 }
             } else {

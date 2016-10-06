@@ -1,6 +1,8 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
+import by.epam.filmstore.command.PageName;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.service.IDiscountService;
 import by.epam.filmstore.service.ServiceFactory;
 import by.epam.filmstore.service.exception.ServiceException;
@@ -14,32 +16,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * <p>Command implements a request of user with role ADMIN to save new discount or
+ * update it if it exists. Access right is checked in class AdminFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.AdminFilter
  * @author Olga Shahray
  */
-public class AdminAddDiscountCommand implements Command {
-    private static final String ID = "id";
-    private static final String SUM_FROM = "sumFrom";
-    private static final String VALUE = "value";
+public class AdminSaveDiscountCommand implements Command {
+
     private static final String DISCOUNTS_PAGE = "Controller?command=admin-get-discounts";
-    private static final String ERROR_PAGE = "/error.jsp";
-    private static final String EXCEPTION = "exception";
-    private static final String ERROR_MESSAGE = "errorMessage";
+    private static final Logger LOG = LogManager.getLogger(AdminSaveDiscountCommand.class);
 
-    private static final Logger LOG = LogManager.getLogger(AdminAddDiscountCommand.class);
 
-    /**
-     * @param request
-     * @param response
-     * @throws IOException
-     * @throws ServletException
-     */
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         try{
-            String id = request.getParameter(ID);
-            double sumFrom = Double.parseDouble(request.getParameter(SUM_FROM));
-            double value = Double.parseDouble(request.getParameter(VALUE));
+            String id = request.getParameter(ParameterAndAttributeName.ID);
+            double sumFrom = Double.parseDouble(request.getParameter(ParameterAndAttributeName.SUM_FROM));
+            double value = Double.parseDouble(request.getParameter(ParameterAndAttributeName.VALUE));
 
             IDiscountService service = ServiceFactory.getInstance().getDiscountService();
             if(id == null || id.isEmpty()) {
@@ -53,18 +48,18 @@ public class AdminAddDiscountCommand implements Command {
         }
         catch (NumberFormatException e){
             LOG.error("Data is not valid", e);
-            request.setAttribute(ERROR_MESSAGE, "Invalid data. Parameters must contain only numbers");
+            request.setAttribute(ParameterAndAttributeName.ERROR_MESSAGE, "Invalid data. Parameters must contain only numbers");
             request.getRequestDispatcher(DISCOUNTS_PAGE).forward(request, response);
         }
         catch (ServiceValidationException e){
             LOG.error("Data is not valid", e);
-            request.setAttribute(ERROR_MESSAGE, e.getMessage());
+            request.setAttribute(ParameterAndAttributeName.ERROR_MESSAGE, e.getMessage());
             request.getRequestDispatcher(DISCOUNTS_PAGE).forward(request, response);
         }
         catch(ServiceException e){
             LOG.error("Exception is caught", e);
-            request.setAttribute(EXCEPTION, e);
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+            request.setAttribute(ParameterAndAttributeName.EXCEPTION, e);
+            request.getRequestDispatcher(PageName.ERROR_PAGE).forward(request, response);
         }
     }
 }

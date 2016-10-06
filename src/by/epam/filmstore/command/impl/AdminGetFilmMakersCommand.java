@@ -2,6 +2,7 @@ package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.command.PageName;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.FilmMaker;
 import by.epam.filmstore.domain.dto.PagingListDTO;
 import by.epam.filmstore.service.IFilmMakerService;
@@ -18,15 +19,14 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * <p>Command implements a request of user with role ADMIN to show
+ * film makers. Is shown 6 records per page.
+ * Access right is checked in class AdminFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.AdminFilter
  * @author Olga Shahray
  */
 public class AdminGetFilmMakersCommand implements Command {
-    private static final String PAGE = "page";
-    private static final String TOTAL_PAGES = "totalPages";
-    private static final String CURRENT_PAGE = "currentPage";
-    private static final String FILM_MAKER_LIST = "filmMakerList";
-    private static final String ERROR_PAGE = "/error.jsp";
-    private static final String EXCEPTION = "exception";
 
     private static final Logger LOG = LogManager.getLogger(AdminGetFilmMakersCommand.class);
 
@@ -37,8 +37,9 @@ public class AdminGetFilmMakersCommand implements Command {
         try {
             int page = 1;
             int recordsPerPage = 6;
-            if (request.getParameter(PAGE) != null) {
-                page = Integer.parseInt(request.getParameter(PAGE));
+            String pageNum = request.getParameter(ParameterAndAttributeName.PAGE);
+            if (pageNum != null) {
+                page = Integer.parseInt(pageNum);
             }
             PagingListDTO<FilmMaker> result = filmMakerService.getAll((page - 1) * recordsPerPage, recordsPerPage);
             List<FilmMaker> filmMakerList = result.getObjectList();
@@ -46,22 +47,22 @@ public class AdminGetFilmMakersCommand implements Command {
 
             int totalPages = (int) Math.ceil(numOfRecords * 1.0 / recordsPerPage);
 
-            request.setAttribute(FILM_MAKER_LIST, filmMakerList);
-            request.setAttribute(TOTAL_PAGES, totalPages);
-            request.setAttribute(CURRENT_PAGE, page);
+            request.setAttribute(ParameterAndAttributeName.FILM_MAKER_LIST, filmMakerList);
+            request.setAttribute(ParameterAndAttributeName.TOTAL_PAGES, totalPages);
+            request.setAttribute(ParameterAndAttributeName.CURRENT_PAGE, page);
 
             request.getRequestDispatcher(PageName.ADMIN_FILM_MAKERS).forward(request, response);
 
         }
         catch (ServiceValidationException e){
             LOG.error("Data is not valid", e);
-            request.setAttribute(EXCEPTION, e);
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+            request.setAttribute(ParameterAndAttributeName.EXCEPTION, e);
+            request.getRequestDispatcher(PageName.ERROR_PAGE).forward(request, response);
         }
         catch(ServiceException | NumberFormatException e){
             LOG.error("Exception is caught", e);
-            request.setAttribute(EXCEPTION, e);
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+            request.setAttribute(ParameterAndAttributeName.EXCEPTION, e);
+            request.getRequestDispatcher(PageName.ERROR_PAGE).forward(request, response);
         }
     }
 }

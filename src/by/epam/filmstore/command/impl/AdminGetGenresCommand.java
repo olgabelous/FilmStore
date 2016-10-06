@@ -2,6 +2,7 @@ package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.command.PageName;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.Genre;
 import by.epam.filmstore.service.IGenreService;
 import by.epam.filmstore.service.ServiceFactory;
@@ -16,13 +17,13 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * <p>Command implements a request of user with role ADMIN to show
+ * all genres. Access right is checked in class AdminFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.AdminFilter
  * @author Olga Shahray
  */
 public class AdminGetGenresCommand implements Command {
-
-    private static final String GENRE_LIST = "genreList";
-    private static final String ERROR_PAGE = "/error.jsp";
-    private static final String EXCEPTION = "exception";
 
     private static final Logger LOG = LogManager.getLogger(AdminGetGenresCommand.class);
 
@@ -34,15 +35,15 @@ public class AdminGetGenresCommand implements Command {
         try {
             List<Genre> genreList = genreService.getAll();
 
-            request.setAttribute(GENRE_LIST, genreList);
+            request.setAttribute(ParameterAndAttributeName.GENRE_LIST, genreList);
 
             request.getRequestDispatcher(PageName.ADMIN_GENRES).forward(request, response);
 
         }
         catch(ServiceException e){
             LOG.error("Exception is caught", e);
-            request.setAttribute(EXCEPTION, e);
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+            request.setAttribute(ParameterAndAttributeName.EXCEPTION, e);
+            request.getRequestDispatcher(PageName.ERROR_PAGE).forward(request, response);
         }
     }
 }

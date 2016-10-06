@@ -2,6 +2,7 @@ package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.command.PageName;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.Comment;
 import by.epam.filmstore.domain.CommentStatus;
 import by.epam.filmstore.domain.dto.PagingListDTO;
@@ -20,16 +21,14 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * <p>Command implements a request of user with role ADMIN to show
+ * comments with status "new". Is shown 6 records per page.
+ * Access right is checked in class AdminFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.AdminFilter
  * @author Olga Shahray
  */
 public class AdminGetCommentsCommand implements Command {
-    private static final String PAGE = "page";
-    private static final String TOTAL_PAGES = "totalPages";
-    private static final String CURRENT_PAGE = "currentPage";
-    private static final String COMMENT_LIST = "commentList";
-    private static final String COMMENT_NUM = "commentNum";
-    private static final String ERROR_PAGE = "/error.jsp";
-    private static final String EXCEPTION = "exception";
 
     private static final Logger LOG = LogManager.getLogger(AdminGetCommentsCommand.class);
 
@@ -40,34 +39,35 @@ public class AdminGetCommentsCommand implements Command {
         try {
             int page = 1;
             int recordsPerPage = 6;
-            if (request.getParameter(PAGE) != null) {
-                page = Integer.parseInt(request.getParameter(PAGE));
+            String pageNum = request.getParameter(ParameterAndAttributeName.PAGE);
+            if (pageNum != null) {
+                page = Integer.parseInt(pageNum);
             }
             PagingListDTO<Comment> result = commentService.getByStatus(CommentStatus.NEW, (page - 1) * recordsPerPage, recordsPerPage);
             List<Comment> commentList = result.getObjectList();
             int numOfRecords = result.getCount();
 
             if(session != null){
-                session.setAttribute(COMMENT_NUM, commentList.size());
+                session.setAttribute(ParameterAndAttributeName.COMMENT_NUM, commentList.size());
             }
             int totalPages = (int) Math.ceil(numOfRecords * 1.0 / recordsPerPage);
 
-            request.setAttribute(COMMENT_LIST, commentList);
-            request.setAttribute(TOTAL_PAGES, totalPages);
-            request.setAttribute(CURRENT_PAGE, page);
+            request.setAttribute(ParameterAndAttributeName.COMMENT_LIST, commentList);
+            request.setAttribute(ParameterAndAttributeName.TOTAL_PAGES, totalPages);
+            request.setAttribute(ParameterAndAttributeName.CURRENT_PAGE, page);
 
             request.getRequestDispatcher(PageName.ADMIN_COMMENTS).forward(request, response);
 
         }
         catch (ServiceValidationException e){
             LOG.error("Data is not valid", e);
-            request.setAttribute(EXCEPTION, e);
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+            request.setAttribute(ParameterAndAttributeName.EXCEPTION, e);
+            request.getRequestDispatcher(PageName.ERROR_PAGE).forward(request, response);
         }
         catch(ServiceException | NumberFormatException e){
             LOG.error("Exception is caught", e);
-            request.setAttribute(EXCEPTION, e);
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+            request.setAttribute(ParameterAndAttributeName.EXCEPTION, e);
+            request.getRequestDispatcher(PageName.ERROR_PAGE).forward(request, response);
         }
     }
 }

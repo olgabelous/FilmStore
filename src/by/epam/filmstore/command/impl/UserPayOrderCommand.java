@@ -1,6 +1,7 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.OrderStatus;
 import by.epam.filmstore.domain.PaymentData;
 import by.epam.filmstore.domain.PaymentStatus;
@@ -20,15 +21,16 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
+ * <p>Command implements a request of user with role USER to pay order.
+ * It changes all order status to "awaiting", calls method processPayment and according to
+ * result of this method changes orders status to "paid" or "unpaid".
+ * Access right is checked in class UserFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.UserFilter
  * @author Olga Shahray
  */
 public class UserPayOrderCommand implements Command {
 
-    private static final String ORDER_ID = "id";
-    private static final String USER = "user";
-    private static final String ORDER_IN_CART_NUM = "orderInCartNum";
-    private static final String TOTAL_SUM = "total-sum";
-    private static final String PAYMENT_STATUS = "paymentStatus";
     private static final String CART_PAGE = "Controller?command=user-cart";
     private static final String ORDERS_PAGE = "Controller?command=user-get-orders";
     private static final int ERROR_STATUS = 404;
@@ -38,10 +40,10 @@ public class UserPayOrderCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        User loggedUser = (User) session.getAttribute(USER);
+        User loggedUser = (User) session.getAttribute(ParameterAndAttributeName.USER);
 
-        String[] order = request.getParameterValues(ORDER_ID);
-        double sum = Double.parseDouble(request.getParameter(TOTAL_SUM));
+        String[] order = request.getParameterValues(ParameterAndAttributeName.ID);
+        double sum = Double.parseDouble(request.getParameter(ParameterAndAttributeName.TOTAL_SUM));
 
         try {
             int[] orderIdArray = new int[order.length];
@@ -57,16 +59,16 @@ public class UserPayOrderCommand implements Command {
                 orderService.updateStatus(orderIdArray, OrderStatus.PAID);
 
                 int orderNum = orderService.getUserOrdersByStatus(loggedUser.getId(), OrderStatus.UNPAID).size();
-                session.setAttribute(ORDER_IN_CART_NUM, orderNum);
-                request.setAttribute(PAYMENT_STATUS, paymentStatus);
+                session.setAttribute(ParameterAndAttributeName.ORDER_IN_CART_NUM, orderNum);
+                request.setAttribute(ParameterAndAttributeName.PAYMENT_STATUS, paymentStatus);
                 response.sendRedirect(ORDERS_PAGE);
             }
             else {
                 orderService.updateStatus(orderIdArray, OrderStatus.UNPAID);
 
                 int orderNum = orderService.getUserOrdersByStatus(loggedUser.getId(), OrderStatus.UNPAID).size();
-                session.setAttribute(ORDER_IN_CART_NUM, orderNum);
-                request.setAttribute(PAYMENT_STATUS, paymentStatus);
+                session.setAttribute(ParameterAndAttributeName.ORDER_IN_CART_NUM, orderNum);
+                request.setAttribute(ParameterAndAttributeName.PAYMENT_STATUS, paymentStatus);
                 response.sendRedirect(CART_PAGE);
             }
 

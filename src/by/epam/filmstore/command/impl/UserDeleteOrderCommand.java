@@ -1,6 +1,7 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.service.IOrderService;
 import by.epam.filmstore.service.ServiceFactory;
 import by.epam.filmstore.service.exception.ServiceException;
@@ -15,12 +16,15 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
+ * <p>Command implements a request of user with role USER to delete film from cart,
+ * i.e. to delete unpaid order. Access right is checked in class UserFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.UserFilter
  * @author Olga Shahray
  */
 public class UserDeleteOrderCommand implements Command {
-    private static final String ID = "id";
+
     private static final String COUNTRY_PAGE = "Controller?command=user-cart";
-    private static final String ORDER_IN_CART_NUM = "orderInCartNum";
     private static final int ERROR_STATUS = 404;
 
     private static final Logger LOG = LogManager.getLogger(UserDeleteOrderCommand.class);
@@ -28,7 +32,7 @@ public class UserDeleteOrderCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
-            int id = Integer.parseInt(request.getParameter(ID));
+            int id = Integer.parseInt(request.getParameter(ParameterAndAttributeName.ID));
 
             IOrderService service = ServiceFactory.getInstance().getOrderService();
             // TODO: 23.09.2016 проверить принадлежит ли заказ этому пользователю
@@ -36,8 +40,8 @@ public class UserDeleteOrderCommand implements Command {
 
             HttpSession session = request.getSession(false);
             if(isDeleted ) {
-                int orderNum = (Integer)session.getAttribute(ORDER_IN_CART_NUM);
-                session.setAttribute(ORDER_IN_CART_NUM, --orderNum);
+                int orderNum = (Integer)session.getAttribute(ParameterAndAttributeName.ORDER_IN_CART_NUM);
+                session.setAttribute(ParameterAndAttributeName.ORDER_IN_CART_NUM, --orderNum);
                 response.sendRedirect(COUNTRY_PAGE);
             }
             else{

@@ -2,6 +2,7 @@ package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.command.PageName;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.Discount;
 import by.epam.filmstore.domain.User;
 import by.epam.filmstore.service.IDiscountService;
@@ -20,21 +21,22 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * <p>Command implements a request of user with role USER to show
+ * his discount and total amount of paid orders.
+ * Access right is checked in class UserFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.UserFilter
  * @author Olga Shahray
  */
 public class UserGetDiscountCommand implements Command {
-    private static final String USER = "user";
-    private static final String DISCOUNT_LIST = "discountList";
-    private static final String DISCOUNT = "discount";
-    private static final String TOTAL_AMOUNT = "totalAmount";
-    private static final int ERROR_STATUS = 404;
 
+    private static final int ERROR_STATUS = 404;
     private static final Logger LOG = LogManager.getLogger(UserGetDiscountCommand.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        User loggedUser = (User) session.getAttribute(USER);
+        User loggedUser = (User) session.getAttribute(ParameterAndAttributeName.USER);
         try {
             IDiscountService discountService = ServiceFactory.getInstance().getDiscountService();
             IOrderService orderService = ServiceFactory.getInstance().getOrderService();
@@ -43,9 +45,9 @@ public class UserGetDiscountCommand implements Command {
             double discount = discountService.getDiscount(loggedUser.getId());
             double totalAmount = orderService.getTotalAmount(loggedUser.getId());
 
-            request.setAttribute(DISCOUNT_LIST, discountList);
-            request.setAttribute(DISCOUNT, discount);
-            request.setAttribute(TOTAL_AMOUNT, totalAmount);
+            request.setAttribute(ParameterAndAttributeName.DISCOUNT_LIST, discountList);
+            request.setAttribute(ParameterAndAttributeName.DISCOUNT, discount);
+            request.setAttribute(ParameterAndAttributeName.TOTAL_AMOUNT, totalAmount);
 
             request.getRequestDispatcher(PageName.USER_DISCOUNT_PAGE).forward(request, response);
 

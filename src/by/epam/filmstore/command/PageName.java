@@ -1,7 +1,7 @@
 package by.epam.filmstore.command;
 
 /**
- * Created by Olga Shahray on 22.09.2016.
+ * @author Olga Shahray
  */
 public final class PageName {
 
@@ -26,4 +26,6 @@ public final class PageName {
     public static final String COMMON_FILM_PAGE = "/WEB-INF/jsp/singleFilm.jsp";
     public static final String COMMON_FILMS_PAGE = "/WEB-INF/jsp/films.jsp";
     public static final String COMMON_MAIN_PAGE = "/WEB-INF/jsp/main.jsp";
+    public static final String ERROR_PAGE = "/error.jsp";
+    public static final String INDEX_PAGE = "index.jsp";
 }

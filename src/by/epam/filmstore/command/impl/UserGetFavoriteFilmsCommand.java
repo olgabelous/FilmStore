@@ -2,6 +2,7 @@ package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.command.PageName;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.Film;
 import by.epam.filmstore.domain.User;
 import by.epam.filmstore.domain.dto.PagingListDTO;
@@ -20,28 +21,29 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * <p>Command implements a request of user with role USER to show
+ * favorite films. It shown 10 films per page.
+ * Access right is checked in class UserFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.UserFilter
  * @author Olga Shahray
  */
 public class UserGetFavoriteFilmsCommand implements Command {
-    private static final String PAGE = "page";
-    private static final String TOTAL_PAGES = "totalPages";
-    private static final String CURRENT_PAGE = "currentPage";
-    private static final String USER = "user";
-    private static final String FILM_LIST = "filmList";
-    private static final int ERROR_STATUS = 404;
 
+    private static final int ERROR_STATUS = 404;
     private static final Logger LOG = LogManager.getLogger(UserGetFavoriteFilmsCommand.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        User loggedUser = (User) session.getAttribute(USER);
+        User loggedUser = (User) session.getAttribute(ParameterAndAttributeName.USER);
         try {
             IFilmService filmService = ServiceFactory.getInstance().getFilmService();
             int page = 1;
-            int recordsPerPage = 6;
-            if (request.getParameter(PAGE) != null) {
-                page = Integer.parseInt(request.getParameter(PAGE));
+            int recordsPerPage = 10;
+            String pageNum = request.getParameter(ParameterAndAttributeName.PAGE);
+            if (pageNum != null) {
+                page = Integer.parseInt(pageNum);
             }
             PagingListDTO<Film> result = filmService.getFavoriteFilms(loggedUser.getId(), (page - 1) * recordsPerPage, recordsPerPage);
 
@@ -50,9 +52,9 @@ public class UserGetFavoriteFilmsCommand implements Command {
 
             int totalPages = (int) Math.ceil(numOfRecords * 1.0 / recordsPerPage);
 
-            request.setAttribute(FILM_LIST, filmList);
-            request.setAttribute(TOTAL_PAGES, totalPages);
-            request.setAttribute(CURRENT_PAGE, page);
+            request.setAttribute(ParameterAndAttributeName.FILM_LIST, filmList);
+            request.setAttribute(ParameterAndAttributeName.TOTAL_PAGES, totalPages);
+            request.setAttribute(ParameterAndAttributeName.CURRENT_PAGE, page);
 
             request.getRequestDispatcher(PageName.USER_WISH_LIST_PAGE).forward(request, response);
 

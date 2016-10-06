@@ -2,6 +2,7 @@ package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.command.PageName;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.User;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -13,15 +14,18 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
+ * <p>Command sends user to user profile page. It checks access right of
+ * requested user.
+ * </p>
+ *
  * @author Olga Shahray
  */
 public class GetUserByIdCommand implements Command {
-    private static final String ID = "id";
-    private static final String USER = "user";
-    private static final int ERROR_STATUS = 404;
+
     private static final String INDEX_PAGE = "Controller?command=load-main-page";
     private static final String ACCESS_DENIED_ERROR = "accessDeniedError";
     private static final String MESSAGE = "Please log in";
+    private static final int ERROR_STATUS = 404;
 
     private static final Logger LOG = LogManager.getLogger(GetUserByIdCommand.class);
 
@@ -29,13 +33,11 @@ public class GetUserByIdCommand implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            User loggedUser = (User) session.getAttribute(USER);
+            User loggedUser = (User) session.getAttribute(ParameterAndAttributeName.USER);
             if (loggedUser != null) {
                 try {
-                    int id = Integer.parseInt(request.getParameter(ID));
+                    int id = Integer.parseInt(request.getParameter(ParameterAndAttributeName.ID));
                     if (loggedUser.getId() == id) {
-
-                        //response.sendRedirect(PageName.USER_PROFILE_PAGE);
                         request.getRequestDispatcher(PageName.USER_PROFILE_PAGE).forward(request, response);
                     }
                     else{

@@ -2,6 +2,7 @@ package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.command.PageName;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.Comment;
 import by.epam.filmstore.domain.User;
 import by.epam.filmstore.service.ICommentService;
@@ -19,25 +20,28 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * <p>Command implements a request of user with role USER to show
+ * all his comments to films.
+ * Access right is checked in class UserFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.UserFilter
  * @author Olga Shahray
  */
 public class UserGetCommentsCommand implements Command {
-    private static final String USER = "user";
-    private static final String COMMENT_LIST = "commentList";
-    private static final int ERROR_STATUS = 404;
 
+    private static final int ERROR_STATUS = 404;
     private static final Logger LOG = LogManager.getLogger(UserGetCommentsCommand.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        User loggedUser = (User) session.getAttribute(USER);
+        User loggedUser = (User) session.getAttribute(ParameterAndAttributeName.USER);
         try {
             ICommentService commentService = ServiceFactory.getInstance().getCommentService();
 
             List<Comment> commentList = commentService.getAllOfUser(loggedUser.getId());
 
-            request.setAttribute(COMMENT_LIST, commentList);
+            request.setAttribute(ParameterAndAttributeName.COMMENT_LIST, commentList);
 
             request.getRequestDispatcher(PageName.USER_COMMENTS_PAGE).forward(request, response);
 

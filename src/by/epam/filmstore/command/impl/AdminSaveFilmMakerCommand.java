@@ -1,6 +1,8 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
+import by.epam.filmstore.command.PageName;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.service.IFilmMakerService;
 import by.epam.filmstore.service.ServiceFactory;
 import by.epam.filmstore.service.exception.ServiceException;
@@ -15,32 +17,23 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * <p>Command implements a request of user with role ADMIN to save new film maker or
+ * update him if he exists. Access right is checked in class AdminFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.AdminFilter
  * @author Olga Shahray
  */
-public class AdminAddFilmMakerCommand implements Command {
+public class AdminSaveFilmMakerCommand implements Command {
 
-    private static final String ID = "id";
-    private static final String NAME = "name";
-    private static final String PROFESSION = "profession";
     private static final String FILM_MAKER_PAGE = "Controller?command=admin-get-film-makers";
-    private static final String ERROR_PAGE = "/error.jsp";
-    private static final String EXCEPTION = "exception";
-    private static final String ERROR_MESSAGE = "errorMessage";
+    private static final Logger LOG = LogManager.getLogger(AdminSaveFilmMakerCommand.class);
 
-    private static final Logger LOG = LogManager.getLogger(AdminAddFilmMakerCommand.class);
-
-    /**
-     * @param request
-     * @param response
-     * @throws IOException
-     * @throws ServletException
-     */
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String id = request.getParameter(ID);
-        String name = request.getParameter(NAME);
-        String profession = request.getParameter(PROFESSION);
+        String id = request.getParameter(ParameterAndAttributeName.ID);
+        String name = request.getParameter(ParameterAndAttributeName.NAME);
+        String profession = request.getParameter(ParameterAndAttributeName.PROFESSION);
 
         IFilmMakerService service = ServiceFactory.getInstance().getFilmMakerService();
 
@@ -55,19 +48,19 @@ public class AdminAddFilmMakerCommand implements Command {
 
         }catch (ServiceIncorrectParamLengthException e){
             LOG.error("Data is not valid", e);
-            request.setAttribute(EXCEPTION, e);
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+            request.setAttribute(ParameterAndAttributeName.EXCEPTION, e);
+            request.getRequestDispatcher(PageName.ERROR_PAGE).forward(request, response);
         }
         catch (ServiceValidationException e){
             LOG.error("Data is not valid", e);
-            request.setAttribute(ERROR_MESSAGE, e.getMessage());
+            request.setAttribute(ParameterAndAttributeName.ERROR_MESSAGE, e.getMessage());
             request.getRequestDispatcher(FILM_MAKER_PAGE).forward(request, response);
         }
 
         catch(ServiceException | NumberFormatException e){
             LOG.error("Exception is caught", e);
-            request.setAttribute(EXCEPTION, e);
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+            request.setAttribute(ParameterAndAttributeName.EXCEPTION, e);
+            request.getRequestDispatcher(PageName.ERROR_PAGE).forward(request, response);
         }
     }
 }

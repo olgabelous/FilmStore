@@ -2,6 +2,7 @@ package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
 import by.epam.filmstore.command.PageName;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.Film;
 import by.epam.filmstore.domain.dto.PagingListDTO;
 import by.epam.filmstore.service.IFilmService;
@@ -18,18 +19,16 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * <p>Command implements a request of user with role ADMIN to show
+ * films. Is shown 6 records per page in order of addition date (new records on the top).
+ * Access right is checked in class AdminFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.AdminFilter
  * @author Olga Shahray
  */
 public class AdminGetFilmsCommand implements Command {
 
-    private static final String PAGE = "page";
-    private static final String TOTAL_PAGES = "totalPages";
-    private static final String CURRENT_PAGE = "currentPage";
-    private static final String FILM_LIST = "filmList";
-    private static final String ERROR_PAGE = "/error.jsp";
     private static final String ORDER = "date_add";
-    private static final String EXCEPTION = "exception";
-
     private static final Logger LOG = LogManager.getLogger(AdminGetFilmsCommand.class);
 
     @Override
@@ -39,8 +38,8 @@ public class AdminGetFilmsCommand implements Command {
         try {
             int page = 1;
             int recordsPerPage = 6;
-            if (request.getParameter(PAGE) != null) {
-                page = Integer.parseInt(request.getParameter(PAGE));
+            if (request.getParameter(ParameterAndAttributeName.PAGE) != null) {
+                page = Integer.parseInt(request.getParameter(ParameterAndAttributeName.PAGE));
             }
             PagingListDTO<Film> result = filmService.getAll(ORDER, (page - 1) * recordsPerPage, recordsPerPage);
 
@@ -49,22 +48,22 @@ public class AdminGetFilmsCommand implements Command {
 
             int totalPages = (int) Math.ceil(numOfRecords * 1.0 / recordsPerPage);
 
-            request.setAttribute(FILM_LIST, filmList);
-            request.setAttribute(TOTAL_PAGES, totalPages);
-            request.setAttribute(CURRENT_PAGE, page);
+            request.setAttribute(ParameterAndAttributeName.FILM_LIST, filmList);
+            request.setAttribute(ParameterAndAttributeName.TOTAL_PAGES, totalPages);
+            request.setAttribute(ParameterAndAttributeName.CURRENT_PAGE, page);
 
             request.getRequestDispatcher(PageName.ADMIN_FILMS).forward(request, response);
 
         }
         catch (ServiceValidationException e){
             LOG.error("Data is not valid", e);
-            request.setAttribute(EXCEPTION, e);
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+            request.setAttribute(ParameterAndAttributeName.EXCEPTION, e);
+            request.getRequestDispatcher(PageName.ERROR_PAGE).forward(request, response);
         }
         catch(ServiceException | NumberFormatException e){
             LOG.error("Exception is caught", e);
-            request.setAttribute(EXCEPTION, e);
-            request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
+            request.setAttribute(ParameterAndAttributeName.EXCEPTION, e);
+            request.getRequestDispatcher(PageName.ERROR_PAGE).forward(request, response);
         }
     }
 }

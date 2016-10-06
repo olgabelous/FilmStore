@@ -1,6 +1,7 @@
 package by.epam.filmstore.command.impl;
 
 import by.epam.filmstore.command.Command;
+import by.epam.filmstore.command.ParameterAndAttributeName;
 import by.epam.filmstore.domain.User;
 import by.epam.filmstore.service.IFilmService;
 import by.epam.filmstore.service.ServiceFactory;
@@ -16,22 +17,24 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
+ * <p>Command implements a request of user with role USER to delete
+ * favorite film. Access right is checked in class UserFilter.</p>
+ *
+ * @see by.epam.filmstore.controller.filter.UserFilter
  * @author Olga Shahray
  */
 public class UserDeleteFavoriteFilmCommand implements Command {
-    private static final String ID = "id";
-    private static final String USER = "user";
+
     private static final String FILMS_PAGE = "Controller?command=user-get-favorite-films";
     private static final int ERROR_STATUS = 404;
-
     private static final Logger LOG = LogManager.getLogger(UserDeleteFavoriteFilmCommand.class);
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        User loggedUser = (User) session.getAttribute(USER);
+        User loggedUser = (User) session.getAttribute(ParameterAndAttributeName.USER);
         try {
-            int filmId = Integer.parseInt(request.getParameter(ID));
+            int filmId = Integer.parseInt(request.getParameter(ParameterAndAttributeName.ID));
             IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 
             boolean isDeleted = filmService.deleteFavotiteFilm(loggedUser.getId(), filmId);
