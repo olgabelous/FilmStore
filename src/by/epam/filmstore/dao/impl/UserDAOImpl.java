@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 18.06.2016.
+ * Class allows to perform CRUD operations with entity User.
+ * All methods use connection getting from method in class DAOHelper. Connection returns to pool in
+ * class DAOHelper
  *
- * Класс UserDAOImpl позволяет совершить CRUD операции с сущностью Пользователь и связанными сущностями - Любимые Жанры Пользователя.
- * В каждом методе используется Connection, полученный из DAOHelper (см. AbstractDAO и DAOHelper).
- * Возврат Connection в пул происходит в DAOHelper
+ * @see by.epam.filmstore.dao.impl.AbstractDAO
+ * @see by.epam.filmstore.util.DAOHelper
+ * @author Olga Shahray
  */
 public class UserDAOImpl extends AbstractDAO implements IUserDAO {
 

@@ -14,16 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 18.06.2016.
+ * Class allows to perform CRUD operations with entity Comment.
+ * All methods use connection getting from method in class DAOHelper. Connection returns to pool in
+ * class DAOHelper
  *
- * Класс CommentDAOImpl позволяет совершить CRUD операции с сущностью Комментарий.
- * В каждом методе используется Connection, полученный из DAOHelper (см. AbstractDAO и DAOHelper).
- * Возврат Connection в пул происходит в DAOHelper
+ * @see by.epam.filmstore.dao.impl.AbstractDAO
+ * @see by.epam.filmstore.util.DAOHelper
+ * @author Olga Shahray
  */
 public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
 
     private static final String INSERT_COMMENT = "INSERT INTO comments (film_id, user_id, mark, comment, date_com, status) VALUES(?,?,?,?,?,?)";
-    private static final String SELECT_COMMENT = "SELECT * FROM comments WHERE id=?";
     private static final String DELETE_COMMENT = "DELETE FROM comments WHERE id=?";
     private static final String SELECT_ALL_COMMENTS_OF_USER = "SELECT comments.film_id, films.title, films.poster, comments.mark, comments.comment, " +
             "comments.date_com, comments.status, comments.id  FROM comments INNER JOIN films ON comments.film_id = films.id WHERE user_id=?";
@@ -35,7 +36,12 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
             "INNER JOIN films ON comments.film_id = films.id WHERE status = ? LIMIT ?, ?";
     private static final String COUNT_COMMENTS_BY_STATUS = "SELECT COUNT(id) FROM comments WHERE status = ?";
 
-
+    /**
+     * Method saves @param comment in database
+     *
+     * @param comment
+     * @throws DAOException
+     */
     @Override
     @PartOfTransaction
     public void save(Comment comment) throws DAOException {
@@ -70,9 +76,16 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
         }
     }
 
+    /**
+     * Method updates status of comment in database
+     *
+     * @param commentId
+     * @param status
+     * @throws DAOException
+     */
     @Override
     @PartOfTransaction
-    public void update(int id, CommentStatus status) throws DAOException {
+    public void update(int commentId, CommentStatus status) throws DAOException {
         PreparedStatement preparedStatement = null;
 
         try{
@@ -80,7 +93,7 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
             preparedStatement = connection.prepareStatement(UPDATE_COMMENT);
 
             preparedStatement.setString(1, status.name());
-            preparedStatement.setInt(2, id);
+            preparedStatement.setInt(2, commentId);
 
             int row = preparedStatement.executeUpdate();
             if (row == 0) {
@@ -100,16 +113,21 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
         }
     }
 
+    /**
+     *
+     * @param commentId
+     * @return boolean result if comment was deleted
+     * @throws DAOException
+     */
     @Override
-    @PartOfTransaction
-    public boolean delete(int id) throws DAOException {
+    public boolean delete(int commentId) throws DAOException {
         PreparedStatement preparedStatement = null;
 
         try {
             Connection connection = getConnectionFromThreadLocal();
             preparedStatement = connection.prepareStatement(DELETE_COMMENT);
 
-            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(1, commentId);
             int row = preparedStatement.executeUpdate();
             return  row != 0;
 
@@ -127,47 +145,14 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
         }
     }
 
+    /**
+     * Returns all comments belonging to user with required user id
+     *
+     * @param userId
+     * @return a {@code List<Comment>}
+     * @throws DAOException
+     */
     @Override
-    @PartOfTransaction
-    public Comment get(int id) throws DAOException {
-        Comment comment = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            Connection connection = getConnectionFromThreadLocal();
-            preparedStatement = connection.prepareStatement(SELECT_COMMENT);
-
-            preparedStatement.setInt(1, id);
-            try(ResultSet rs = preparedStatement.executeQuery()) {
-                if(rs.next()) {
-                    comment = new Comment();
-
-                    comment.setMark(rs.getInt(3));
-                    comment.setText(rs.getString(4));
-                    comment.setDateComment(rs.getTimestamp(5).toLocalDateTime());
-                    comment.setStatus(CommentStatus.valueOf(rs.getString(6).toUpperCase()));
-                }
-                else{
-                    throw new DAOException("Error getting comment");
-                }
-            }
-        } catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Error getting comment", e);
-        }
-        finally {
-            if(preparedStatement != null){
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    throw new DAOException("Error closing prepared statement in comment dao", e);
-                }
-            }
-        }
-        return comment;
-    }
-
-    @Override
-    @PartOfTransaction
     public List<Comment> getAllOfUser(int userId) throws DAOException {
         List<Comment> allComments = new ArrayList<>();
         PreparedStatement preparedStatement = null;
@@ -208,6 +193,13 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
         return allComments;
     }
 
+    /**
+     * Returns all comments of film with required id
+     *
+     * @param filmId
+     * @return a {@code List<Comment>}
+     * @throws DAOException
+     */
     @Override
     @PartOfTransaction
     public List<Comment> getAllOfFilm(int filmId) throws DAOException {
@@ -249,6 +241,15 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
         return allComments;
     }
 
+    /**
+     * Returns all comments with specified status
+     *
+     * @param status
+     * @param offset - is a start number of selection in db
+     * @param count - is a count of required records from db
+     * @return a {@code List<Comment>}
+     * @throws DAOException
+     */
     @Override
     @PartOfTransaction
     public List<Comment> getByStatus(CommentStatus status, int offset, int count) throws DAOException {
@@ -294,7 +295,14 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
         return allComments;
     }
 
+    /**
+     *
+     * @param status
+     * @return count af all comments with specifies status
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public int getCount(CommentStatus status) throws DAOException {
         int count = 0;
         PreparedStatement preparedStatement = null;

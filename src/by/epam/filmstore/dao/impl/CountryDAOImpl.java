@@ -11,17 +11,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 18.07.2016.
+ * Class allows to perform CRUD operations with entity Country.
+ * All methods use connection getting from method in class DAOHelper. Connection returns to pool in
+ * class DAOHelper
+ *
+ * @see by.epam.filmstore.dao.impl.AbstractDAO
+ * @see by.epam.filmstore.util.DAOHelper
+ * @author Olga Shahray
  */
 public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
 
     private static final String INSERT_COUNTRY = "INSERT INTO country (country) VALUES(?)";
-    private static final String SELECT_COUNTRY = "SELECT id, country FROM country WHERE id = ?";
     private static final String DELETE_COUNTRY = "DELETE FROM country WHERE id = ?";
     private static final String SELECT_ALL_COUNTRIES = "SELECT id, country FROM country";
     private static final String UPDATE_COUNTRY = "UPDATE country SET country = ? WHERE id = ?";
 
+    /**
+     *  Method saves @param country in database
+     *
+     * @param country
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void save(Country country) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -56,6 +68,12 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
         }
     }
 
+    /**
+     * Method updates existind country
+     *
+     * @param country
+     * @throws DAOException
+     */
     @Override
     @PartOfTransaction
     public void update(Country country) throws DAOException {
@@ -85,7 +103,12 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
             }
         }
     }
-
+    /**
+     *
+     * @param countryId
+     * @return boolean result if country was deleted
+     * @throws DAOException
+     */
     @Override
     public boolean delete(int countryId) throws DAOException {
         PreparedStatement preparedStatement = null;
@@ -112,41 +135,12 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
         }
     }
 
-    @Override
-    public Country get(int countryId) throws DAOException {
-        Country country = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            Connection connection = getConnectionFromThreadLocal();
-            preparedStatement = connection.prepareStatement(SELECT_COUNTRY);
-
-            preparedStatement.setInt(1, countryId);
-            try(ResultSet rs = preparedStatement.executeQuery()) {
-                if(rs.next()) {
-                    country = new Country();
-                    country.setId(rs.getInt(1));
-                    country.setCountryName(rs.getString(2));
-                }
-                else{
-                    throw new DAOException("Error getting country by id");
-                }
-            }
-        } catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Error getting country by id", e);
-        }
-        finally {
-            if(preparedStatement != null){
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    throw new DAOException("Error closing prepared statement in country dao", e);
-                }
-            }
-        }
-        return country;
-    }
-
+    /**
+     * Returns all countries from database
+     *
+     * @return a {@code List<Country>}
+     * @throws DAOException
+     */
     @Override
     public List<Country> getAll() throws DAOException {
         List<Country> allCountries = new ArrayList<>();

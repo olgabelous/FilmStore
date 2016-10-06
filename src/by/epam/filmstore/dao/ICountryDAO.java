@@ -17,9 +17,6 @@ public interface ICountryDAO {
     // false if not found
     boolean delete(int countryId) throws DAOException;
 
-    // null if not found
-    Country get(int countryId) throws DAOException;
-
     List<Country> getAll() throws DAOException;
 
 

@@ -10,11 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 27.06.2016.
+ * Class allows to perform CRUD operations with entity Discount.
+ * All methods use connection getting from method in class DAOHelper. Connection returns to pool in
+ * class DAOHelper
  *
- * Класс DiscountDAOImpl позволяет совершить CRUD операции с сущностью Скидка.
- * В каждом методе используется Connection, полученный из DAOHelper (см. AbstractDAO и DAOHelper).
- * Возврат Connection в пул происходит в DAOHelper
+ * @see by.epam.filmstore.dao.impl.AbstractDAO
+ * @see by.epam.filmstore.util.DAOHelper
+ * @author Olga Shahray
  */
 public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
 

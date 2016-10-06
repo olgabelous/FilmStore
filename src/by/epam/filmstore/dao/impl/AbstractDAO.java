@@ -6,18 +6,20 @@ import by.epam.filmstore.util.DAOHelper;
 
 import java.sql.Connection;
 
-
 /**
- * Created by Olga Shahray on 17.07.2016.
+ * Abstract class has a method that allows to get connection from thread local in class DAOHelper.
  *
- * Абстрактный класс AbstractDAO имеет метод получения Connection из DAOHelper.
- * Создан для того, чтобы все DAO, наследующие данный класс, могли получить Connection для реализации всех
- * своих методов
- *
+ * @see by.epam.filmstore.util.DAOHelper
+ * @author Olga Shahray
  */
 public abstract class AbstractDAO {
 
-    //получаем Connection либо exception в случае если соединения не существует
+    /**
+     *
+     * @return connection or DAOException if connection does not exist
+     * @throws ConnectionPoolException
+     * @throws DAOException
+     */
     protected Connection getConnectionFromThreadLocal() throws ConnectionPoolException, DAOException {
         if(DAOHelper.getCurrentConnection() == null){
             throw new DAOException("Connection doesn't exist");

@@ -18,9 +18,6 @@ public interface ICommentDAO {
     // false if not found
     boolean delete(int id) throws DAOException;
 
-    // null if not found
-    Comment get(int id) throws DAOException;
-
     List<Comment> getAllOfUser(int userId) throws DAOException;
 
     List<Comment> getAllOfFilm(int filmId) throws DAOException;

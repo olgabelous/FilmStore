@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Controller that get requested image from specified path and send it to jsp page.
+ * Controller that gets requested image from specified path and sends it to jsp page.
  *
  * @author Olga Shahray
  */

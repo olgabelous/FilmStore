@@ -11,50 +11,79 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Olga Shahray on 17.07.2016.
+ * Auxiliary class for DAO layer that has methods for performing transactions and building queries.
  *
- * Вспомогательный класс для слоя DAO
+ * @author Olga Shahray
  */
-public class DAOHelper {
+public final class DAOHelper {
 
+    /**
+     * Getting instance of pool connection
+     */
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
 
-    //ThreadLocal позволяет имея одну переменную Connection, иметь различное значение для каждого из потоков.
-    //данная переменная необходима для передачи Connection в методы DAO
-    //см. AbstractDAO
+    /**
+     * ThreadLocal provides thread-local variable connection. Each thread holds an implicit reference
+     * to its copy of a thread-local variable as long as the thread is alive and the ThreadLocal instance is accessible.
+     * ThreadLocal allows to pass variable connection to methods in DAO classes.
+     *
+     * @see by.epam.filmstore.dao.impl.AbstractDAO
+     */
     private static ThreadLocal<Connection> currentConnection = new ThreadLocal<>();
 
-    //получение Connection из ThreadLocal
+    /**
+     *
+     * @return thread-local variable connection from ThreadLocal
+     */
     public static Connection getCurrentConnection() {
         return currentConnection.get();
     }
 
-    //private констуктор необходим, чтобы нельзя было создать экземпляр класса
-    private DAOHelper() {}
 
-
-    //Параметризованный НЕтранзакционный метод выполнения запросов
-    //В качестве паметра принимает функциональный интерфейс SqlExecutor<T>
-    //коннекшн берем из пула с помощью конструкции try-with-resources. Метод close() вызывается автоматически и
-    //возвращает connection в пул
+    /**
+     * Parametrized not transactional class for executing queries that uses connection with
+     * auto-commit mode in the state "true". Connection is taken from pool connection with
+     * try-with-resources construction. Method close is called automatically that returns connection to pool
+     *
+     * @param executor - it is a parametrized functional interface
+     *                 @see by.epam.filmstore.util.SqlExecutor
+     * @param <T>
+     * @return
+     * @throws DAOException
+     * @throws ServiceException
+     */
     public static <T> T execute(SqlExecutor<T> executor) throws DAOException, ServiceException {
 
         try (Connection conn = connectionPool.takeConnection()) {
-            //помещаем connection в ThreadLocal для передачи в DAO
+            /**
+             * Passing connection to ThreadLocal
+             */
             currentConnection.set(conn);
             return executor.execute();
 
         } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException(e);
         } finally {
-            //удаляем из ThreadLocal
+            /**
+             * Removing connection from ThreadLocal
+             */
             currentConnection.remove();
         }
     }
 
-    //Параметризованный транзакционный метод выполнения запросов
-    //используется для операций, требующих проведения в рамках транзакции, например, получения фильма со списком актеров
-    //В качестве паметра принимает функциональный интерфейс SqlExecutor<T>
+    /**
+     * Parametrized transactional class for executing queries that sets connection's auto-commit mode
+     * to the state "false" and allows execute several actions in one trancsaction.
+     * Connection is taken from pool connection with try-with-resources construction.
+     * Method close is called automatically that returns connection to pool.
+     *
+     * @param executor- it is a parametrized functional interface
+     *                 @see by.epam.filmstore.util.SqlExecutor
+     * @param <T>
+     * @return
+     * @throws DAOException
+     * @throws ServiceException
+     */
     public static <T> T transactionExecute(SqlExecutor<T> executor) throws DAOException, ServiceException {
         try (Connection conn = connectionPool.takeConnection()) {
             currentConnection.set(conn);
@@ -74,7 +103,13 @@ public class DAOHelper {
         }
     }
 
-    public static String buildFilterFilmQuery(Map<String, List<String>> filteredParams){
+    /**
+     * Return a query string to select films from db according to given filter parameters.
+     * @param filterParams {@code Map<String, List<String>>} where map's key is a name of parameter,
+     *                                                      map's value is a List of values
+     * @return
+     */
+    public static String buildFilterFilmQuery(Map<String, List<String>> filterParams){
         StringBuilder start1 = new StringBuilder("SELECT DISTINCT films.id, films.title, films.release_year, films.description, films.duration, "+
                 "films.age_restriction, films.price, films.poster, films.rating, films.country_id, country.country, films.date_add ");
         StringBuilder from = new StringBuilder("FROM ");
@@ -89,11 +124,11 @@ public class DAOHelper {
         String clRB = ")";
         String order = " ORDER BY ? DESC";
         String end = " LIMIT ?, ?";
-        if(filteredParams==null || filteredParams.isEmpty()){
+        if(filterParams==null || filterParams.isEmpty()){
             return start1.append(from).append(innerJoin).append(order).append(end).toString();
         }
 
-        for(Map.Entry<String, List<String>> pair : filteredParams.entrySet()){
+        for(Map.Entry<String, List<String>> pair : filterParams.entrySet()){
             String key = pair.getKey();
             List<String> valueList = pair.getValue();
             if (key.equals("rating")){
@@ -138,7 +173,13 @@ public class DAOHelper {
 
     }
 
-    public static String buildCountFilmQuery(Map<String, List<String>> filteredParams){
+    /**
+     * Return a query string to get count of films from db according to given filter parameters.
+     * @param filterParams {@code Map<String, List<String>>} where map's key is a name of parameter,
+     *                                                      map's value is a List of values
+     * @return
+     */
+    public static String buildCountFilmQuery(Map<String, List<String>> filterParams){
 
         StringBuilder start2 = new StringBuilder("SELECT COUNT(DISTINCT films.id) ");
         StringBuilder from = new StringBuilder("FROM films");
@@ -149,10 +190,10 @@ public class DAOHelper {
         String br = " >= ";
         String lr = " < ";
 
-        if(filteredParams==null || filteredParams.isEmpty()){
+        if(filterParams==null || filterParams.isEmpty()){
             return start2.append(from).toString();
         }
-        for(Map.Entry<String, List<String>> pair : filteredParams.entrySet()){
+        for(Map.Entry<String, List<String>> pair : filterParams.entrySet()){
             String key = pair.getKey();
             List<String> valueList = pair.getValue();
             if (key.equals("rating")){
@@ -194,6 +235,12 @@ public class DAOHelper {
         return start2.append(from).append(where).toString();
     }
 
+    /**
+     * Return a query string to select films from db according to given keywords.
+     *
+     * @param keywords
+     * @return
+     */
     public static String buildSearchedFilmQuery(String[] keywords) {
         StringBuilder startQuery = new StringBuilder("SELECT DISTINCT films.id, films.title, films.release_year, films.description, films.duration, "+
                 "films.age_restriction, films.price, films.poster, films.rating, films.country_id, country.country, films.date_add " +
