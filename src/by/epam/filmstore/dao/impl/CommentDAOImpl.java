@@ -242,12 +242,10 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
     }
 
     /**
-     * Returns all comments with specified status
-     *
      * @param status
      * @param offset - is a start number of selection in db
      * @param count - is a count of required records from db
-     * @return a {@code List<Comment>}
+     * @return a {@code List<Comment>} return all comments with specified status
      * @throws DAOException
      */
     @Override
@@ -296,7 +294,6 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
     }
 
     /**
-     *
      * @param status
      * @return count af all comments with specifies status
      * @throws DAOException

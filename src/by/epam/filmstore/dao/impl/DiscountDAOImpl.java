@@ -1,6 +1,7 @@
 package by.epam.filmstore.dao.impl;
 
 import by.epam.filmstore.dao.IDiscountDAO;
+import by.epam.filmstore.dao.PartOfTransaction;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Discount;
@@ -21,8 +22,6 @@ import java.util.List;
 public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
 
     private static final String INSERT_DISCOUNT = "INSERT INTO discount (sum_from, value) VALUES (?,?)";
-    private static final String SELECT_DISCOUNT = "SELECT discount_id, discount.sum_from, discount.value FROM discount " +
-            "WHERE discount_id=?";
     private static final String SELECT_ALL_DISCOUNTS = "SELECT discount_id, discount.sum_from, discount.value " +
             "FROM discount ORDER BY value";
     private static final String DELETE_DISCOUNT = "DELETE FROM discount WHERE discount_id = ?";
@@ -31,8 +30,13 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
             " WHERE sum_from <= (SELECT COALESCE((SELECT SUM(orders.sum) FROM orders WHERE orders.user_id = ? AND orders.status = 'paid' " +
             "),0)) ORDER BY sum_from DESC LIMIT 1";
 
-
+    /**
+     * Method saves @param discount in database
+     * @param discount
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void save(Discount discount) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -69,7 +73,13 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
         }
     }
 
+    /**
+     * Method updates existing discount
+     * @param discount
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void update(Discount discount) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -100,43 +110,11 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
         }
     }
 
-    @Override
-    public Discount get(int discountId) throws DAOException {
-        Discount discount = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            Connection connection = getConnectionFromThreadLocal();
-            preparedStatement = connection.prepareStatement(SELECT_DISCOUNT);
-
-            preparedStatement.setInt(1, discountId);
-
-            try (ResultSet rs = preparedStatement.executeQuery()) {
-                if(rs.next()) {
-                    discount = new Discount();
-                    discount.setId(rs.getInt(1));
-                    discount.setSumFrom(rs.getDouble(2));
-                    discount.setValue(rs.getDouble(3));
-                }
-                else{
-                    throw new DAOException("Error getting discount");
-                }
-            }
-        } catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Error getting discount", e);
-        }
-        finally {
-            if(preparedStatement != null){
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    throw new DAOException("Error closing prepared statement in comment dao", e);
-                }
-            }
-        }
-        return discount;
-    }
-
+    /**
+     * @param userId
+     * @return Discount calculated on basis of paid user's orders
+     * @throws DAOException
+     */
     @Override
     public Discount getUserDiscount(int userId) throws DAOException {
         Discount discount = null;
@@ -171,6 +149,11 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
         return discount;
     }
 
+    /**
+     * @param discountId
+     * @return boolean result if discount was deleted
+     * @throws DAOException
+     */
     @Override
     public boolean delete(int discountId) throws DAOException {
         PreparedStatement preparedStatement = null;
@@ -197,8 +180,12 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
         }
     }
 
+    /**
+     * @return a {@code List<Discount>} all discounts from database
+     * @throws DAOException
+     */
     @Override
-    public List<Discount> getDiscountsList() throws DAOException {
+    public List<Discount> getAll() throws DAOException {
         List<Discount> discountList = new ArrayList<>();
         PreparedStatement preparedStatement = null;
 

@@ -73,7 +73,7 @@ public class DiscountServiceImpl implements IDiscountService {
     public List<Discount> getAll() throws ServiceException {
         IDiscountDAO dao = DAOFactory.getMySqlDAOFactory().getIDiscountDAO();
         try {
-            return DAOHelper.execute(dao::getDiscountsList);
+            return DAOHelper.execute(dao::getAll);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -86,7 +86,7 @@ public class DiscountServiceImpl implements IDiscountService {
         }
         IDiscountDAO dao = DAOFactory.getMySqlDAOFactory().getIDiscountDAO();
         try {
-            return DAOHelper.transactionExecute(() -> dao.getUserDiscount(userId).getValue());
+            return DAOHelper.execute(() -> dao.getUserDiscount(userId).getValue());
         } catch (DAOException e) {
             throw new ServiceException(e);
         }

@@ -1,6 +1,7 @@
 package by.epam.filmstore.dao.impl;
 
 import by.epam.filmstore.dao.IFilmDAO;
+import by.epam.filmstore.dao.PartOfTransaction;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.*;
@@ -39,8 +40,6 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     private static final String DELETE_FILM = "DELETE FROM films WHERE id=?";
     private static final String SELECT_FILMS_BY_YEAR = "SELECT films.id, title, release_year, description, duration, " +
             "age_restriction, price, poster, rating FROM films WHERE films.release_year = ? LIMIT ?, ?";
-    private static final String SELECT_FILMS_BY_RATING = "SELECT films.id, title, release_year, description, duration, " +
-            "age_restriction, price, poster, rating FROM films WHERE films.rating >= ?";
     private static final String UPDATE_FILM = "UPDATE films SET title=?, release_year=?, country_id=?, description=?, " +
             "duration=?, age_restriction=?, price=?, poster=?, video=? WHERE id=?";
     private static final String COUNT_FAVORITE_FILMS = "SELECT count(films.id) FROM preferences, films where films.id=preferences.film_id AND preferences.user_id=?";
@@ -53,7 +52,13 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             "AND preferences.film_id = ?";
 
 
+    /**
+     * Method saves @param film in database
+     * @param film
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void save(Film film) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -98,7 +103,14 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         }
     }
 
+    /**
+     * Method saves @param {@code List<Genre>} in database
+     * @param filmId - id of film which genres belong to
+     * @param genres
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void saveFilmGenres(int filmId, List<Genre> genres) throws DAOException {
         PreparedStatement psInsert = null;
         PreparedStatement psDelete = null;
@@ -145,7 +157,14 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         }
     }
 
+    /**
+     * Method saves @param {@code List<FilmMaker>} in database
+     * @param filmId- id of film which film makers belong to
+     * @param filmMakers
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void saveFilmMakers(int filmId, List<FilmMaker> filmMakers) throws DAOException {
         PreparedStatement psDelete = null;
         PreparedStatement psInsert = null;
@@ -192,7 +211,13 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         }
     }
 
+    /**
+     * Method updates @param film in database
+     * @param film
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void update(Film film) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -229,6 +254,11 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         }
     }
 
+    /**
+     * @param id of film
+     * @return boolean result if film was deleted
+     * @throws DAOException
+     */
     @Override
     public boolean delete(int id) throws DAOException {
         PreparedStatement preparedStatement = null;
@@ -282,7 +312,13 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         }
     }
 
+    /**
+     * @param id of film
+     * @return Film with given id
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public Film get(int id) throws DAOException {
         Film film = null;
         PreparedStatement preparedStatement = null;
@@ -327,10 +363,21 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         return film;
     }
 
+    /**
+     * @param filterParams {@code Map<String, List<String>>} where key is name of parameter and
+     *                                                      value is list of parameter's values
+     * @param orderBy - order of selection
+     * @param offset - is a start number of selection in db
+     * @param count - is a count of required records from db
+     * @return a {@code List<Film>} returns films according to filter parameters
+     * @throws DAOException
+     *
+     * @see by.epam.filmstore.util.DAOHelper
+     */
     @Override
+    @PartOfTransaction
     public List<Film> getFilteredFilms(Map<String, List<String>> filterParams, String orderBy, int offset, int count) throws DAOException {
         List<Film> filmList = new ArrayList<>();
-//// TODO: 01.10.2016 date_add
         PreparedStatement prStatFimls = null;
         String query = DAOHelper.buildFilterFilmQuery(filterParams);
         try {
@@ -373,7 +420,16 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         }
         return filmList;
     }
+
+    /**
+     * @param filterParams {@code Map<String, List<String>>} where key is name of parameter and
+     *                                                      value is list of parameter's values
+     * @return count of films according to filter parameters
+     * @throws DAOException
+     * @see by.epam.filmstore.util.DAOHelper
+     */
     @Override
+    @PartOfTransaction
     public int getCountFilm(Map<String, List<String>> filterParams) throws DAOException {
        int filmCount = 0;
 
@@ -403,18 +459,26 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         return filmCount;
     }
 
+    /**
+     * @param userId - id of user who marked films as favorite
+     * @param offset - is a start number of selection in db
+     * @param count - is a count of required records from db
+     * @return a {@code List<Film>}
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public List<Film> getFavoriteFilms(int userId, int offset, int count)  throws DAOException {
         List<Film> filmList = new ArrayList<>();
-        PreparedStatement prStatFimls = null;
+        PreparedStatement prStatFilms = null;
         try {
             Connection connection = getConnectionFromThreadLocal();
-            prStatFimls = connection.prepareStatement(SELECT_FAVORITE_FILMS);
+            prStatFilms = connection.prepareStatement(SELECT_FAVORITE_FILMS);
 
-            prStatFimls.setInt(1, userId);
-            prStatFimls.setInt(2, offset);
-            prStatFimls.setInt(3, count);
-            try(ResultSet rs = prStatFimls.executeQuery()) {
+            prStatFilms.setInt(1, userId);
+            prStatFilms.setInt(2, offset);
+            prStatFilms.setInt(3, count);
+            try(ResultSet rs = prStatFilms.executeQuery()) {
                 Film film = null;
                 while(rs.next()) {
                     film = new Film();
@@ -435,9 +499,9 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             throw new DAOException("Error getting favorite films", e);
         }
         finally {
-            if(prStatFimls != null){
+            if(prStatFilms != null){
                 try {
-                    prStatFimls.close();
+                    prStatFilms.close();
                 } catch (SQLException e) {
                     throw new DAOException("Error closing prepared statement in film dao", e);
                 }
@@ -446,7 +510,14 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         return filmList;
     }
 
+    /**
+     *
+     * @param userId - id of user who marked films as favorite
+     * @return count of favorite films of given user
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public int getCountFavoriteFilm(int userId) throws DAOException {
         int count = 0;
         PreparedStatement prStatCount = null;
@@ -475,7 +546,14 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         }
     }
 
+    /**
+     *
+     * @param userId - id of user who marked film as favorite
+     * @param filmId - id of favorite user's film
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void saveFavoriteFilm(int userId, int filmId) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -504,6 +582,13 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         }
     }
 
+    /**
+     *
+     * @param userId - id of user who marked film as favorite
+     * @param filmId - id of favorite user's film
+     * @return boolean result if film was deleted
+     * @throws DAOException
+     */
     @Override
     public boolean deleteFavoriteFilm(int userId, int filmId) throws DAOException {
         PreparedStatement preparedStatement = null;
@@ -530,7 +615,13 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         }
     }
 
+    /**
+     * @param keywords - array of words for search films
+     * @return a {@code List<Film>}
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public List<Film> search(String[] keywords) throws DAOException {
         List<Film> filmList = new ArrayList<>();
 
@@ -540,9 +631,6 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
             Connection connection = getConnectionFromThreadLocal();
             prStatFimls = connection.prepareStatement(query);
 
-            /*prStatFimls.setString(1, orderBy);
-            prStatFimls.setInt(2, offset);
-            prStatFimls.setInt(3, count);*/
             try(ResultSet rs = prStatFimls.executeQuery()) {
                 Film film = null;
                 while(rs.next()) {
@@ -577,6 +665,13 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         return filmList;
     }
 
+    /**
+     * Method checks if given film is favorite for given user
+     * @param userId
+     * @param filmId
+     * @return boolean result if film is favorite
+     * @throws DAOException
+     */
     @Override
     public boolean isFavoriteFilm(int userId, int filmId) throws DAOException {
         PreparedStatement preparedStatement = null;
@@ -607,6 +702,14 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         }
     }
 
+    /**
+     *
+     * @param year - release year of film
+     * @param offset - is a start number of selection in db
+     * @param count - is a count of required records from db
+     * @return a {@code List<Film>}
+     * @throws DAOException
+     */
     @Override
     public List<Film> getByYear(int year, int offset, int count) throws DAOException {
         List<Film> filmList = new ArrayList<>();
@@ -652,7 +755,13 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         return filmList;
     }
 
+    /**
+     * @param filmId - id of film which genres belong to
+     * @return  a {@code List<Genre>} of given film
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public List<Genre> getAllGenresOfFilm(int filmId) throws DAOException {
         List<Genre> genreList = new ArrayList<>();
         PreparedStatement preparedStatement = null;
@@ -686,7 +795,13 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
         return genreList;
     }
 
+    /**
+     * @param filmId - id of film which film makers belong to
+     * @return  a {@code List<FilmMaker>} of given film
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public List<FilmMaker> getMakersOfFilm(int filmId) throws DAOException {
         List<FilmMaker> personList = new ArrayList<>();
         PreparedStatement preparedStatement = null;

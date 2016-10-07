@@ -28,9 +28,9 @@ public interface IFilmService {
 
     PagingListDTO<Film> getFavoriteFilms(int id, int offset, int count) throws ServiceException;
 
-    void saveFavotiteFilm(int id, int filmId) throws ServiceException;
+    void saveFavoriteFilm(int id, int filmId) throws ServiceException;
 
-    boolean deleteFavotiteFilm(int id, int filmId) throws ServiceException;
+    boolean deleteFavoriteFilm(int id, int filmId) throws ServiceException;
 
     List<Film> search(String searchLine)throws ServiceException;
 

@@ -107,7 +107,7 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
         }
         IFilmMakerDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmMakerDAO();
         try {
-            return DAOHelper.execute(() -> {
+            return DAOHelper.transactionExecute(() -> {
                 List<FilmMaker> list = dao.getAll(offset, count);
                 int countFM = dao.getCountFilmMakers();
                 return new PagingListDTO<FilmMaker>(countFM, list);

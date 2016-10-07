@@ -1,6 +1,7 @@
 package by.epam.filmstore.dao.impl;
 
 import by.epam.filmstore.dao.IGenreDAO;
+import by.epam.filmstore.dao.PartOfTransaction;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Genre;
@@ -19,13 +20,19 @@ import java.util.List;
  * @author Olga Shahray
  */
 public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
+
     private static final String INSERT_GENRE = "INSERT INTO allgenres (genre) VALUES(?)";
-    private static final String SELECT_GENRE = "SELECT id, genre FROM allgenres WHERE allgenres.id =?";
     private static final String DELETE_GENRE = "DELETE FROM allgenres WHERE allgenres.id=?";
     private static final String SELECT_ALL_GENRES = "SELECT id, genre FROM allgenres";
     private static final String UPDATE_GENRE = "UPDATE allgenres SET genre=? WHERE id=?";
 
+    /**
+     * Method saves @param genre in database
+     * @param genre
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void save(Genre genre) throws DAOException {
 
         PreparedStatement preparedStatement = null;
@@ -61,7 +68,13 @@ public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
         }
     }
 
+    /**
+     * Method updates @param genre in database
+     * @param genre
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void update(Genre genre) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -90,6 +103,11 @@ public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
         }
     }
 
+    /**
+     * @param id of genre
+     * @return boolean result if genre was deleted
+     * @throws DAOException
+     */
     @Override
     public boolean delete(int id) throws DAOException {
 
@@ -117,41 +135,10 @@ public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
         }
     }
 
-    @Override
-    public Genre get(int id) throws DAOException {
-        Genre genre = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            Connection connection = getConnectionFromThreadLocal();
-            preparedStatement = connection.prepareStatement(SELECT_GENRE);
-
-            preparedStatement.setInt(1, id);
-            try(ResultSet rs = preparedStatement.executeQuery()) {
-                if(rs.next()) {
-                    genre = new Genre();
-                    genre.setId(rs.getInt(1));
-                    genre.setGenreName(rs.getString(2));
-                }
-                else{
-                    throw new DAOException("Error getting genre");
-                }
-            }
-        } catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Error getting genre", e);
-        }
-        finally {
-            if(preparedStatement != null){
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    throw new DAOException("Error closing prepared statement in genre dao", e);
-                }
-            }
-        }
-        return genre;
-    }
-
+    /**
+     * @return a {@code List<Genre>} all genres from database
+     * @throws DAOException
+     */
     @Override
     public List<Genre> getAll() throws DAOException {
         List<Genre> allGenres = new ArrayList<>();

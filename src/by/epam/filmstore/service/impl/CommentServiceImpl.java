@@ -100,7 +100,7 @@ public class CommentServiceImpl implements ICommentService {
         }
         ICommentDAO dao = DAOFactory.getMySqlDAOFactory().getICommentDAO();
         try {
-            return DAOHelper.execute(() -> {
+            return DAOHelper.transactionExecute(() -> {
                 List<Comment> list = dao.getByStatus(status, offset, count);
                 int countComment = dao.getCount(status);
                 return new PagingListDTO<Comment>(countComment, list);

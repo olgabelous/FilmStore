@@ -69,7 +69,7 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
     }
 
     /**
-     * Method updates existind country
+     * Method updates existing country
      *
      * @param country
      * @throws DAOException
@@ -136,9 +136,7 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
     }
 
     /**
-     * Returns all countries from database
-     *
-     * @return a {@code List<Country>}
+     * @return a {@code List<Country>} all countries from database
      * @throws DAOException
      */
     @Override

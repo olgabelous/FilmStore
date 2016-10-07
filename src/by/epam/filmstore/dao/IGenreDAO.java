@@ -17,9 +17,6 @@ public interface IGenreDAO {
     // false if not found
     boolean delete(int id) throws DAOException;
 
-    // null if not found
-    Genre get(int id) throws DAOException;
-
     List<Genre> getAll() throws DAOException;
 
 

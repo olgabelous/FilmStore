@@ -287,7 +287,7 @@ public class FilmServiceImpl implements IFilmService{
     }
 
     @Override
-    public void saveFavotiteFilm(int userId, int filmId) throws ServiceException {
+    public void saveFavoriteFilm(int userId, int filmId) throws ServiceException {
         if(ServiceValidation.isNotPositive(userId, filmId)){
             throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
         }
@@ -303,7 +303,7 @@ public class FilmServiceImpl implements IFilmService{
     }
 
     @Override
-    public boolean deleteFavotiteFilm(int userId, int filmId) throws ServiceException {
+    public boolean deleteFavoriteFilm(int userId, int filmId) throws ServiceException {
         if(ServiceValidation.isNotPositive(userId, filmId)){
             throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
         }

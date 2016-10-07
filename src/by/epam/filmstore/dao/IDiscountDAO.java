@@ -14,14 +14,12 @@ public interface IDiscountDAO {
 
     void update(Discount discount) throws DAOException;
 
-    Discount get(int discountId) throws DAOException;
-
     Discount getUserDiscount(int userId)  throws DAOException;
 
     // false if not found
     boolean delete(int discountId) throws DAOException;
 
-    List<Discount> getDiscountsList() throws DAOException;
+    List<Discount> getAll() throws DAOException;
 
 
 }

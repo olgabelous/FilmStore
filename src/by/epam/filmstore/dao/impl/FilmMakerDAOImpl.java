@@ -1,6 +1,7 @@
 package by.epam.filmstore.dao.impl;
 
 import by.epam.filmstore.dao.IFilmMakerDAO;
+import by.epam.filmstore.dao.PartOfTransaction;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.FilmMaker;
@@ -29,7 +30,13 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
     private static final String UPDATE_FILM_MAKER = "UPDATE allfilmmakers SET name=?, profession=? WHERE id=?";
     private static final String COUNT_FILM_MAKER = "SELECT COUNT(id) FROM allfilmmakers";
 
+    /**
+     * Method saves @param filmMaker in database
+     * @param filmMaker
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void save(FilmMaker filmMaker) throws DAOException {
 
         PreparedStatement preparedStatement = null;
@@ -66,7 +73,13 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
         }
     }
 
+    /**
+     * Method updates @param filmMaker in database
+     * @param filmMaker
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void update(FilmMaker filmMaker) throws DAOException {
         PreparedStatement preparedStatement = null;
         try {
@@ -95,6 +108,11 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
         }
     }
 
+    /**
+     * @param id of film maker
+     * @return boolean result if film maker was deleted
+     * @throws DAOException
+     */
     @Override
     public boolean delete(int id) throws DAOException {
 
@@ -121,6 +139,11 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
         }
     }
 
+    /**
+     * @param id of required film maker
+     * @return FilmMaker
+     * @throws DAOException
+     */
     @Override
     public FilmMaker get(int id) throws DAOException {
         FilmMaker filmMaker = null;
@@ -157,7 +180,14 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
         return filmMaker;
     }
 
+    /**
+     * @param offset - is a start number of selection in db
+     * @param count - is a count of required records from db
+     * @return a {@code List<FilmMaker>}
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public List<FilmMaker> getAll(int offset, int count) throws DAOException {
         List<FilmMaker> allFilmMakers = new ArrayList<>();
         PreparedStatement preparedStatement = null;
@@ -193,6 +223,10 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
         return allFilmMakers;
     }
 
+    /**
+     * @return a {@code List<FilmMaker>} return all film makers from db
+     * @throws DAOException
+     */
     @Override
     public List<FilmMaker> getAll() throws DAOException {
         List<FilmMaker> allFilmMakers = new ArrayList<>();
@@ -228,7 +262,12 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
         return allFilmMakers;
     }
 
+    /**
+     * @return count of film makers
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public int getCountFilmMakers() throws DAOException {
         int count = 0;
         PreparedStatement preparedStatement = null;
