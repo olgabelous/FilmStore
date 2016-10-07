@@ -6,7 +6,7 @@ import by.epam.filmstore.domain.Genre;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 19.06.2016.
+ * @author Olga Shahray
  */
 public interface IGenreDAO {
 
@@ -18,8 +18,5 @@ public interface IGenreDAO {
     boolean delete(int id) throws DAOException;
 
     List<Genre> getAll() throws DAOException;
-
-
-
 
 }

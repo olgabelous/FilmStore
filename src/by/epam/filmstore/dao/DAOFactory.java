@@ -1,7 +1,7 @@
 package by.epam.filmstore.dao;
 
 /**
- * Created by Olga Shahray on 18.06.2016.
+ * @author Olga Shahray
  */
 public abstract class DAOFactory {
     private static final MySqlDAOFactory mySqlDAOFactory = new MySqlDAOFactory();

@@ -6,7 +6,7 @@ import by.epam.filmstore.domain.FilmMaker;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 27.06.2016.
+ * @author Olga Shahray
  */
 public interface IFilmMakerDAO {
 

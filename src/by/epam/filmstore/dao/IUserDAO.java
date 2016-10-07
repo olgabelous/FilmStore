@@ -6,7 +6,7 @@ import by.epam.filmstore.domain.User;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 18.06.2016.
+ * @author Olga Shahray
  */
 public interface IUserDAO {
 

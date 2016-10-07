@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Olga Shahray on 18.06.2016.
+ * @author Olga Shahray
  */
 public interface IFilmDAO {
 

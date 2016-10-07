@@ -104,10 +104,9 @@ public final class DAOHelper {
     }
 
     /**
-     * Return a query string to select films from db according to given filter parameters.
      * @param filterParams {@code Map<String, List<String>>} where map's key is a name of parameter,
      *                                                      map's value is a List of values
-     * @return
+     * @return a query string to select films from db according to given filter parameters.
      */
     public static String buildFilterFilmQuery(Map<String, List<String>> filterParams){
         StringBuilder start1 = new StringBuilder("SELECT DISTINCT films.id, films.title, films.release_year, films.description, films.duration, "+
@@ -174,10 +173,9 @@ public final class DAOHelper {
     }
 
     /**
-     * Return a query string to get count of films from db according to given filter parameters.
      * @param filterParams {@code Map<String, List<String>>} where map's key is a name of parameter,
      *                                                      map's value is a List of values
-     * @return
+     * @return a query string to get count of films from db according to given filter parameters
      */
     public static String buildCountFilmQuery(Map<String, List<String>> filterParams){
 
@@ -236,10 +234,8 @@ public final class DAOHelper {
     }
 
     /**
-     * Return a query string to select films from db according to given keywords.
-     *
      * @param keywords
-     * @return
+     * @return a query string to select films from db according to given keywords.
      */
     public static String buildSearchedFilmQuery(String[] keywords) {
         StringBuilder startQuery = new StringBuilder("SELECT DISTINCT films.id, films.title, films.release_year, films.description, films.duration, "+

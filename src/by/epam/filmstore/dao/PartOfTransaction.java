@@ -1,11 +1,11 @@
 package by.epam.filmstore.dao;
 
 /**
- * Created by Olga Shahray on 02.09.2016.
+ * Interface that indicates that method is a part of transaction and is called from method
+ * {@code transactionExecute(SqlExecutor<T> executor)} in class DAOHelper
  *
- * Показывает, что метод является частью транзакции
- * В каждом методе используется Connection, полученный из DAOHelper (см. AbstractDAO и DAOHelper).
- * Возврат Connection в пул происходит в DAOHelper
+ * @see by.epam.filmstore.util.DAOHelper
+ * @author Olga Shahray
  */
 public @interface PartOfTransaction {
 }

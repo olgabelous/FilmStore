@@ -6,7 +6,7 @@ import by.epam.filmstore.domain.Country;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 18.07.2016.
+ * @author Olga Shahray
  */
 public interface ICountryDAO {
 

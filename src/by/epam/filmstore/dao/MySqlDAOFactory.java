@@ -3,7 +3,7 @@ package by.epam.filmstore.dao;
 import by.epam.filmstore.dao.impl.*;
 
 /**
- * Created by Olga Shahray on 18.06.2016.
+ * @author Olga Shahray
  */
 public class MySqlDAOFactory extends DAOFactory {
 

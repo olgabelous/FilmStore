@@ -6,13 +6,13 @@ import by.epam.filmstore.service.exception.ServiceException;
 import java.sql.SQLException;
 
 /**
- * Created by Olga Shahray on 17.07.2016.
+ * Functional interface.
+ * Instances of functional interfaces can be created with lambda expressions.
  *
- * Функциональный интерфейс.
- * Для реализации функционального интерфейса можно использовать лямбда-выражения для замены анонимного внутреннего класса
- * см. слой service и класс DAOHelper
+ * @see by.epam.filmstore.service.impl
+ * @see by.epam.filmstore.util.DAOHelper
+ * @author Olga Shahray
  */
-
 @FunctionalInterface
 public interface SqlExecutor<T> {
     T execute() throws SQLException, DAOException, ServiceException;
