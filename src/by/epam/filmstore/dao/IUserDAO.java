@@ -25,9 +25,6 @@ public interface IUserDAO {
     // null if not found
     User get(int id) throws DAOException;
 
-    // null if not found
-    User getByEmail(String email) throws DAOException;
-
     List<User> getAll(int offset, int count) throws DAOException;
 
     int checkIfEmailExist(String email)  throws DAOException;

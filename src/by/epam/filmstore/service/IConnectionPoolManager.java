@@ -3,7 +3,7 @@ package by.epam.filmstore.service;
 import by.epam.filmstore.service.exception.ServiceConnectionPoolManagerException;
 
 /**
- * Created by Olga Shahray on 04.08.2016.
+ * @author Olga Shahray
  */
 public interface IConnectionPoolManager {
 

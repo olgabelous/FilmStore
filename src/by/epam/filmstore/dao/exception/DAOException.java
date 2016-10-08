@@ -1,7 +1,9 @@
 package by.epam.filmstore.dao.exception;
 
 /**
- * Created by Olga Shahray on 28.05.2016.
+ * An exception that provides information on errors in DAO layer
+ *
+ * @author Olga Shahray
  */
 public class DAOException extends Exception {
 

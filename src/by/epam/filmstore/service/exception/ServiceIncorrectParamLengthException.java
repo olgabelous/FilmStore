@@ -1,7 +1,9 @@
 package by.epam.filmstore.service.exception;
 
 /**
- * Created by Olga Shahray on 22.09.2016.
+ * Thrown to indicate that an method has incorrect length of parameters.
+ *
+ * @author Olga Shahray
  */
 public class ServiceIncorrectParamLengthException extends ServiceValidationException{
 

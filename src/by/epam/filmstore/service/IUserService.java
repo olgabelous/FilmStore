@@ -5,7 +5,7 @@ import by.epam.filmstore.domain.dto.PagingListDTO;
 import by.epam.filmstore.service.exception.ServiceException;
 
 /**
- * Created by Olga Shahray on 23.07.2016.
+ * @author Olga Shahray
  */
 public interface IUserService {
 

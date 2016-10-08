@@ -1,7 +1,6 @@
 package by.epam.filmstore.dao.impl;
 
 import by.epam.filmstore.dao.ICountryDAO;
-import by.epam.filmstore.dao.PartOfTransaction;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Country;
@@ -28,12 +27,10 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
 
     /**
      *  Method saves @param country in database
-     *
      * @param country
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public void save(Country country) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -70,12 +67,10 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
 
     /**
      * Method updates existing country
-     *
      * @param country
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public void update(Country country) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -104,8 +99,7 @@ public class CountryDAOImpl extends AbstractDAO implements ICountryDAO {
         }
     }
     /**
-     *
-     * @param countryId
+     * @param countryId - id of country
      * @return boolean result if country was deleted
      * @throws DAOException
      */

@@ -36,7 +36,6 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public void save(Discount discount) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -79,7 +78,6 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public void update(Discount discount) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -111,11 +109,12 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
     }
 
     /**
-     * @param userId
+     * @param userId - id of user
      * @return Discount calculated on basis of paid user's orders
      * @throws DAOException
      */
     @Override
+    @PartOfTransaction
     public Discount getUserDiscount(int userId) throws DAOException {
         Discount discount = null;
         PreparedStatement preparedStatement = null;
@@ -150,7 +149,7 @@ public class DiscountDAOImpl extends AbstractDAO implements IDiscountDAO {
     }
 
     /**
-     * @param discountId
+     * @param discountId - id of discount
      * @return boolean result if discount was deleted
      * @throws DAOException
      */

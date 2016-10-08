@@ -22,13 +22,25 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Olga Shahray on 17.07.2016.
+ * <p>Class encapsulates the business logic for the entity Film, performing validation,
+ * controlling transactions and coordinating responses in the implementation of its operations.</p>
+ *
+ * @see by.epam.filmstore.util.DAOHelper
+ * @author Olga Shahray
  */
 public class FilmServiceImpl implements IFilmService{
     private final static String ID_MUST_BE_POSITIVE = "Id must be positive number";
 
+    /**
+     * Method validates params, creates instance Film and passes to dao to save
+     * @param genresId {@code String[]}
+     * @param filmMakersId {@code String[]}
+     * @param params
+     * @throws ServiceException
+     */
     @Override
     public void save(String[] genresId, String[] filmMakersId, Object... params) throws ServiceException {
+        //validation
         if(ServiceValidation.isNullOrEmpty(genresId) || ServiceValidation.isNullOrEmpty(filmMakersId)){
             throw new ServiceValidationException("Genres and film makers must not be empty");
         }
@@ -71,6 +83,7 @@ public class FilmServiceImpl implements IFilmService{
         }
         Country country = new Country(countryId);
         LocalDate dateAdd = LocalDate.now();
+        //validation end
         Film film = new Film(title,year,country,description,duration,ageRestriction, price, poster, video, dateAdd, genreList, filmMakerList);
         IFilmDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
 
@@ -86,8 +99,17 @@ public class FilmServiceImpl implements IFilmService{
         }
     }
 
+    /**
+     * Method validates params, creates instance Film and passes to dao to update
+     * @param filmId id of film
+     * @param genresId {@code String[]}
+     * @param filmMakersId {@code String[]}
+     * @param params
+     * @throws ServiceException
+     */
     @Override
     public void update(int filmId, String[] genresId, String[] filmMakersId, Object... params) throws ServiceException {
+        //validation
         if(ServiceValidation.isNullOrEmpty(genresId) || ServiceValidation.isNullOrEmpty(filmMakersId)){
             throw new ServiceValidationException("Genres and film makers must not be empty");
         }
@@ -131,6 +153,8 @@ public class FilmServiceImpl implements IFilmService{
         }
         Country country = new Country(countryId);
         LocalDate dateAdd = LocalDate.parse(date);
+        //validation end
+
         Film film = new Film(title,year,country,description,duration,ageRestriction, price, poster, video, dateAdd, genreList, filmMakerList);
         film.setId(filmId);
         IFilmDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
@@ -147,6 +171,11 @@ public class FilmServiceImpl implements IFilmService{
         }
     }
 
+    /**
+     * @param id of film
+     * @return film
+     * @throws ServiceException
+     */
     @Override
     public Film get(int id) throws ServiceException {
         if(ServiceValidation.isNotPositive(id)){
@@ -175,6 +204,11 @@ public class FilmServiceImpl implements IFilmService{
         return film[0];
     }
 
+    /**
+     * @param id of film
+     * @return boolean result if film was deleted
+     * @throws ServiceException
+     */
     @Override
     public boolean delete(int id) throws ServiceException {
         if(ServiceValidation.isNotPositive(id)){
@@ -188,6 +222,13 @@ public class FilmServiceImpl implements IFilmService{
         }
     }
 
+    /**
+     * @param year for search
+     * @param offset - is a start number of selection
+     * @param count - is a count of required records
+     * @return {@code List<Film>}
+     * @throws ServiceException
+     */
     @Override
     public List<Film> getByYear(int year, int offset, int count) throws ServiceException {
         if(ServiceValidation.isNotPositive(year)){
@@ -201,8 +242,21 @@ public class FilmServiceImpl implements IFilmService{
         }
     }
 
+    /**
+     * Return DTO object that contains {@code List<Film>} displaying on page and count
+     * of all films filtered by given parameters.
+     * @param filterParams - filter parameters
+     * @param order of selection
+     * @param offset - is a start number of selection
+     * @param count - is a count of required records
+     * @return {@code PagingListDTO<Film>}
+     * @throws ServiceException
+     *
+     * @see by.epam.filmstore.domain.dto.PagingListDTO
+     */
     @Override
     public PagingListDTO<Film> getFilteredFilms(Map<String, List<String>> filterParams, String order, int offset, int count) throws ServiceException {
+        //validation
         for(Map.Entry<String,List<String>> pair : filterParams.entrySet()){
             List<String> paramIdList = pair.getValue();
             String key = pair.getKey();
@@ -235,6 +289,7 @@ public class FilmServiceImpl implements IFilmService{
         if(ServiceValidation.isNullOrEmpty(order)){
             order = "rating";
         }
+        //validation end
 
         IFilmDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
         try {
@@ -249,6 +304,17 @@ public class FilmServiceImpl implements IFilmService{
         }
     }
 
+    /**
+     * Return DTO object that contains {@code List<Film>} displaying on page and count
+     * of all films.
+     * @param order of selection
+     * @param offset - is a start number of selection
+     * @param count - is a count of required records
+     * @return {@code PagingListDTO<Film>}
+     * @throws ServiceException
+     *
+     * @see by.epam.filmstore.domain.dto.PagingListDTO
+     */
     @Override
     public PagingListDTO<Film> getAll(String order, int offset, int count) throws ServiceException {
         if(offset < 0 || count < 0){
@@ -266,9 +332,20 @@ public class FilmServiceImpl implements IFilmService{
         }
     }
 
+    /**
+     * Return DTO object that contains {@code List<Film>} displaying on page and count
+     * of favorite films of user.
+     * @param userId - id of user
+     * @param offset - is a start number of selection
+     * @param count - is a count of required records
+     * @return {@code PagingListDTO<Film>}
+     * @throws ServiceException
+     *
+     * @see by.epam.filmstore.domain.dto.PagingListDTO
+     */
     @Override
-    public PagingListDTO<Film> getFavoriteFilms(int id, int offset, int count) throws ServiceException {
-        if(ServiceValidation.isNotPositive(id)){
+    public PagingListDTO<Film> getFavoriteFilms(int userId, int offset, int count) throws ServiceException {
+        if(ServiceValidation.isNotPositive(userId)){
             throw new ServiceValidationException(ID_MUST_BE_POSITIVE);
         }
         if(offset < 0 || count < 0){
@@ -277,8 +354,8 @@ public class FilmServiceImpl implements IFilmService{
         IFilmDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
         try {
             return DAOHelper.transactionExecute(() -> {
-                List<Film> films = dao.getFavoriteFilms(id, offset, count);
-                int countFilm = dao.getCountFavoriteFilm(id);
+                List<Film> films = dao.getFavoriteFilms(userId, offset, count);
+                int countFilm = dao.getCountFavoriteFilm(userId);
                 return new PagingListDTO<Film>(countFilm, films);
             });
         } catch (DAOException | NumberFormatException e) {
@@ -286,6 +363,12 @@ public class FilmServiceImpl implements IFilmService{
         }
     }
 
+    /**
+     * Method validates params and passes to dao to save favorite film of user
+     * @param userId - id of user
+     * @param filmId - id of film
+     * @throws ServiceException
+     */
     @Override
     public void saveFavoriteFilm(int userId, int filmId) throws ServiceException {
         if(ServiceValidation.isNotPositive(userId, filmId)){
@@ -293,7 +376,7 @@ public class FilmServiceImpl implements IFilmService{
         }
         IFilmDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmDAO();
         try {
-            DAOHelper.transactionExecute(() -> {
+            DAOHelper.execute(() -> {
                 dao.saveFavoriteFilm(userId, filmId);
                 return null;
             });
@@ -302,6 +385,13 @@ public class FilmServiceImpl implements IFilmService{
         }
     }
 
+    /**
+     * Methods removes favorite film of user
+     * @param userId  - id of user
+     * @param filmId - id of film
+     * @return boolean result if film was deleted
+     * @throws ServiceException
+     */
     @Override
     public boolean deleteFavoriteFilm(int userId, int filmId) throws ServiceException {
         if(ServiceValidation.isNotPositive(userId, filmId)){
@@ -315,6 +405,12 @@ public class FilmServiceImpl implements IFilmService{
         }
     }
 
+    /**
+     * Method searches films by query
+     * @param searchLine - query for search
+     * @return {@code List<Film>}
+     * @throws ServiceException
+     */
     @Override
     public List<Film> search(String searchLine) throws ServiceException {
         if(ServiceValidation.isNullOrEmpty(searchLine)){
@@ -329,6 +425,13 @@ public class FilmServiceImpl implements IFilmService{
         }
     }
 
+    /**
+     *  Method checks if film is favorite for user
+     * @param userId - id of user
+     * @param filmId - id of film
+     * @return boolean result if film is favorite
+     * @throws ServiceException
+     */
     @Override
     public boolean isFavoriteFilm(int userId, int filmId) throws ServiceException {
         if(ServiceValidation.isNotPositive(userId, filmId)){

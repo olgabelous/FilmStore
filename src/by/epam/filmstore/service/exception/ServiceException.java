@@ -1,7 +1,9 @@
 package by.epam.filmstore.service.exception;
 
 /**
- * Created by Olga Shahray on 28.05.2016.
+ * An exception that provides information on errors in service layer
+ *
+ * @author Olga Shahray
  */
 public class ServiceException extends Exception {
 

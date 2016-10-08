@@ -1,7 +1,6 @@
 package by.epam.filmstore.dao.impl;
 
 import by.epam.filmstore.dao.IGenreDAO;
-import by.epam.filmstore.dao.PartOfTransaction;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Genre;
@@ -32,7 +31,6 @@ public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public void save(Genre genre) throws DAOException {
 
         PreparedStatement preparedStatement = null;
@@ -74,7 +72,6 @@ public class GenreDAOImpl extends AbstractDAO implements IGenreDAO {
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public void update(Genre genre) throws DAOException {
         PreparedStatement preparedStatement = null;
 

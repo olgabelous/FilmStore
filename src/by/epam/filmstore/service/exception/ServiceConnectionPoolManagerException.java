@@ -1,9 +1,12 @@
 package by.epam.filmstore.service.exception;
 
 /**
- * Created by Olga Shahray on 04.08.2016.
+ * An exception that provides information on pool connection errors in service layer
+ *
+ * @author Olga Shahray
  */
 public class ServiceConnectionPoolManagerException extends ServiceException {
+
     public ServiceConnectionPoolManagerException(String message) {
         super(message);
     }

@@ -13,10 +13,19 @@ import by.epam.filmstore.util.DAOHelper;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 17.08.2016.
+ * <p>Class encapsulates the business logic for the entity Country, performing validation,
+ * controlling transactions and coordinating responses in the implementation of its operations.</p>
+ *
+ * @see by.epam.filmstore.util.DAOHelper
+ * @author Olga Shahray
  */
 public class CountryServiceImpl implements ICountryService {
 
+    /**
+     * Method validates params, creates instance Country and pass to dao to save
+     * @param countryName - name of country
+     * @throws ServiceException
+     */
     @Override
     public void save(String countryName) throws ServiceException {
         if(ServiceValidation.isNullOrEmpty(countryName)){
@@ -25,7 +34,7 @@ public class CountryServiceImpl implements ICountryService {
         ICountryDAO dao = DAOFactory.getMySqlDAOFactory().getICountryDAO();
         Country country = new Country(countryName);
         try {
-            DAOHelper.transactionExecute(() -> {
+            DAOHelper.execute(() -> {
                 dao.save(country);
                 return null;
             });
@@ -34,6 +43,12 @@ public class CountryServiceImpl implements ICountryService {
         }
     }
 
+    /**
+     * Method validates params, creates instance Country and pass to dao to update
+     * @param id of country
+     * @param countryName - name of country
+     * @throws ServiceException
+     */
     @Override
     public void update(int id, String countryName) throws ServiceException {
         if(ServiceValidation.isNotPositive(id)){
@@ -45,7 +60,7 @@ public class CountryServiceImpl implements ICountryService {
         ICountryDAO dao = DAOFactory.getMySqlDAOFactory().getICountryDAO();
         Country country = new Country(id, countryName);
         try {
-            DAOHelper.transactionExecute(() -> {
+            DAOHelper.execute(() -> {
                 dao.update(country);
                 return null;
             });
@@ -54,6 +69,11 @@ public class CountryServiceImpl implements ICountryService {
         }
     }
 
+    /**
+     * @param id of country
+     * @return boolean result if country was deleted
+     * @throws ServiceException
+     */
     @Override
     public boolean delete(int id) throws ServiceException {
         if(ServiceValidation.isNotPositive(id)){
@@ -67,6 +87,10 @@ public class CountryServiceImpl implements ICountryService {
         }
     }
 
+    /**
+     * @return a {@code List<Country>}
+     * @throws ServiceException
+     */
     @Override
     public List<Country> getAll() throws ServiceException {
         ICountryDAO dao = DAOFactory.getMySqlDAOFactory().getICountryDAO();

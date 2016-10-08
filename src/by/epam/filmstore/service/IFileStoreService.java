@@ -3,21 +3,17 @@ package by.epam.filmstore.service;
 import java.io.IOException;
 
 /**
- * Created by Olga Shahray on 07.09.2016.
+ * @author Olga Shahray
  */
 public interface IFileStoreService {
 
-    /*String save(OutputStream file, String fileStorePath, String path) throws IOException;//Output
+    String save(byte[] file, String fileStorePath, String path) throws IOException;
 
-    InputStream get(String fileStorePath, String path) throws IOException;//InputStream*/
+    boolean save(byte[] file, String fullPath) throws IOException;
 
-    String save(byte[] file, String fileStorePath, String path) throws IOException;//Output
+    byte[] get(String fileStorePath, String path) throws IOException;
 
-    boolean save(byte[] file, String fullPath) throws IOException;//Output
-
-    byte[] get(String fileStorePath, String path) throws IOException;//InputStream
-
-    byte[] get(String fullPath) throws IOException;//InputStream
+    byte[] get(String fullPath) throws IOException;
 
     void delete(String fileStorePath, String path) throws IOException;
 

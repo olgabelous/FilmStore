@@ -3,7 +3,7 @@ package by.epam.filmstore.service;
 import by.epam.filmstore.service.impl.*;
 
 /**
- * Created by Olga Shahray on 28.05.2016.
+ * @author Olga Shahray
  */
 public class ServiceFactory {
 

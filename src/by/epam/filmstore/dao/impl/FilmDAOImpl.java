@@ -369,7 +369,7 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
      * @param orderBy - order of selection
      * @param offset - is a start number of selection in db
      * @param count - is a count of required records from db
-     * @return a {@code List<Film>} returns films according to filter parameters
+     * @return a {@code List<Film>} films according to filter parameters
      * @throws DAOException
      *
      * @see by.epam.filmstore.util.DAOHelper
@@ -511,7 +511,6 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     }
 
     /**
-     *
      * @param userId - id of user who marked films as favorite
      * @return count of favorite films of given user
      * @throws DAOException
@@ -547,13 +546,11 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     }
 
     /**
-     *
      * @param userId - id of user who marked film as favorite
      * @param filmId - id of favorite user's film
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public void saveFavoriteFilm(int userId, int filmId) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -583,7 +580,6 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     }
 
     /**
-     *
      * @param userId - id of user who marked film as favorite
      * @param filmId - id of favorite user's film
      * @return boolean result if film was deleted
@@ -621,7 +617,6 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public List<Film> search(String[] keywords) throws DAOException {
         List<Film> filmList = new ArrayList<>();
 
@@ -667,8 +662,8 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
 
     /**
      * Method checks if given film is favorite for given user
-     * @param userId
-     * @param filmId
+     * @param userId - id of user
+     * @param filmId - id of film
      * @return boolean result if film is favorite
      * @throws DAOException
      */
@@ -703,7 +698,6 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     }
 
     /**
-     *
      * @param year - release year of film
      * @param offset - is a start number of selection in db
      * @param count - is a count of required records from db

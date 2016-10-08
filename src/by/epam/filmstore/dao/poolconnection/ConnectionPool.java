@@ -8,14 +8,18 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 
 /**
- * Created by Olga Shahray on 18.06.2016.
+ * <p>Class ConnectionPool allows to use available connections for access to database.
+ * As the operation of creating connection is very expensive, used connection is not
+ * closed, it is returned in pool.
+ * </p>
+ *
+ * @author Olga Shahray
  */
-/*класс ConnectionPool позволяет использовать доступные connection для доступа к БД
-т.к. операция создания соединения очень дорогая, использованный connection не закрывается,
-а возвращается обратно в пул*/
 public final class ConnectionPool {
-
-    private static final int DEFAULT_POOL_SIZE = 5;//количество соединений по умолчанию
+    /**
+     * Default number of connections in pool
+     */
+    private static final int DEFAULT_POOL_SIZE = 5;
 
     private BlockingQueue<Connection> connectionQueue;
     private BlockingQueue<Connection> givenAwayConQueue;
@@ -24,7 +28,6 @@ public final class ConnectionPool {
     private String user;
     private String password;
     private int poolSize;
-
 
     private ConnectionPool() {
         DBResourceManager dbResourceManager = DBResourceManager.getInstance();
@@ -40,8 +43,10 @@ public final class ConnectionPool {
 
     }
 
-    //Singleton Bill Pugh. Использование внутреннего класса позволяет создать объект пула только при
-    //первом обращении к нему
+    /**
+     * <p>Singleton Bill Pugh. Use of nested class allows create instance of pool only
+     * at first calling</p>
+     */
     private static class SingletonHelper {
         private static final ConnectionPool INSTANCE = new ConnectionPool();
     }
@@ -50,7 +55,10 @@ public final class ConnectionPool {
         return SingletonHelper.INSTANCE;
     }
 
-    //инициализируем пул соединений
+    /**
+     * Initialization of pool connection
+     * @throws ConnectionPoolException
+     */
     public void initPoolData() throws ConnectionPoolException {
         try {
             Class.forName(driverName);
@@ -69,8 +77,11 @@ public final class ConnectionPool {
         }
     }
 
-
-    //берем коннекшен из пула
+    /**
+     * Method that takes connection from pool
+     * @return connection
+     * @throws ConnectionPoolException
+     */
     public Connection takeConnection() throws ConnectionPoolException {
         Connection connection = null;
         try {
@@ -82,7 +93,10 @@ public final class ConnectionPool {
         return connection;
     }
 
-    //закрытие пула соединений
+    /**
+     * Method that closes pool connection
+     * @throws ConnectionPoolException
+     */
     public void disposeConnectionPool() throws ConnectionPoolException {
         try {
             closeConnectionsQueue(connectionQueue);
@@ -102,10 +116,12 @@ public final class ConnectionPool {
         }
     }
 
-    //внутренний класс - реализация интерфейса Connection
-    //реализуем метод close таким обрабом, что соединение не закрывается, а возвращается в пул
-    //метод reallyClose фактически закрывает connection
-
+    /**
+     * <p>Inner class implements interface Connection. It has method {@code close} which returns connection
+     * in pool. Method {@code reallyClose} actually closes connection.</p>
+     *
+     * @see Connection
+     */
     private class PooledConnection implements Connection {
         private Connection connection;
 

@@ -7,10 +7,17 @@ import by.epam.filmstore.service.IPaymentService;
 import java.time.LocalDateTime;
 
 /**
- * Created by Olga Shahray on 04.09.2016.
+ * Class encapsulates the business logic for payment of orders.
+ *
+ * @author Olga Shahray
  */
 public class PaymentServiceImpl implements IPaymentService{
 
+    /**
+     * Method implements process payment of order. It gives payment data and returns payment status
+     * @param pd - payment data
+     * @return PaymentStatus
+     */
     @Override
     public PaymentStatus processPayment(PaymentData pd) {
         return new PaymentStatus(1L,true, "", LocalDateTime.now(), pd.getSum());

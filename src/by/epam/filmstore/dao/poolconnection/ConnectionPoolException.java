@@ -1,7 +1,9 @@
 package by.epam.filmstore.dao.poolconnection;
 
 /**
- * Created by Olga Shahray on 18.06.2016.
+ * An exception that provides information on error in pool connection.
+ *
+ * @author Olga Shahray
  */
 public class ConnectionPoolException extends Exception {
 

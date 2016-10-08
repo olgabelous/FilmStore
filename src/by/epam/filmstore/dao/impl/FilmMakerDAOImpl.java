@@ -36,7 +36,6 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public void save(FilmMaker filmMaker) throws DAOException {
 
         PreparedStatement preparedStatement = null;
@@ -79,7 +78,6 @@ public class FilmMakerDAOImpl extends AbstractDAO implements IFilmMakerDAO{
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public void update(FilmMaker filmMaker) throws DAOException {
         PreparedStatement preparedStatement = null;
         try {

@@ -3,7 +3,10 @@ package by.epam.filmstore.dao.poolconnection;
 import java.util.ResourceBundle;
 
 /**
- * Created by Olga Shahray on 18.06.2016.
+ * <p>Class manages database resources. It allows to get parameter of database
+ * by key</p>
+ *
+ * @author Olga Shahray
  */
 public class DBResourceManager {
     private final static DBResourceManager instance = new DBResourceManager();

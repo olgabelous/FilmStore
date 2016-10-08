@@ -6,10 +6,17 @@ import by.epam.filmstore.service.IConnectionPoolManager;
 import by.epam.filmstore.service.exception.ServiceConnectionPoolManagerException;
 
 /**
- * Created by Olga Shahray on 04.08.2016.
+ * Class that manages initialization and destroying of pool connection
+ *
+ * @see by.epam.filmstore.dao.poolconnection.ConnectionPool
+ * @author Olga Shahray
  */
 public class ConnectionPoolManagerImpl implements IConnectionPoolManager {
 
+    /**
+     * Method that initializes  pool connection
+     * @throws ServiceConnectionPoolManagerException
+     */
     @Override
     public void init() throws ServiceConnectionPoolManagerException {
         ConnectionPool pool = ConnectionPool.getInstance();
@@ -20,6 +27,10 @@ public class ConnectionPoolManagerImpl implements IConnectionPoolManager {
         }
     }
 
+    /**
+     * Method that destroys  pool connection
+     * @throws ServiceConnectionPoolManagerException
+     */
     @Override
     public void destroy() throws ServiceConnectionPoolManagerException {
         ConnectionPool pool = ConnectionPool.getInstance();

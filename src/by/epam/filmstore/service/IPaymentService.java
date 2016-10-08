@@ -4,7 +4,7 @@ import by.epam.filmstore.domain.PaymentData;
 import by.epam.filmstore.domain.PaymentStatus;
 
 /**
- * Created by Olga Shahray on 04.09.2016.
+ * @author Olga Shahray
  */
 public interface IPaymentService {
 

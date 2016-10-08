@@ -1,7 +1,9 @@
 package by.epam.filmstore.service.exception;
 
 /**
- * Created by Olga Shahray on 23.07.2016.
+ * An exception that provides information of errors during user's authorization
+ *
+ * @author Olga Shahray
  */
 public class ServiceAuthException extends ServiceException{
 

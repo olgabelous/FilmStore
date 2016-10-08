@@ -1,7 +1,7 @@
 package by.epam.filmstore.service.exception;
 
 /**
- * Created by Olga Shahray on 02.09.2016.
+ * Thrown to indicate that data is not valid.
  */
 public class ServiceValidationException  extends ServiceException{
 

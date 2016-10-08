@@ -1,9 +1,9 @@
 package by.epam.filmstore.dao.impl;
 
 import by.epam.filmstore.dao.IUserDAO;
+import by.epam.filmstore.dao.PartOfTransaction;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
-import by.epam.filmstore.domain.Genre;
 import by.epam.filmstore.domain.Role;
 import by.epam.filmstore.domain.User;
 
@@ -25,8 +25,6 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
     private static final String INSERT_USER = "INSERT INTO users (name, email, password, phone, photo, date_reg, role) VALUES(?,?,?,?,?,?,?)";
     private static final String INSERT_FAVORITE_GENRE = "INSERT INTO preferences (user_id, genre_id) VALUES(?,?)";
     private static final String DELETE_FAVORITE_GENRE = "DELETE FROM preferences WHERE user_id=?";
-    private static final String SELECT_FAVORITE_GENRES = "SELECT DISTINCT preferences.genre_id, allgenres.genre FROM preferences, allgenres" +
-            " WHERE allgenres.id = preferences.genre_id AND preferences.user_id= ?";
     private static final String SELECT_USER_BY_ID = "SELECT * FROM users WHERE users.id=?";
     private static final String SELECT_USER_BY_EMAIL = "SELECT * FROM users WHERE users.email=?";
     private static final String SELECT_USER_BY_EMAIL_PASS = "SELECT id, name, email, password, phone, photo, date_reg, role " +
@@ -38,6 +36,12 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
     private static final String UPDATE_USER = "UPDATE users SET name=?, email=?, password=?, phone=?, photo=?, date_reg=?, role=? WHERE id=?";
     private static final String SELECT_EMAIL_COUNT = "SELECT COUNT(1) FROM users WHERE email = ?";
 
+    /**
+     * Method saves @param user in database
+     * @param user
+     * @return saved user
+     * @throws DAOException
+     */
     @Override
     public User save(User user) throws DAOException {
         PreparedStatement preparedStatement = null;
@@ -80,6 +84,13 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         }
     }
 
+    /**
+     * Method returns user from db on basis of given email and password
+     * @param email of user
+     * @param password of user
+     * @return user
+     * @throws DAOException
+     */
     @Override
     public User authorize(String email, String password) throws DAOException {
         User user = null;
@@ -103,9 +114,7 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
                     user.setDateRegistration(rs.getTimestamp(7).toLocalDateTime());
                     user.setRole(Role.valueOf(rs.getString(8).toUpperCase()));
 
-                } /*else {
-                    throw new DAOException("Error getting user");
-                }*/
+                }
             }
         } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Error getting user", e);
@@ -122,50 +131,12 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         return user;
     }
 
-    public void saveFavoriteGenres(int userId, List<Genre> genreList) throws DAOException {
-        PreparedStatement preparedStatement = null;
-        PreparedStatement preparedStatement1 = null;
-
-        try {
-            Connection connection = getConnectionFromThreadLocal();
-            preparedStatement = connection.prepareStatement(INSERT_FAVORITE_GENRE);
-            preparedStatement1 = connection.prepareStatement(DELETE_FAVORITE_GENRE);
-
-            preparedStatement1.setInt(1, userId);
-            preparedStatement.executeUpdate();
-
-            for (Genre genre : genreList) {
-                preparedStatement.setInt(1, userId);
-                preparedStatement.setInt(2, genre.getId());
-                preparedStatement.addBatch();
-            }
-            int[] rows = preparedStatement.executeBatch();
-            for (int row : rows) {
-                if (row == 0) {
-                    throw new DAOException("Error saving favorite genre");
-                }
-            }
-        } catch (ConnectionPoolException | SQLException e) {
-            throw new DAOException("Error saving favorite genre", e);
-        }
-        finally {
-            if(preparedStatement != null){
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    throw new DAOException("Error closing prepared statement in user dao", e);
-                }
-            }
-            if(preparedStatement1 != null){
-                try {
-                    preparedStatement1.close();
-                } catch (SQLException e) {
-                    throw new DAOException("Error closing prepared statement in user dao", e);
-                }
-            }
-        }
-    }
-
+    /**
+     * Method updates user in db
+     * @param user for updating
+     * @return updated user
+     * @throws DAOException
+     */
     @Override
     public User update(User user) throws DAOException {
         PreparedStatement preparedStatement = null;
@@ -202,6 +173,11 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         }
     }
 
+    /**
+     * @param id of user
+     * @return boolean result if user was deleted
+     * @throws DAOException
+     */
     @Override
     public boolean delete(int id) throws DAOException {
         PreparedStatement preparedStatement = null;
@@ -255,6 +231,12 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         }
     }
 
+    /**
+     * Method gets user from database
+     * @param id of user
+     * @return user
+     * @throws DAOException
+     */
     @Override
     public User get(int id) throws DAOException {
         User user = null;
@@ -296,48 +278,15 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         return user;
     }
 
+    /**
+     * Method returns a {@code List<User>}
+     * @param offset - is a start number of selection in db
+     * @param count - is a count of required records from db
+     * @return a {@code List<User>}
+     * @throws DAOException
+     */
     @Override
-    public User getByEmail(String email) throws DAOException {
-        User user = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            Connection connection = getConnectionFromThreadLocal();
-            preparedStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL);
-
-            preparedStatement.setString(1, email);
-            try (ResultSet rs = preparedStatement.executeQuery()) {
-                if (rs.next()) {
-                    user = new User();
-                    user.setId(rs.getInt(1));
-                    user.setName(rs.getString(2));
-                    user.setEmail(rs.getString(3));
-                    user.setPass(rs.getString(4));
-                    user.setPhone(rs.getString(5));
-                    user.setPhoto(rs.getString(6));
-                    user.setDateRegistration(rs.getTimestamp(7).toLocalDateTime());
-                    user.setRole(Role.valueOf(rs.getString(8).toUpperCase()));
-
-                } else {
-                    throw new DAOException("Error getting user id");
-                }
-            }
-        } catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Error getting user id", e);
-        }
-        finally {
-            if(preparedStatement != null){
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    throw new DAOException("Error closing prepared statement in user dao", e);
-                }
-            }
-        }
-        return user;
-    }
-
-    @Override
+    @PartOfTransaction
     public List<User> getAll(int offset, int count) throws DAOException {
         List<User> allUsers = new ArrayList<>();
         PreparedStatement preparedStatement = null;
@@ -379,7 +328,12 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         return allUsers;
     }
 
+    /**
+     * @return count of users in database
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public int getCountUsers() throws DAOException {
         int count = 0;
         PreparedStatement preparedStatement = null;
@@ -408,6 +362,12 @@ public class UserDAOImpl extends AbstractDAO implements IUserDAO {
         }
     }
 
+    /**
+     * Method checks if email exist in database
+     * @param email for check
+     * @return count of emails in database
+     * @throws DAOException
+     */
     @Override
     public int checkIfEmailExist(String email)  throws DAOException{
         PreparedStatement preparedStatement = null;

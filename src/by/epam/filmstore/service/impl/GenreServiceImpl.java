@@ -13,11 +13,20 @@ import by.epam.filmstore.util.DAOHelper;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 17.08.2016.
+ * <p>Class encapsulates the business logic for the entity Genre, performing validation,
+ * controlling transactions and coordinating responses in the implementation of its operations.</p>
+ *
+ * @see by.epam.filmstore.util.DAOHelper
+ * @author Olga Shahray
  */
 public class GenreServiceImpl implements IGenreService {
     private final static String ID_MUST_BE_POSITIVE = "Id must be positive number";
 
+    /**
+     * Method validates params, creates instance Genre and passes to dao to save
+     * @param genreName - name of genre
+     * @throws ServiceException
+     */
     @Override
     public void save(String genreName) throws ServiceException {
         if(ServiceValidation.isNullOrEmpty(genreName)){
@@ -26,7 +35,7 @@ public class GenreServiceImpl implements IGenreService {
         IGenreDAO dao = DAOFactory.getMySqlDAOFactory().getIGenreDAO();
         Genre genre = new Genre(genreName);
         try {
-            DAOHelper.transactionExecute(() -> {
+            DAOHelper.execute(() -> {
                 dao.save(genre);
                 return null;
             });
@@ -35,6 +44,12 @@ public class GenreServiceImpl implements IGenreService {
         }
     }
 
+    /**
+     * Method validates params, creates instance Genre and passes to dao to update
+     * @param id of genre
+     * @param genreName - name of genre
+     * @throws ServiceException
+     */
     @Override
     public void update(int id, String genreName) throws ServiceException {
         if(ServiceValidation.isNotPositive(id)){
@@ -46,7 +61,7 @@ public class GenreServiceImpl implements IGenreService {
         IGenreDAO dao = DAOFactory.getMySqlDAOFactory().getIGenreDAO();
         Genre genre = new Genre(id, genreName);
         try {
-            DAOHelper.transactionExecute(() -> {
+            DAOHelper.execute(() -> {
                 dao.update(genre);
                 return null;
             });
@@ -55,6 +70,11 @@ public class GenreServiceImpl implements IGenreService {
         }
     }
 
+    /**
+     * @param id of genre
+     * @return boolean result if genre was deleted
+     * @throws ServiceException
+     */
     @Override
     public boolean delete(int id) throws ServiceException {
         if(ServiceValidation.isNotPositive(id)){
@@ -68,6 +88,10 @@ public class GenreServiceImpl implements IGenreService {
         }
     }
 
+    /**
+     * @return a {@code List<Genre>}
+     * @throws ServiceException
+     */
     @Override
     public List<Genre> getAll() throws ServiceException {
         IGenreDAO dao = DAOFactory.getMySqlDAOFactory().getIGenreDAO();

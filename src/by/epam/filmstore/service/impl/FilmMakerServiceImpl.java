@@ -16,12 +16,21 @@ import by.epam.filmstore.util.DAOHelper;
 import java.util.List;
 
 /**
- * Created by Olga Shahray on 17.07.2016.
+ * <p>Class encapsulates the business logic for the entity Film maker, performing validation,
+ * controlling transactions and coordinating responses in the implementation of its operations.</p>
+ *
+ * @see by.epam.filmstore.util.DAOHelper
+ * @author Olga Shahray
  */
 public class FilmMakerServiceImpl implements IFilmMakerService {
     private final static String ID_MUST_BE_POSITIVE = "Id must be positive number";
     private final static String MUST_NOT_BE_EMPTY = "Invalid parameters: Fields must not be empty";
 
+    /**
+     * Method validates params, creates instance Film maker and pass to dao to save
+     * @param params
+     * @throws ServiceException
+     */
     @Override
     public void save(String... params) throws ServiceException {
         if (params.length != 2){
@@ -37,7 +46,7 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
         FilmMaker fm = new FilmMaker(name, profession);
         IFilmMakerDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmMakerDAO();
         try {
-            DAOHelper.transactionExecute(() -> {
+            DAOHelper.execute(() -> {
                 dao.save(fm);
                 return null;
             });
@@ -47,6 +56,12 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
 
     }
 
+    /**
+     * Method validates params, creates instance Film maker and pass to dao to update
+     * @param id of film maker
+     * @param params
+     * @throws ServiceException
+     */
     @Override
     public void update(int id, String... params) throws ServiceException {
         if (ServiceValidation.isNotPositive(id)){
@@ -65,7 +80,7 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
         FilmMaker fm = new FilmMaker(id, name, profession);
         IFilmMakerDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmMakerDAO();
         try {
-            DAOHelper.transactionExecute(() -> {
+            DAOHelper.execute(() -> {
                 dao.update(fm);
                 return null;
             });
@@ -74,6 +89,11 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
         }
     }
 
+    /**
+     * @param id of film maker
+     * @return boolean result if film maker was deleted
+     * @throws ServiceException
+     */
     @Override
     public boolean delete(int id) throws ServiceException {
         if (ServiceValidation.isNotPositive(id)){
@@ -87,6 +107,11 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
         }
     }
 
+    /**
+     * @param id of film maker
+     * @return film maker
+     * @throws ServiceException
+     */
     @Override
     public FilmMaker get(int id) throws ServiceException {
         if (ServiceValidation.isNotPositive(id)){
@@ -100,6 +125,16 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
         }
     }
 
+    /**
+     * Return DTO object that contains {@code List<FilmMaker>} displaying on page and count
+     * of all film makers.
+     * @param offset - is a start number of selection
+     * @param count - is a count of required records
+     * @return a {@code PagingListDTO<FilmMaker>}
+     * @throws ServiceException
+     *
+     * @see by.epam.filmstore.domain.dto.PagingListDTO
+     */
     @Override
     public PagingListDTO<FilmMaker> getAll(int offset, int count) throws ServiceException {
         if(offset < 0 || count < 0){
@@ -117,6 +152,10 @@ public class FilmMakerServiceImpl implements IFilmMakerService {
         }
     }
 
+    /**
+     * @return a {@code List<FilmMaker>}
+     * @throws ServiceException
+     */
     @Override
     public List<FilmMaker> getAll() throws ServiceException {
         IFilmMakerDAO dao = DAOFactory.getMySqlDAOFactory().getIFilmMakerDAO();

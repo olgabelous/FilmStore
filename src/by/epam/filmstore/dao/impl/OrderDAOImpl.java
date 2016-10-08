@@ -1,6 +1,7 @@
 package by.epam.filmstore.dao.impl;
 
 import by.epam.filmstore.dao.IOrderDAO;
+import by.epam.filmstore.dao.PartOfTransaction;
 import by.epam.filmstore.dao.exception.DAOException;
 import by.epam.filmstore.dao.poolconnection.ConnectionPoolException;
 import by.epam.filmstore.domain.Film;
@@ -37,8 +38,13 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
     private static final String SELECT_TOTAL_AMOUNT_OF_USER = "SELECT SUM(orders.sum) FROM orders WHERE orders.user_id = ? " +
             "AND orders.status = 'paid'";
 
-
+    /**
+     * Method saves @param order in database
+     * @param order
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void save(Order order) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -78,7 +84,14 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         }
     }
 
+    /**
+     * Method updates order with given status
+     * @param orderId - id of order
+     * @param status - order status for updating
+     * @throws DAOException
+     */
     @Override
+    @PartOfTransaction
     public void updateStatus(int orderId, OrderStatus status) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -108,6 +121,11 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
 
     }
 
+    /**
+     * @param id of order
+     * @return boolean result if order was deleted
+     * @throws DAOException
+     */
     @Override
     public boolean delete(int id) throws DAOException {
         PreparedStatement preparedStatement = null;
@@ -134,6 +152,11 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         }
     }
 
+    /**
+     * @param id of order
+     * @return order with given id
+     * @throws DAOException
+     */
     @Override
     public Order get(int id) throws DAOException {
         Order order = null;
@@ -173,6 +196,12 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         return order;
     }
 
+    /**
+     * @param userId - id of user
+     * @param status - status of order
+     * @return a {@code List<Order>} of user with specified status
+     * @throws DAOException
+     */
     @Override
     public List<Order> getOrdersOfUser(int userId, OrderStatus status) throws DAOException {
         List<Order> allOrders = new ArrayList<>();
@@ -214,6 +243,11 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         return allOrders;
     }
 
+    /**
+     * @param filmId - id of film
+     * @return a {@code List<Order>} of given film
+     * @throws DAOException
+     */
     @Override
     public List<Order> getAllOfFilm(int filmId) throws DAOException {
         List<Order> allOrders = new ArrayList<>();
@@ -253,6 +287,10 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         return allOrders;
     }
 
+    /**
+     * @return a {@code List<Order>} all orders from database
+     * @throws DAOException
+     */
     @Override
     public List<Order> getAll() throws DAOException {
         List<Order> allOrders = new ArrayList<>();
@@ -291,6 +329,11 @@ public class OrderDAOImpl extends AbstractDAO implements IOrderDAO {
         return allOrders;
     }
 
+    /**
+     * @param userId - id of user
+     * @return total amount of money paid by user for films
+     * @throws DAOException
+     */
     @Override
     public double getTotalAmount(int userId) throws DAOException {
         PreparedStatement preparedStatement = null;

@@ -38,12 +38,10 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
 
     /**
      * Method saves @param comment in database
-     *
      * @param comment
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public void save(Comment comment) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -78,13 +76,11 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
 
     /**
      * Method updates status of comment in database
-     *
      * @param commentId
      * @param status
      * @throws DAOException
      */
     @Override
-    @PartOfTransaction
     public void update(int commentId, CommentStatus status) throws DAOException {
         PreparedStatement preparedStatement = null;
 
@@ -146,10 +142,8 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
     }
 
     /**
-     * Returns all comments belonging to user with required user id
-     *
-     * @param userId
-     * @return a {@code List<Comment>}
+     * @param userId - id of user
+     * @return a {@code List<Comment>} all comments belonging to user with required user id
      * @throws DAOException
      */
     @Override
@@ -194,10 +188,8 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
     }
 
     /**
-     * Returns all comments of film with required id
-     *
-     * @param filmId
-     * @return a {@code List<Comment>}
+     * @param filmId - id of film
+     * @return a {@code List<Comment>} all comments of film with required id
      * @throws DAOException
      */
     @Override

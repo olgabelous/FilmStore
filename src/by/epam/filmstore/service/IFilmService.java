@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Olga Shahray on 17.07.2016.
+ * @author Olga Shahray
  */
 public interface IFilmService {
 
@@ -26,7 +26,7 @@ public interface IFilmService {
 
     PagingListDTO<Film> getAll(String order, int offset, int count) throws ServiceException;
 
-    PagingListDTO<Film> getFavoriteFilms(int id, int offset, int count) throws ServiceException;
+    PagingListDTO<Film> getFavoriteFilms(int userId, int offset, int count) throws ServiceException;
 
     void saveFavoriteFilm(int id, int filmId) throws ServiceException;
 

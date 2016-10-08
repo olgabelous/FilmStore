@@ -8,7 +8,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by Olga Shahray on 23.07.2016.
+ * Auxiliary class for service layer that implements data validation.
+ *
+ * @author Olga Shahray
  */
 public class ServiceValidation {
 
@@ -30,17 +32,8 @@ public class ServiceValidation {
         if(password == null || password.isEmpty() || password.length() < 6){
             return false;
         }
-        /*Pattern pattern = Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,})");
+        Pattern pattern = Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,})");
         Matcher matcher = pattern.matcher(password);
-
-        return matcher.matches();*/
-        return  true;
-
-    }
-
-    public static boolean isNameValid(String name){
-        Pattern pattern = Pattern.compile("^[a-zA-ZА-Яа-я]+$");
-        Matcher matcher = pattern.matcher(name);
 
         return matcher.matches();
 
