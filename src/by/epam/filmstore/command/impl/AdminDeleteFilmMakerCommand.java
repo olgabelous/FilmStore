@@ -10,6 +10,7 @@ import by.epam.filmstore.service.exception.ServiceValidationException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +41,10 @@ public class AdminDeleteFilmMakerCommand  implements Command {
 
             if(isDeleted) {
                 LOG.info("Film maker id="+id+" was deleted");
+
+                ServletContext servletContext = request.getServletContext();
+                servletContext.setAttribute(ParameterAndAttributeName.FILM_MAKER_LIST, filmMakerService.getAll());
+
                 response.sendRedirect(FILM_MAKERS_PAGE);
             }
             else{

@@ -8,6 +8,7 @@ package by.epam.filmstore.command;
 public class ParameterAndAttributeName {
 
     public static final String AGE_RESTRICTION = "ageRestriction";
+    public static final String BEST_FILMS = "bestFilms";
     public static final String COUNTRY = "country";
     public static final String COUNTRY_FILTER = "countryFilter";
     public static final String CONFIRM_PASSWORD = "confirm_password";
@@ -40,6 +41,7 @@ public class ParameterAndAttributeName {
     public static final String LOGIN = "login";
     public static final String MARK = "mark";
     public static final String NAME = "name";
+    public static final String NEW_FILMS = "newFilms";
     public static final String OLD_POSTER = "oldPoster";
     public static final String ORDER = "order";
     public static final String ORDER_LIST = "orderList";

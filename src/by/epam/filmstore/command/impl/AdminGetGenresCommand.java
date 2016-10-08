@@ -10,6 +10,7 @@ import by.epam.filmstore.service.exception.ServiceException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +36,8 @@ public class AdminGetGenresCommand implements Command {
         try {
             List<Genre> genreList = genreService.getAll();
 
-            request.setAttribute(ParameterAndAttributeName.GENRE_LIST, genreList);
+            ServletContext servletContext = request.getServletContext();
+            servletContext.setAttribute(ParameterAndAttributeName.GENRE_LIST, genreList);
 
             request.getRequestDispatcher(PageName.ADMIN_GENRES).forward(request, response);
 

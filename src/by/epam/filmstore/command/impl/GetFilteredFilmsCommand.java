@@ -14,10 +14,10 @@ import by.epam.filmstore.service.exception.ServiceValidationException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 
@@ -57,9 +57,9 @@ public class GetFilteredFilmsCommand implements Command {
             if (pageNum != null) {
                 page = Integer.parseInt(pageNum);
             }
-            HttpSession session = request.getSession();
-            List<Genre> genreList  = (List<Genre>) session.getAttribute(ParameterAndAttributeName.GENRE_LIST);
-            List<Country> countryList = (List<Country>) session.getAttribute(ParameterAndAttributeName.COUNTRY_LIST);
+            ServletContext servletContext = request.getServletContext();
+            List<Genre> genreList  = (List<Genre>) servletContext.getAttribute(ParameterAndAttributeName.GENRE_LIST);
+            List<Country> countryList = (List<Country>) servletContext.getAttribute(ParameterAndAttributeName.COUNTRY_LIST);
 
             if (genres != null && genres.length != 0) {
                 filterParams.put(ParameterAndAttributeName.GENRE, Arrays.asList(genres));

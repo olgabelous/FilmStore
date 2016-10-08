@@ -10,6 +10,7 @@ import by.epam.filmstore.service.exception.ServiceException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +36,8 @@ public class AdminGetCountriesCommand implements Command {
         try {
             List<Country> countryList = countryService.getAll();
 
-            request.setAttribute(ParameterAndAttributeName.COUNTRY_LIST, countryList);
+            ServletContext servletContext = request.getServletContext();
+            servletContext.setAttribute(ParameterAndAttributeName.COUNTRY_LIST, countryList);
 
             request.getRequestDispatcher(PageName.ADMIN_COUNTRIES).forward(request, response);
 

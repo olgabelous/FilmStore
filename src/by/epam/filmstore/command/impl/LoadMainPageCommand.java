@@ -24,12 +24,8 @@ import java.util.List;
  */
 public class LoadMainPageCommand implements Command {
 
-    private static final int YEAR = 2016;
     private static final int LIMIT = 12;
-    private static final String NEW_FILMS = "newfilms";
-    private static final String BEST_FILMS = "bestfilms";
     private static final int ERROR_STATUS = 404;
-
     private static final Logger LOG = LogManager.getLogger(LoadMainPageCommand.class);
 
     @Override
@@ -38,11 +34,11 @@ public class LoadMainPageCommand implements Command {
         IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 
         try {
-            List<Film> newFilmList = filmService.getByYear(YEAR, 0, LIMIT);
-            request.setAttribute(NEW_FILMS, newFilmList);
+            List<Film> newFilmList = filmService.getAll(ParameterAndAttributeName.DATE_ADD, 0, LIMIT).getObjectList();
+            request.setAttribute(ParameterAndAttributeName.NEW_FILMS, newFilmList);
 
             List<Film> bestFilmList = filmService.getAll(ParameterAndAttributeName.RATING, 0, LIMIT).getObjectList();
-            request.setAttribute(BEST_FILMS, bestFilmList);
+            request.setAttribute(ParameterAndAttributeName.BEST_FILMS, bestFilmList);
 
             request.getRequestDispatcher(PageName.COMMON_MAIN_PAGE).forward(request, response);
 

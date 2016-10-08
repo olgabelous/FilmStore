@@ -13,10 +13,10 @@ import by.epam.filmstore.service.exception.ServiceValidationException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -52,9 +52,9 @@ public class AdminShowAddFilmPageCommand implements Command {
             }
             List<FilmMaker> filmMakers = filmMakerService.getAll();
 
-            HttpSession session = request.getSession(true);
+            ServletContext servletContext = request.getServletContext();
 
-            session.setAttribute(ParameterAndAttributeName.FILM_MAKER_LIST, filmMakers);
+            servletContext.setAttribute(ParameterAndAttributeName.FILM_MAKER_LIST, filmMakers);
             request.setAttribute(ParameterAndAttributeName.FILM, film);
             request.setAttribute(ParameterAndAttributeName.PAGE, page);
 

@@ -26,7 +26,7 @@ public class CharsetFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         servletRequest.setCharacterEncoding(encoding);
         servletResponse.setCharacterEncoding(encoding);
-        LOG.info("Charset was set.");
+        //LOG.info("Charset was set.");
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

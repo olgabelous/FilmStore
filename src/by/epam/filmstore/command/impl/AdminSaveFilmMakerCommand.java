@@ -11,6 +11,7 @@ import by.epam.filmstore.service.exception.ServiceValidationException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +45,9 @@ public class AdminSaveFilmMakerCommand implements Command {
             else{
                 service.update(Integer.parseInt(id), name, profession);
             }
+            ServletContext servletContext = request.getServletContext();
+            servletContext.setAttribute(ParameterAndAttributeName.FILM_MAKER_LIST, service.getAll());
+
             response.sendRedirect(FILM_MAKER_PAGE);
 
         }catch (ServiceIncorrectParamLengthException e){

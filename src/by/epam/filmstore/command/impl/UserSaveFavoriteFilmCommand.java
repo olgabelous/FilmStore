@@ -39,7 +39,7 @@ public class UserSaveFavoriteFilmCommand implements Command {
 
             IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 
-            filmService.saveFavotiteFilm(loggedUser.getId(), filmId);
+            filmService.saveFavoriteFilm(loggedUser.getId(), filmId);
 
             response.sendRedirect(FILM_PAGE+filmId);
 

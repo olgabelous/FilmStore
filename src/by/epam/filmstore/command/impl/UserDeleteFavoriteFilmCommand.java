@@ -37,7 +37,7 @@ public class UserDeleteFavoriteFilmCommand implements Command {
             int filmId = Integer.parseInt(request.getParameter(ParameterAndAttributeName.ID));
             IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 
-            boolean isDeleted = filmService.deleteFavotiteFilm(loggedUser.getId(), filmId);
+            boolean isDeleted = filmService.deleteFavoriteFilm(loggedUser.getId(), filmId);
 
             if (isDeleted) {
                 response.sendRedirect(FILMS_PAGE);
