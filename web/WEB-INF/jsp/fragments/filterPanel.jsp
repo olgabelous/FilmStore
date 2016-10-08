@@ -16,7 +16,7 @@
             <li class="nav-item active dropdown-open">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="true" href="#">${genres}</a>
                 <ul class="dropdown-menu">
-                    <c:forEach var="genre" items="${sessionScope.genreList}">
+                    <c:forEach var="genre" items="${applicationScope.genreList}">
                         <li><a href="Controller?command=get-filtered-films&genre=${genre.id}">${genre.genreName}</a></li>
                     </c:forEach>
                 </ul>
@@ -24,7 +24,7 @@
             <li class="nav-item active dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="true" href="#">${countries}</a>
                 <ul class="dropdown-menu">
-                    <c:forEach var="country" items="${sessionScope.countryList}">
+                    <c:forEach var="country" items="${applicationScope.countryList}">
                         <li><a href="Controller?command=get-filtered-films&country=${country.id}">${country.countryName}</a></li>
                     </c:forEach>
                 </ul>
@@ -35,15 +35,15 @@
                     <li><a href="Controller?command=get-filtered-films&year=2016">2016</a></li>
                     <li><a href="Controller?command=get-filtered-films&year=2010">2010-${s}</a></li>
                     <li><a href="Controller?command=get-filtered-films&year=2000">2000-${s}</a></li>
-                    <li><a href="Controller?command=get-filtered-films&year=1990">90-${s}</a></li>
-                    <li><a href="Controller?command=get-filtered-films&year=1980">80-${s}</a></li>
-                    <li><a href="Controller?command=get-filtered-films&year=1970">70-${s}</a></li>
-                    <li><a href="Controller?command=get-filtered-films&year=1960">60-${s}</a></li>
+                    <li><a href="Controller?command=get-filtered-films&year=1990">1990-${s}</a></li>
+                    <li><a href="Controller?command=get-filtered-films&year=1980">1980-${s}</a></li>
+                    <li><a href="Controller?command=get-filtered-films&year=1970">1970-${s}</a></li>
+                    <li><a href="Controller?command=get-filtered-films&year=1960">1960-${s}</a></li>
                 </ul>
             </li>
         </ul>
         <div class="" style="max-width: 350px; display: inline-block; max-height: 62px; padding: 15px 20px; float:right;">
-            <form role="search" method="get" action="Controller">
+            <form role="search" method="get" action="Controller" accept-charset="UTF-8">
                 <input type="hidden" name="command" value="search-film">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="${search}" name="q" value="${requestScope.searchQuery}" required>

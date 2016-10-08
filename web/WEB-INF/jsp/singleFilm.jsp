@@ -23,6 +23,8 @@
 <fmt:message bundle="${loc}" key="locale.film.post_comment" var="post_comment"/>
 <fmt:message bundle="${loc}" key="locale.film.post_comment_mess" var="post_comment_mess"/>
 <fmt:message bundle="${loc}" key="locale.film.in_wishlist" var="in_wishlist"/>
+<fmt:message bundle="${loc}" key="locale.film.mark_empty" var="mark_empty"/>
+<fmt:message bundle="${loc}" key="locale.film.comment_empty" var="comment_empty"/>
 <fmt:message bundle="${loc}" key="locale.button.add_to_cart" var="add_to_cart"/>
 <fmt:message bundle="${loc}" key="locale.button.add_to_wishlist" var="add_to_wishlist"/>
 
@@ -198,6 +200,7 @@
                                             <label for="comment">${comment}*</label>
                                             <textarea class="form-control" id="comment" name="comment"
                                                       rows="4" required></textarea>
+                                            <span id='message6'></span>
                                         </div>
                                     </div>
                                 </div>
@@ -215,7 +218,6 @@
                         <c:when test="${sessionScope.user.role.name()=='ADMIN'}"/>
                         <c:otherwise>
                             <br>
-
                             <p class="text-muted padding-big">${post_comment_mess}</p>
                             <br>
                         </c:otherwise>
@@ -275,15 +277,16 @@
 <script>
     function checkFormComment(form) {
         $('#message5').html('');
+        $('#message6').html('');
 
         var bool = true;
 
         if ($('input[name=mark]:checked').size() == 0) {
-            $('#message5').html('fail').css('color', 'red');
+            $('#message5').html('${mark_empty}').css('color', 'red');
             bool = false;
         }
         if(form.comment.value === null) {
-            $('#message1').html('${comment_empty}').css('color', 'red');
+            $('#message6').html('${comment_empty}').css('color', 'red');
             bool = false;
         }
         return bool;

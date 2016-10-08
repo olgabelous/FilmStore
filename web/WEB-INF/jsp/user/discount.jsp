@@ -19,7 +19,7 @@
 
 <jsp:include page="../fragments/userMenu.jsp"/>
 <!-- !PAGE CONTENT! -->
-<div class="w3-main w3-white" style="margin-left:300px">
+<div class="w3-main">
 
     <!-- Header -->
     <header class="w3-container">
@@ -80,10 +80,9 @@
         </div>
     </div>
     <!-- /.container -->
-    <jsp:include page="../fragments/footer.jsp"/>
-
     <!-- End page content -->
 </div>
+<jsp:include page="../fragments/footer.jsp"/>
 </body>
 </html>
 

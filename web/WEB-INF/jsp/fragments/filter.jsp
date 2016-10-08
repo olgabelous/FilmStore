@@ -28,7 +28,7 @@
 
                     <div class="col-lg-8 filters">
                         <ul id="filters-tags" class="filters-tags">
-                            <c:forEach  var="entry" items="${requestScope.genresFilter}">
+                            <c:forEach  var="entry" items="${requestScope.genreFilter}">
                                 <li>${entry.value}<input type="hidden" name="genre" value="${entry.key}"></li>
                             </c:forEach>
                             <c:forEach  var="entry" items="${requestScope.countryFilter}">
@@ -55,7 +55,7 @@
                 <div class="">
                     <h4 class="text-uppercase">${genres}</h4>
                     <ul id="genreUl" class="list-unstyled twocol">
-                        <c:forEach var="genre" items="${sessionScope.genreList}">
+                        <c:forEach var="genre" items="${applicationScope.genreList}">
                             <li><a onclick="myF(this)" name="genre" id="g${genre.id}">${genre.genreName}</a></li>
                         </c:forEach>
                     </ul>
@@ -63,7 +63,7 @@
                 <div class="">
                     <h4 class="text-uppercase">${countries}</h4>
                     <ul id="countryUl" class="list-unstyled twocol">
-                        <c:forEach var="country" items="${sessionScope.countryList}">
+                        <c:forEach var="country" items="${applicationScope.countryList}">
                             <li><a class="filter-item" onclick="myF(this)" name="country" id="c${country.id}">${country.countryName}</a></li>
                         </c:forEach>
                     </ul>

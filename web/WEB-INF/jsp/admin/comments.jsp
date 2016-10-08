@@ -18,7 +18,7 @@
 
 <jsp:include page="../fragments/adminMenu.jsp"/>
 <!-- !PAGE CONTENT! -->
-<div class="w3-main w3-white" style="margin-left:300px; min-height: calc(100% - 138px);">
+<div class="w3-main page-content">
 
     <!-- Header -->
     <header class="w3-container">

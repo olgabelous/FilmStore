@@ -6,7 +6,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Icon font  -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/icon-font.min.css" type='text/css' />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/font-awesome-4.6.3/css/font-awesome.css" >
     <!-- Bootstrap css  -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
@@ -19,18 +18,14 @@
     <!-- W3 Css -->
     <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
     <link rel="shortcut icon" href="${pageContext.request.contextPath}/resources/images/film-icon.png">
-    <!-- Css animations  -->
-    <link href="${pageContext.request.contextPath}/resources/css/animate.css" rel="stylesheet">
     <!-- Custom stylesheet -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/banner.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.default.css" id="theme-stylesheet">
-    <link href="${pageContext.request.contextPath}/resources/css/custom.css" rel="stylesheet">
     <!-- Scripts  -->
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/owl.carousel.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/admin.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/admin.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/custom.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery.maskedinput.js"></script>
 </head>

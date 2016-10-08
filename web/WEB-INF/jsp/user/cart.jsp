@@ -22,7 +22,7 @@
 <body>
 <jsp:include page="../fragments/userMenu.jsp"/>
 <!-- !PAGE CONTENT! -->
-<div class="w3-main w3-white" style="margin-left:300px">
+<div class="w3-main page-content">
     <!-- Header -->
     <header class="w3-container">
         <jsp:include page="../fragments/userSmallPic.jsp"/>
@@ -94,8 +94,8 @@
                                 </table>
                             </div>
                             <input hidden name="command" value="user-pay-order">
-                            <input hidden name="order-list" value="${requestScope.orderList}">
-                            <input hidden name="total-sum" value="${requestScope.totalSum}">
+                            <input hidden name="orderList" value="${requestScope.orderList}">
+                            <input hidden name="totalSum" value="${requestScope.totalSum}">
 
                             <div class="box-footer">
                                 <div class="pull-left">
@@ -109,26 +109,20 @@
                                     </button>
                                 </div>
                             </div>
-
                             <!-- /.box -->
                         </form>
                         </c:otherwise>
                         </c:choose>
-
                     </div>
-
                     <!-- /.table-responsive -->
-
                 </div>
                 <!-- /.col-md-9 -->
             </div>
-
         </div>
-
     </div>
     <!-- /.container -->
-    <jsp:include page="../fragments/footer.jsp"/>
 </div>
 <!-- /#content -->
+<jsp:include page="../fragments/footer.jsp"/>
 </body>
 </html>

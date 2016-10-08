@@ -39,7 +39,7 @@
 
 <jsp:include page="../fragments/adminMenu.jsp"/>
 <!-- !PAGE CONTENT! -->
-<div class="w3-main w3-white" style="margin-left:300px">
+<div class="w3-main page-content">
 
     <!-- Header -->
     <header class="w3-container">
@@ -86,7 +86,7 @@
 
                             <div class="col-sm-9">
                                 <select class="form-control" name="countryId" id="countryId" required>
-                                    <c:forEach var="country" items="${sessionScope.countryList}">
+                                    <c:forEach var="country" items="${applicationScope.countryList}">
                                         <option value="${country.id}" ${country.id == requestScope.film.country.id ? 'selected="selected"' : ''}>
                                                 ${country.countryName}</option>
                                     </c:forEach>
@@ -115,8 +115,8 @@
                             <label class="control-label col-sm-2" for="genreName">${genres}:</label>
 
                             <div class="col-sm-9">
-                                <select multiple class="form-control" name="genres" id="genreName"  required>
-                                    <c:forEach var="genre" items="${sessionScope.genreList}">
+                                <select multiple class="form-control" name="genreList" id="genreName"  required>
+                                    <c:forEach var="genre" items="${applicationScope.genreList}">
                                         <option value="${genre.id}"
                                                 <c:forEach var="filmGenre" items="${requestScope.film.genreList}">
                                                     ${genre.id == filmGenre.id ? 'selected="selected"' : ''}
@@ -129,8 +129,8 @@
                             <label class="control-label col-sm-2" for="director">${director}:</label>
 
                             <div class="col-sm-9">
-                                <select class="form-control" name="filmMakers" id="director" required>
-                                    <c:forEach var="dir" items="${requestScope.filmMakers}">
+                                <select class="form-control" name="filmMakerList" id="director" required>
+                                    <c:forEach var="dir" items="${applicationScope.filmMakerList}">
                                         <c:if test="${dir.profession == 'DIRECTOR'}">
                                             <option value="${dir.id}"
                                                     <c:forEach var="filmMaker" items="${requestScope.film.filmMakerList}">
@@ -146,7 +146,7 @@
 
                             <div class="col-sm-9">
                                 <select multiple="multiple" class="form-control" name="filmMakers" id="actors" required>
-                                    <c:forEach var="actor" items="${requestScope.filmMakers}">
+                                    <c:forEach var="actor" items="${applicationScope.filmMakerList}">
                                         <c:if test="${actor.profession == 'ACTOR'}">
                                             <option value="${actor.id}"
                                                     <c:forEach var="filmMaker" items="${requestScope.film.filmMakerList}">
@@ -198,9 +198,9 @@
             </div>
         </div>
     </div>
-
     <!-- End page content -->
 </div>
+<jsp:include page="../fragments/footer.jsp"/>
 
 <script type="text/javascript">
     function checkForm(form)

@@ -23,7 +23,7 @@
 
 <jsp:include page="../fragments/adminMenu.jsp"/>
 <!-- !PAGE CONTENT! -->
-<div class="w3-main w3-white" style="margin-left:300px">
+<div class="w3-main page-content">
 
     <!-- Header -->
     <header class="w3-container">
@@ -67,7 +67,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <c:forEach var="genreItem" items="${requestScope.genreList}">
+                                    <c:forEach var="genreItem" items="${applicationScope.genreList}">
                                         <tr>
                                             <td>${genreItem.id}</td>
                                             <td>${genreItem.genreName}</td>
@@ -97,11 +97,10 @@
     <!-- /.container -->
     <br>
     <br>
-    <jsp:include page="../fragments/footer.jsp"/>
-
     <!-- End page content -->
 </div>
-<!-- Modal -->
+<jsp:include page="../fragments/footer.jsp"/>
+
 <!-- Modal -->
 <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">

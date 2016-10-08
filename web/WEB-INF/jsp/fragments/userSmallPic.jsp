@@ -13,7 +13,7 @@
     </c:otherwise>
 </c:choose>
 
-<span class="w3-opennav w3-hide-large w3-xxlarge w3-hover-text-grey" onclick="w3_open()"><i
+<span class="w3-opennav w3-hide-large w3-xxlarge w3-hover-text-grey" onclick="sidenav_open()"><i
         class="fa fa-bars"></i></span>
 
 </html>

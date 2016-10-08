@@ -26,7 +26,7 @@
 
 <jsp:include page="../fragments/adminMenu.jsp"/>
 <!-- !PAGE CONTENT! -->
-<div class="w3-main w3-white" style="margin-left:300px">
+<div class="w3-main page-content">
 
     <!-- Header -->
     <header class="w3-container">
@@ -106,14 +106,13 @@
                 </div>
                 <!-- /.col-md-9 -->
             </div>
-
         </div>
     </div>
     <!-- /.container -->
-    <jsp:include page="../fragments/footer.jsp"/>
-
     <!-- End page content -->
 </div>
+<jsp:include page="../fragments/footer.jsp"/>
+
 <!-- Modal -->
 <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">

@@ -29,9 +29,6 @@
     <listener>
         <listener-class>by.epam.filmstore.controller.listener.FilmstoreServletContextListener</listener-class>
     </listener>
-    <listener>
-        <listener-class>by.epam.filmstore.controller.listener.FilmstoreHttpSessionListener</listener-class>
-    </listener>
 
     <servlet>
         <servlet-name>Welcome</servlet-name>
@@ -79,6 +76,10 @@
     <filter>
         <filter-name>ChangeLanguageFilter</filter-name>
         <filter-class>by.epam.filmstore.controller.filter.ChangeLanguageFilter</filter-class>
+        <init-param>
+            <param-name>defaultLocal</param-name>
+            <param-value>ru</param-value>
+        </init-param>
     </filter>
     <filter>
         <filter-name>FileUploadFilter</filter-name>

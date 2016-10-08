@@ -30,7 +30,7 @@
 
 <jsp:include page="../fragments/adminMenu.jsp"/>
 <!-- !PAGE CONTENT! -->
-<div class="w3-main w3-white" style="margin-left:300px">
+<div class="w3-main page-content">
 
     <!-- Header -->
     <header class="w3-container">
@@ -111,9 +111,9 @@
     <!-- /.container -->
     <br>
     <br>
-    <jsp:include page="../fragments/footer.jsp"/>
     <!-- End page content -->
 </div>
+<jsp:include page="../fragments/footer.jsp"/>
 <!-- Modal -->
 <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
@@ -158,7 +158,7 @@
 
                     <input type="hidden" name="id" id="id" value=""/>
                     <input type="hidden" name="photo" id="photo" value=""/>
-                    <input type="hidden" name="date-reg" id="date-reg" value=""/>
+                    <input type="hidden" name="dateReg" id="dateReg" value=""/>
                 </div>
 
                 <div class="modal-footer">

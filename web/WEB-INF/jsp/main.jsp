@@ -30,13 +30,13 @@
         <div class="row">
                 <div class="box">
                     <div class="owl-carousel">
-                        <c:forEach var="newfilm" items="${requestScope.newfilms}">
+                        <c:forEach var="newFilm" items="${requestScope.newFilms}">
                             <div class="img w3-hover-shadow">
-                                <a href="Controller?command=get-film-by-id&id=${newfilm.id}">
-                                    <img src="ImageController?img=${newfilm.poster}&type=poster" class="img-fluid m-y"
-                                         alt="Обложка">
+                                <a href="Controller?command=get-film-by-id&id=${newFilm.id}">
+                                    <img src="ImageController?img=${newFilm.poster}&type=poster" class="img-fluid m-y"
+                                         alt="Poster">
 
-                                    <div class="desc"><h6 class="text-uppercase">${newfilm.title}</h6></div>
+                                    <div class="desc"><h6 class="text-uppercase">${newFilm.title}</h6></div>
                                 </a>
                             </div>
                         </c:forEach>
@@ -60,13 +60,13 @@
         <div class="row">
             <div class="box">
                 <div class="owl-carousel">
-                    <c:forEach var="bestfilm" items="${requestScope.bestfilms}">
+                    <c:forEach var="bestFilm" items="${requestScope.bestFilms}">
                         <div class="img w3-hover-shadow">
-                            <a href="Controller?command=get-film-by-id&id=${bestfilm.id}">
-                                <img src="ImageController?img=${bestfilm.poster}&type=poster" class="img-fluid m-y"
+                            <a href="Controller?command=get-film-by-id&id=${bestFilm.id}">
+                                <img src="ImageController?img=${bestFilm.poster}&type=poster" class="img-fluid m-y"
                                      alt="Обложка">
 
-                                <div class="desc"><h6 class="text-uppercase">${bestfilm.title}</h6></div>
+                                <div class="desc"><h6 class="text-uppercase">${bestFilm.title}</h6></div>
                             </a>
                         </div>
                     </c:forEach>

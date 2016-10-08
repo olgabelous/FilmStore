@@ -18,7 +18,7 @@
 
 <jsp:include page="../fragments/userMenu.jsp"/>
 <!-- !PAGE CONTENT! -->
-<div class="w3-main w3-white" style="margin-left:300px">
+<div class="w3-main page-content">
 
     <!-- Header -->
     <header class="w3-container">
@@ -58,22 +58,13 @@
                                             </h2>
 
                                             <div class="clearfix">
-                                                <div id="${comment.film.id}" style="font-size: medium;"></div>
-                                                <script>
-                                                    $(function () {
-                                                        var stars = ${comment.mark*20};
-                                                        function addScore(score, $domElement) {
-                                                            var starWidth = "<style>.stars-container:after { width: " + score + "%} </style>";
-                                                            $("<span class='stars-container'>")
-                                                                    .text("★★★★★")
-                                                                    .append($(starWidth))
-                                                                    .appendTo($domElement);
-                                                        }
-
-                                                        var divid = ${comment.film.id};
-                                                        addScore(stars, $("#"+divid));
-                                                    });
-                                                </script>
+                                                <p style="font-size: medium;">
+                                                    <c:forEach begin="0" end="4" varStatus="loop">
+                                                <span style="color: ${loop.index < comment.mark ? "gold" : "lightgrey"}">
+                                                    <c:out value="★"/>
+                                                </span>
+                                                    </c:forEach>
+                                                </p>
                                                 <p class="date-comments">
                                                     <i class="fa fa-calendar-o"></i> ${comment.dateComment.toString().replace('T', ' ')}
                                                 </p>
@@ -106,10 +97,8 @@
         </div>
         <!-- /.container -->
     </div>
-
-    <jsp:include page="../fragments/footer.jsp"/>
     <!-- End page content -->
 </div>
-
+<jsp:include page="../fragments/footer.jsp"/>
 </body>
 </html>
