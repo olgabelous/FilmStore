@@ -36,7 +36,7 @@
         <div class="container">
             <div class="row">
 
-                <div class="col-md-9" id="blog-listing-medium">
+                <div class="col-md-9" id="comment-medium">
                     <c:choose>
                         <c:when test="${empty requestScope.commentList}">
                             <p class="text-muted lead">${admin_mess}</p>

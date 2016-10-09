@@ -72,7 +72,7 @@
                     </c:forEach>
                 </div>
 
-            <div class="col-md-2 col-md-offset-5"><a href="Controller?command=get-filtered-films&rating=4"
+            <div class="col-md-2 col-md-offset-5"><a href="Controller?command=get-filtered-films&order=rating"
                                                      class="btn btn-template-main">${see_more}</a></div>
             </div>
         </div>

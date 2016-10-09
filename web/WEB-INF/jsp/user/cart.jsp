@@ -114,15 +114,12 @@
                         </c:otherwise>
                         </c:choose>
                     </div>
-                    <!-- /.table-responsive -->
                 </div>
-                <!-- /.col-md-9 -->
             </div>
         </div>
     </div>
     <!-- /.container -->
 </div>
-<!-- /#content -->
 <jsp:include page="../fragments/footer.jsp"/>
 </body>
 </html>

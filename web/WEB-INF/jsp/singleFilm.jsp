@@ -84,7 +84,7 @@
                                     <td>${director}:</td>
                                     <td><c:forEach var="director" items="${requestScope.film.filmMakerList}">
                                         <c:if test="${director.profession == 'DIRECTOR'}">
-                                            <a href="#">${director.name}</a><span> </span>
+                                            <a href="Controller?command=get-filtered-films&filmMaker=${director.id}">${director.name}</a><span> </span>
                                         </c:if>
                                     </c:forEach></td>
                                 </tr>
@@ -92,7 +92,7 @@
                                     <td>${actors}:</td>
                                     <td><c:forEach var="actor" items="${requestScope.film.filmMakerList}">
                                         <c:if test="${actor.profession == 'ACTOR'}">
-                                            <a href="#">${actor.name}</a><span> </span>
+                                            <a href="Controller?command=get-filtered-films&filmMaker=${actor.id}">${actor.name}</a><span> </span>
                                         </c:if>
                                     </c:forEach></td>
                                 </tr>

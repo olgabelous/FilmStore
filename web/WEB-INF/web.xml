@@ -109,10 +109,6 @@
 
 
     <error-page>
-        <error-code>401</error-code>
-        <location>/WEB-INF/jsp/404.jsp</location>
-    </error-page>
-    <error-page>
         <error-code>403</error-code>
         <location>/WEB-INF/jsp/404.jsp</location>
     </error-page>

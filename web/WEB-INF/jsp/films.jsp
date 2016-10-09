@@ -47,7 +47,7 @@
             </c:forEach>
         </div>
         <br>
-        <div class="col-lg-4 col-lg-offset-4">
+        <div class="col-md-2 col-md-offset-5">
             <c:url var="searchUri" value="/Controller?${requestScope.query}&page=##"/>
             <paginator:display maxLinks="10" currPage="${requestScope.currentPage}" totalPages="${requestScope.totalPages}" uri="${searchUri}" />
         </div>
