@@ -3,7 +3,7 @@ package by.epam.filmstore.domain;
 import java.util.Objects;
 
 /**
- * Created by Olga Shahray on 18.07.2016.
+ * @author Olga Shahray
  */
 public class Country {
 

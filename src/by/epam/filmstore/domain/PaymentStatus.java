@@ -1,16 +1,17 @@
 package by.epam.filmstore.domain;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
- * Created by Olga Shahray on 04.09.2016.
+ * @author Olga Shahray
  */
 public class PaymentStatus {
-    long paymentId;
-    boolean successful;
-    String message;
-    LocalDateTime dateTimeTransaction;
-    double sum;
+    private long paymentId;
+    private boolean successful;
+    private String message;
+    private LocalDateTime dateTimeTransaction;
+    private double sum;
 
     public PaymentStatus(long paymentId, boolean successful, String message, LocalDateTime dateTimeTransaction, double sum) {
         this.paymentId = paymentId;
@@ -58,5 +59,33 @@ public class PaymentStatus {
 
     public void setSum(double sum) {
         this.sum = sum;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o.getClass() != this.getClass()) return false;
+        PaymentStatus that = (PaymentStatus) o;
+        return paymentId == that.paymentId &&
+                successful == that.successful &&
+                Double.compare(that.sum, sum) == 0 &&
+                Objects.equals(message, that.message) &&
+                Objects.equals(dateTimeTransaction, that.dateTimeTransaction);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(paymentId, successful, message, dateTimeTransaction, sum);
+    }
+
+    @Override
+    public String toString() {
+        return "PaymentStatus{" +
+                "paymentId=" + paymentId +
+                ", successful=" + successful +
+                ", message='" + message + '\'' +
+                ", dateTimeTransaction=" + dateTimeTransaction +
+                ", sum=" + sum +
+                '}';
     }
 }

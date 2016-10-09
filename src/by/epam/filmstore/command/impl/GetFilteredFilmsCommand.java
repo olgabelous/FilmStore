@@ -49,6 +49,7 @@ public class GetFilteredFilmsCommand implements Command {
         String[] countries = request.getParameterValues(ParameterAndAttributeName.COUNTRY);
         String[] year = request.getParameterValues(ParameterAndAttributeName.YEAR);
         String rating = request.getParameter(ParameterAndAttributeName.RATING);
+        String filmMaker = request.getParameter(ParameterAndAttributeName.FILM_MAKER);
         String order = request.getParameter(ParameterAndAttributeName.ORDER);
         try {
             int page = 1;
@@ -72,6 +73,7 @@ public class GetFilteredFilmsCommand implements Command {
                 }
             }
             request.setAttribute(ParameterAndAttributeName.GENRE_FILTER, genresFilterToSend);
+
             if (countries != null && countries.length != 0) {
                 filterParams.put(ParameterAndAttributeName.COUNTRY, Arrays.asList(countries));
                 for (Country c : countryList) {
@@ -93,13 +95,16 @@ public class GetFilteredFilmsCommand implements Command {
                     int yearTo = yearFrom + 10;
                     yearFilterToSend = Arrays.asList(new String[]{year[0], String.valueOf(yearTo)});
                 }
-
                 filterParams.put(ParameterAndAttributeName.YEAR, yearFilterToSend);
             }
             request.setAttribute(ParameterAndAttributeName.YEAR_FILTER, year);
 
             if (rating != null && !rating.isEmpty()) {
                 filterParams.put(ParameterAndAttributeName.RATING, Collections.singletonList(rating));
+            }
+
+            if (filmMaker != null && !filmMaker.isEmpty()) {
+                filterParams.put(ParameterAndAttributeName.FILM_MAKER, Collections.singletonList(filmMaker));
             }
 
             IFilmService filmService = ServiceFactory.getInstance().getFilmService();

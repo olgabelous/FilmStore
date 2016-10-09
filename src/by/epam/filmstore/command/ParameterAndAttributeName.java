@@ -29,6 +29,7 @@ public class ParameterAndAttributeName {
     public static final String FILM = "film";
     public static final String FILM_ID = "filmId";
     public static final String FILM_LIST = "filmList";
+    public static final String FILM_MAKER = "filmMaker";
     public static final String FILM_MAKER_LIST = "filmMakerList";
     public static final String GENRE = "genre";
     public static final String GENRE_FILTER = "genreFilter";

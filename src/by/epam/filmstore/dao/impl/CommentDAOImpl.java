@@ -76,8 +76,8 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
 
     /**
      * Method updates status of comment in database
-     * @param commentId
-     * @param status
+     * @param commentId - id of comment
+     * @param status of comment
      * @throws DAOException
      */
     @Override
@@ -111,7 +111,7 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
 
     /**
      *
-     * @param commentId
+     * @param commentId - id of comment
      * @return boolean result if comment was deleted
      * @throws DAOException
      */
@@ -234,7 +234,7 @@ public class CommentDAOImpl extends AbstractDAO implements ICommentDAO {
     }
 
     /**
-     * @param status
+     * @param status of comment
      * @param offset - is a start number of selection in db
      * @param count - is a count of required records from db
      * @return a {@code List<Comment>} return all comments with specified status

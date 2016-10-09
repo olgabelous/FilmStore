@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Created by Olga Shahray on 06.09.2016.
+ * Class that builds tag {@code <paginator>}
+ *
+ * @author Olga Shahray
  */
 public class Paginator extends SimpleTagSupport {
     private String uri;

@@ -103,73 +103,87 @@ public final class DAOHelper {
         }
     }
 
+    private static final String WHERE = " WHERE ";
+    private static final String AND = " AND ";
+    private static final String OR = " OR ";
+    private static final String EQ = " = ";
+    private static final String BR = " >= ";
+    private static final String LR = " < ";
+    private static final String OP_RB = "(";
+    private static final String CL_RB = ")";
+    private static final String ORDER_BY = " ORDER BY ";
+    private static final String DESC = " DESC";
+    private static final String LIMIT = " LIMIT ?, ?";
+    private static final String YEAR = "year";
+    private static final String RELEASE_YEAR = "release_year";
+    private static final String COUNTRY = "country";
+    private static final String COUNTRY_ID = "country_id";
+    private static final String FILM_MAKER = "filmMaker";
+    private static final String FILM_MAKERS_PERSON_ID = "filmmakers.person_id";
+    private static final String GENRE = "genre";
+    private static final String GENRE_ID = "filmgenres.genre_id";
+    private static final String RATING = "rating";
+    private static final String FILMMAKERS_FILM_ID_FK = "films.id = filmmakers.film_id";
+    private static final String FILMGENRES_FILM_ID_FK = "films.id = filmgenres.film_id";
+
     /**
      * @param filterParams {@code Map<String, List<String>>} where map's key is a name of parameter,
      *                                                      map's value is a List of values
      * @return a query string to select films from db according to given filter parameters.
      */
-    public static String buildFilterFilmQuery(Map<String, List<String>> filterParams){
+    public static String buildFilterFilmQuery(Map<String, List<String>> filterParams, String order){
         StringBuilder start1 = new StringBuilder("SELECT DISTINCT films.id, films.title, films.release_year, films.description, films.duration, "+
                 "films.age_restriction, films.price, films.poster, films.rating, films.country_id, country.country, films.date_add ");
         StringBuilder from = new StringBuilder("FROM ");
         String innerJoin = "  films INNER JOIN country ON films.country_id = country.id ";
-        StringBuilder where = new StringBuilder(" WHERE ");
-        String and = " AND ";
-        String or = " OR ";
-        String eq = " = ";
-        String br = " >= ";
-        String lr = " < ";
-        String opRB = "(";
-        String clRB = ")";
-        String order = " ORDER BY ? DESC";
-        String end = " LIMIT ?, ?";
+        StringBuilder where = new StringBuilder(WHERE);
+
         if(filterParams==null || filterParams.isEmpty()){
-            return start1.append(from).append(innerJoin).append(order).append(end).toString();
+            return start1.append(from).append(innerJoin).append(ORDER_BY).append(order).append(DESC).append(LIMIT).toString();
         }
 
         for(Map.Entry<String, List<String>> pair : filterParams.entrySet()){
             String key = pair.getKey();
             List<String> valueList = pair.getValue();
-            if (key.equals("rating")){
-                where.append(key).append(br).append(valueList.get(0)).append(and);
+            if (key.equals(RATING)){
+                where.append(key).append(BR).append(valueList.get(0)).append(AND);
             }
-            else if(key.equals("year")){
+            else if(key.equals(YEAR)){
                 if(valueList.size()==1){
-                    where.append("release_year").append(eq).append(valueList.get(0)).append(and);
+                    where.append(RELEASE_YEAR).append(EQ).append(valueList.get(0)).append(AND);
                 }
                 else {
-                    where.append(opRB).append("release_year").append(br).append(valueList.get(0)).append(and);
-                    where.append("release_year").append(lr).append(valueList.get(1)).append(clRB).append(and);
+                    where.append(OP_RB).append(RELEASE_YEAR).append(BR).append(valueList.get(0)).append(AND);
+                    where.append(RELEASE_YEAR).append(LR).append(valueList.get(1)).append(CL_RB).append(AND);
                 }
             }
-            else if(key.equals("country")){
-                where.append(opRB);
+            else if(key.equals(COUNTRY)){
+                where.append(OP_RB);
                 for (String countryId: valueList) {
-                    where.append("country_id").append(eq).append(countryId).append(or);
+                    where.append(COUNTRY_ID).append(EQ).append(countryId).append(OR);
                 }
-                where.delete(where.lastIndexOf(or), where.length()).append(clRB).append(and);
+                where.delete(where.lastIndexOf(OR), where.length()).append(CL_RB).append(AND);
             }
-            else if(key.equals("filmMaker")){
-                where.append("films.id = filmmakers.film_id and ");
+            else if(key.equals(FILM_MAKER)){
+                where.append(FILMMAKERS_FILM_ID_FK).append(AND);
                 for (String filmMakerId: valueList) {
-                    where.append("filmmakers.person_id").append(eq).append(filmMakerId).append(or);
+                    where.append(FILM_MAKERS_PERSON_ID).append(EQ).append(filmMakerId).append(OR);
                 }
-                where.replace(where.lastIndexOf(or), where.length(), and);
+                where.replace(where.lastIndexOf(OR), where.length(), AND);
                 from.append(" filmmakers, ");
             }
-            else if(key.equals("genre")){
-                where.append("films.id = filmgenres.film_id AND ");
-                where.append(opRB);
+            else if(key.equals(GENRE)){
+                where.append(FILMGENRES_FILM_ID_FK).append(AND);
+                where.append(OP_RB);
                 for (String filmGenreId: valueList) {
-                    where.append("filmgenres.genre_id").append(eq).append(filmGenreId).append(or);
+                    where.append(GENRE_ID).append(EQ).append(filmGenreId).append(OR);
                 }
-                where.delete(where.lastIndexOf(or), where.length()).append(clRB).append(and);
+                where.delete(where.lastIndexOf(OR), where.length()).append(CL_RB).append(AND);
                 from.append(" filmgenres, ");
             }
         }
-        where.delete(where.lastIndexOf(and), where.length());
-        return start1.append(from).append(innerJoin).append(where).append(order).append(end).toString();
-
+        where.delete(where.lastIndexOf(AND), where.length());
+        return start1.append(from).append(innerJoin).append(where).append(ORDER_BY).append(order).append(DESC).append(LIMIT).toString();
     }
 
     /**
@@ -181,12 +195,7 @@ public final class DAOHelper {
 
         StringBuilder start2 = new StringBuilder("SELECT COUNT(DISTINCT films.id) ");
         StringBuilder from = new StringBuilder("FROM films");
-        StringBuilder where = new StringBuilder(" WHERE ");
-        String and = " AND ";
-        String or = " OR ";
-        String eq = " = ";
-        String br = " >= ";
-        String lr = " < ";
+        StringBuilder where = new StringBuilder(WHERE);
 
         if(filterParams==null || filterParams.isEmpty()){
             return start2.append(from).toString();
@@ -194,42 +203,44 @@ public final class DAOHelper {
         for(Map.Entry<String, List<String>> pair : filterParams.entrySet()){
             String key = pair.getKey();
             List<String> valueList = pair.getValue();
-            if (key.equals("rating")){
-                where.append(key).append(br).append(valueList.get(0)).append(and);
+            if (key.equals(RATING)){
+                where.append(key).append(BR).append(valueList.get(0)).append(AND);
             }
-            else if(key.equals("year")){
-                if(valueList.size()==1){
-                    where.append("release_year").append(eq).append(valueList.get(0)).append(and);
+            else if(key.equals(YEAR)){
+                if(valueList.size() == 1){
+                    where.append(RELEASE_YEAR).append(EQ).append(valueList.get(0)).append(AND);
                 }
                 else {
-                    where.append("release_year").append(br).append(valueList.get(0)).append(and);
-                    where.append("release_year").append(lr).append(valueList.get(1)).append(and);
+                    where.append(RELEASE_YEAR).append(BR).append(valueList.get(0)).append(AND);
+                    where.append(RELEASE_YEAR).append(LR).append(valueList.get(1)).append(AND);
                 }
             }
-            else if(key.equals("country")){
+            else if(key.equals(COUNTRY)){
+                where.append(OP_RB);
                 for (String countryId: valueList) {
-                    where.append("country_id").append(eq).append(countryId).append(or);
+                    where.append(COUNTRY_ID).append(EQ).append(countryId).append(OR);
                 }
-                where.replace(where.lastIndexOf(or), where.length(), and);
+                where.delete(where.lastIndexOf(OR), where.length()).append(CL_RB).append(AND);
             }
-            else if(key.equals("filmMaker")){
-                where.append("films.id = filmmakers.film_id and ");
+            else if(key.equals(FILM_MAKER)){
+                where.append(FILMMAKERS_FILM_ID_FK).append(AND);
                 for (String filmMakerId: valueList) {
-                    where.append("filmmakers.person_id").append(eq).append(filmMakerId).append(or);
+                    where.append(FILM_MAKERS_PERSON_ID).append(EQ).append(filmMakerId).append(OR);
                 }
-                where.replace(where.lastIndexOf(or), where.length(), and);
+                where.replace(where.lastIndexOf(OR), where.length(), AND);
                 from.append(", filmmakers");
             }
-            else if(key.equals("genre")){
-                where.append("films.id = filmgenres.film_id AND ");
+            else if(key.equals(GENRE)){
+                where.append(FILMGENRES_FILM_ID_FK).append(AND);
+                where.append(OP_RB);
                 for (String filmGenreId: valueList) {
-                    where.append("filmgenres.genre_id").append(eq).append(filmGenreId).append(or);
+                    where.append(GENRE_ID).append(EQ).append(filmGenreId).append(OR);
                 }
-                where.replace(where.lastIndexOf(or), where.length(), and);
+                where.delete(where.lastIndexOf(OR), where.length()).append(CL_RB).append(AND);
                 from.append(", filmgenres");
             }
         }
-        where.delete(where.lastIndexOf(and), where.length());
+        where.delete(where.lastIndexOf(AND), where.length());
         return start2.append(from).append(where).toString();
     }
 
@@ -262,7 +273,6 @@ public final class DAOHelper {
                     .append(endSP4).append(or);
         }
         startSP0.delete(startSP0.lastIndexOf(or), startSP0.length());
-        String s = startQuery.append(startSP0).append(endQuery).toString();
-        return s;
+        return startQuery.append(startSP0).append(endQuery).toString();
     }
 }

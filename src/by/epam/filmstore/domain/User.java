@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * Created by Olga Shahray on 17.06.2016.
+ * @author Olga Shahray
  */
 public class User {
     private int id;

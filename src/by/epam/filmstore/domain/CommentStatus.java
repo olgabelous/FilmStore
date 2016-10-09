@@ -1,7 +1,7 @@
 package by.epam.filmstore.domain;
 
 /**
- * Created by Olga Shahray on 04.09.2016.
+ * @author Olga Shahray
  */
 public enum CommentStatus {
 

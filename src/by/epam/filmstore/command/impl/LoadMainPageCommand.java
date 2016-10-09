@@ -26,6 +26,7 @@ public class LoadMainPageCommand implements Command {
 
     private static final int LIMIT = 12;
     private static final int ERROR_STATUS = 404;
+    private static final String DATE_ADD_FIELD = "date_add";
     private static final Logger LOG = LogManager.getLogger(LoadMainPageCommand.class);
 
     @Override
@@ -34,7 +35,7 @@ public class LoadMainPageCommand implements Command {
         IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 
         try {
-            List<Film> newFilmList = filmService.getAll(ParameterAndAttributeName.DATE_ADD, 0, LIMIT).getObjectList();
+            List<Film> newFilmList = filmService.getAll(DATE_ADD_FIELD, 0, LIMIT).getObjectList();
             request.setAttribute(ParameterAndAttributeName.NEW_FILMS, newFilmList);
 
             List<Film> bestFilmList = filmService.getAll(ParameterAndAttributeName.RATING, 0, LIMIT).getObjectList();

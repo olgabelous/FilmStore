@@ -379,14 +379,13 @@ public class FilmDAOImpl extends AbstractDAO implements IFilmDAO {
     public List<Film> getFilteredFilms(Map<String, List<String>> filterParams, String orderBy, int offset, int count) throws DAOException {
         List<Film> filmList = new ArrayList<>();
         PreparedStatement prStatFimls = null;
-        String query = DAOHelper.buildFilterFilmQuery(filterParams);
+        String query = DAOHelper.buildFilterFilmQuery(filterParams, orderBy);
         try {
             Connection connection = getConnectionFromThreadLocal();
             prStatFimls = connection.prepareStatement(query);
 
-            prStatFimls.setString(1, orderBy);
-            prStatFimls.setInt(2, offset);
-            prStatFimls.setInt(3, count);
+            prStatFimls.setInt(1, offset);
+            prStatFimls.setInt(2, count);
             try(ResultSet rs = prStatFimls.executeQuery()) {
                 Film film = null;
                 while(rs.next()) {

@@ -1,7 +1,7 @@
 package by.epam.filmstore.domain;
 
 /**
- * Created by Olga Shahray on 27.06.2016.
+ * @author Olga Shahray
  */
 public class Discount {
     private int id;

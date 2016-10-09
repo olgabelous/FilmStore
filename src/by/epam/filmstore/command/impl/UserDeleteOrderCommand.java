@@ -35,7 +35,6 @@ public class UserDeleteOrderCommand implements Command {
             int id = Integer.parseInt(request.getParameter(ParameterAndAttributeName.ID));
 
             IOrderService service = ServiceFactory.getInstance().getOrderService();
-            // TODO: 23.09.2016 проверить принадлежит ли заказ этому пользователю
             boolean isDeleted = service.delete(id);
 
             HttpSession session = request.getSession(false);
