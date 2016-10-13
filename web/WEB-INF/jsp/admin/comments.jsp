@@ -64,14 +64,9 @@
 
                                                         <p style="font-size: medium;">
                                                             <c:forEach begin="0" end="4" varStatus="loop">
-                                                                <c:choose>
-                                                                    <c:when test="${loop.index < comment.mark}">
-                                                                        <span style="color: gold;"><c:out value="★"/></span>
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <span style="color: lightgrey;"><c:out value="★"/></span>
-                                                                    </c:otherwise>
-                                                                </c:choose>
+                                                                <span style="color: ${loop.index < comment.mark ? "gold" : "lightgrey"}">
+                                                                    <c:out value="★"/>
+                                                                </span>
                                                             </c:forEach>
                                                         </p>
 

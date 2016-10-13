@@ -26,16 +26,8 @@
 <fmt:message bundle="${loc}" key="locale.menu.art_people_info" var="art_people_info"/>
 <fmt:message bundle="${loc}" key="locale.menu.my_page" var="my_page"/>
 
-<body class="w3-content" style="max-width:1600px">
-
-<c:choose>
-    <c:when test="${sessionScope.user.role.name()=='ADMIN'}">
-        <jsp:include page="../fragments/adminMenu.jsp"/>
-    </c:when>
-    <c:otherwise>
-        <jsp:include page="../fragments/userMenu.jsp"/>
-    </c:otherwise>
-</c:choose>
+<body>
+<jsp:include page= "${sessionScope.user.role.name()=='ADMIN' ? '../fragments/adminMenu.jsp' : '../fragments/userMenu.jsp'}"/>
 
 <!-- !PAGE CONTENT! -->
 <div class="w3-main page-content">
@@ -149,10 +141,8 @@
         </c:otherwise>
     </c:choose>
     <!-- End page content -->
-    <!-- Footer -->
-<jsp:include page="../fragments/footer.jsp"/>
-
 </div>
+<jsp:include page="../fragments/footer.jsp"/>
 </body>
 </html>
 

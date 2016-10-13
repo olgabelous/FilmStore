@@ -15,11 +15,11 @@
 <fmt:message bundle="${loc}" key="locale.discount.from" var="from"/>
 <fmt:message bundle="${loc}" key="locale.discount.message" var="message"/>
 
-<body class="w3-content" style="max-width:1600px">
+<body>
 
 <jsp:include page="../fragments/userMenu.jsp"/>
 <!-- !PAGE CONTENT! -->
-<div class="w3-main">
+<div class="w3-main page-content">
 
     <!-- Header -->
     <header class="w3-container">
@@ -85,6 +85,3 @@
 <jsp:include page="../fragments/footer.jsp"/>
 </body>
 </html>
-
-
-
